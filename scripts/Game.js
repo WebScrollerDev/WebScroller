@@ -20,12 +20,9 @@ function startGL() {
 	initGL(canvas);
 	cam.init(gl);
 	render.init(gl, cam);
-	//initShaders();
-	//initBuffers();
 
 	gl.clearColor(1.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-	render.render(gl);
-	//drawScene();
+	render.render();
 }
