@@ -1,6 +1,7 @@
 function Camera () {
 	this.proj = mat4.create();
 	this.view = mat4.create();
+	//this.keyArray = {};
 }
 
 Camera.prototype.init = function(gl) {
@@ -15,4 +16,8 @@ Camera.prototype.getProj = function() {
 
 Camera.prototype.getView = function() {
 	return this.view;
+};
+
+Camera.prototype.move = function(move) {
+	mat4.translate(this.view, this.view, move);
 };

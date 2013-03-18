@@ -1,3 +1,10 @@
+window.requestAnimFrame = (function() {
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+	function(/* function */callback, /* DOMElement */element) {
+		window.setTimeout(callback, 1000 / 60);
+	};
+})();
+
 var gl;
 var cam = new Camera();
 var render = new RenderManager();
@@ -14,6 +21,22 @@ function initGL(canvas) {
 	}
 }
 
+function tick() {
+	requestAnimFrame(tick);
+	handleKeys();
+	render.render();
+}
+
+function handleKeys() {
+	if(isKeyDown('A'))
+		cam.move([0.01, 0.0, 0.0]);
+	if(isKeyDown('W'))
+		cam.move([0.0, -0.01, 0.0]);
+	if(isKeyDown('S'))
+		cam.move([0.0, 0.01, 0.0]);
+	if(isKeyDown('D'))
+		cam.move([-0.01, 0.0, 0.0]);
+}
 
 function startGL() {
 	var canvas = document.getElementById("canvas");
@@ -21,8 +44,10 @@ function startGL() {
 	cam.init(gl);
 	render.init(gl, cam);
 
+	document.onkeydown = keyDown;
+	document.onkeyup = keyUp;
 	gl.clearColor(1.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
-
-	render.render();
+	
+	tick();
 }
