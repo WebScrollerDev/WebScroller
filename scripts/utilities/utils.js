@@ -60,7 +60,7 @@ utils.getShader = function (gl, id) {
 
     //if things didn't go so well alert
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(shader));
+        console.log(gl.getShaderInfoLog(shader));//alert(gl.getShaderInfoLog(shader));
         return null;
     }
 
