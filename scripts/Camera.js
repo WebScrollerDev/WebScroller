@@ -1,14 +1,13 @@
 function Camera () {
-	this.proj = mat4.create();
-	this.view = mat4.create();
-	//this.keyArray = {};
 }
 
 Camera.prototype = {
 	
-	init: function(gl) {
+	init: function(gl, world) {
 	this.proj = mat4.perspective(mat4.create(), 3.14/4, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
-	this.view = mat4.lookAt(mat4.create(), [0, 0, 100], [0, 0, 0], [0, 1, 0]);
+	this.lookat = mat4.lookAt(mat4.create(), [0, 0, 100], [0, 0, 0], [0, 1, 0]);
+	this.view = this.lookat;
+	this.world = world;
 	}, 
 	
 	getProj: function() {
@@ -17,9 +16,12 @@ Camera.prototype = {
 	
 	getView: function() {
 		return this.view;
-	},
+	}, 
 	
-	move: function(move) {
-		mat4.translate(this.view, this.view, move);
+	update: function() {
+		//this.view = mat4.clone(this.lookat);
+		//var tmpPos = this.world.player.getPosition();
+		
+		//mat4.translate(this.view, this.view, [-tmpPos[0], tmpPos[1], tmpPos[2]]);
 	}
 }

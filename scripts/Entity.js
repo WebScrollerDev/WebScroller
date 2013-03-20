@@ -41,9 +41,53 @@ EntityPlayer = function(pos) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.update = function() {
-	this.position[0] += 0.01;
+	this.keyPress();
+	
+	/*if(this.velocity[0] > 0.009)
+		this.velocity[0] -= 0.0005;
+	else if(this.velocity[0] < -0.009)
+		this.velocity[0] += 0.0005;
+	else
+		this.velocity[0] = 0.0;*/
+	
+	this.position[0] += this.velocity[0];
 };
 
+EntityPlayer.prototype.keyPress = function() {
+	
+	var maxVel = 0.001;
+	
+	var velRange = 0.009;
+	
+	var friction = 0.001;
+	
+	var speed = 0.0001;
+	
+	if(isKeyDown('A')) {
+		if(this.velocity[0] > -maxVel)
+			this.velocity[0] -= speed;
+	}
+	else if(isKeyDown('D')) {
+		if(this.velocity[0] < maxVel)
+			this.velocity[0] += speed;
+	}
+	else {
+		if(this.velocity[0] > velRange)
+			this.velocity[0] -= friction;
+		else if(this.velocity[0] < -velRange)
+			this.velocity[0] += friction;
+		else
+			this.velocity[0] = 0.0;
+	}
+	
+	/*if(isKeyDown('D'))
+		if(this.velocity[0] < maxVel)
+			this.velocity[0] += 0.005;
+	else {
+		if(this.velocity[0] > velRange)
+			this.velocity[0] += 0.0005;
+	}*/
+};
 //-------------------enemy--------------------//
 
 EntityEnemy = function(pos) {

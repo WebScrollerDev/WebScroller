@@ -1,6 +1,6 @@
 World = function() {
 	this.bg = [[0, 0],[1024, 256]];
-	this.player = new EntityPlayer([2, 0, 0]);
+	this.player = new EntityPlayer([0, 0, 0]);
 }
 
 World.prototype = {	

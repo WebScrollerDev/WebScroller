@@ -24,26 +24,15 @@ function initGL(canvas) {
 
 function tick() {
 	requestAnimFrame(tick);
-	handleKeys();
 	world.update();
+	cam.update();
 	render.render();
-}
-
-function handleKeys() {
-	if(isKeyDown('A'))
-		cam.move([0.1, 0.0, 0.0]);
-	if(isKeyDown('W'))
-		cam.move([0.0, -0.1, 0.0]);
-	if(isKeyDown('S'))
-		cam.move([0.0, 0.1, 0.0]);
-	if(isKeyDown('D'))
-		cam.move([-0.1, 0.0, 0.0]);
 }
 
 function startGL() {
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
-	cam.init(gl);
+	cam.init(gl, world);
 	render.init(gl, world, cam);
 	//world.init();
 
