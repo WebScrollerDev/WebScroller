@@ -114,33 +114,65 @@ RenderEntity.prototype.renderPlayer = function() {
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelPlayer.getNumVertices());
 }
 
-RenderWorld = function(gl, world, cam, prog) {	//Render Square Class
+RenderWorld = function(gl, world, cam, prog) {
 	RenderWorld.baseConstructor.call(this, gl, cam, prog);
-	this.model = new ModelSquare();
-	this.vao = this.generateModel(this.model);
 	this.world = world;
-	this.bg = gl.createTexture();
-	Texture.loadImage(gl, "resources/bg.png", this.bg);
+	
+	this.modelBg = new ModelSquare();
+	this.vaoBg = this.generateModel(this.modelBg);
+	this.texBg = gl.createTexture();
+	Texture.loadImage(gl, "resources/bg.png", this.texBg);
+
+	this.modelMg = new ModelSquare();
+	this.vaoMg = this.generateModel(this.modelMg);
+	this.texMg = gl.createTexture();
+	Texture.loadImage(gl, "resources/mg.png", this.texMg);
 }
 
 InheritenceManager.extend(RenderWorld, RenderBase);
 
-RenderWorld.prototype.render = function() {
+RenderWorld.prototype.render = function() {	
+	this.renderBg();
+	this.renderMg();
+};
+
+RenderWorld.prototype.renderBg = function() {
 	
 	var modelView = mat4.create();
 	mat4.scale(modelView, modelView, [this.world.bg[1][0], this.world.bg[1][1], 1.0]);
 	//mat4.scale(modelView, modelView, [10.0, 2.5, 1.0]);
 	mat4.translate(modelView, modelView, [0.0, 0.0, -10.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
-	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vao);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoBg);
 
 	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
 	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
 	
-	this.gl.bindTexture(this.gl.TEXTURE_2D, this.bg);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texBg);
     this.gl.uniform1i(this.prog.tex, 0);
 	
-	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.model.getNumVertices());
-
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());
 };
+
+RenderWorld.prototype.renderMg = function() {
+	
+	var modelView = mat4.create();
+	mat4.scale(modelView, modelView, [this.world.bg[1][0], 32, 1.0]);
+	//mat4.scale(modelView, modelView, [10.0, 2.5, 1.0]);
+	mat4.translate(modelView, modelView, [0.0, 0.0, -5.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoMg);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	//this.gl.enableAlphaTest();
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texMg);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelMg.getNumVertices());
+};
+
+
+
 
