@@ -80,18 +80,6 @@ RenderBase.prototype = {
 	}
 }
 
-InheritenceManager = {};
-
-InheritenceManager.extend = function(subClass, baseClass) {
-	function inheritence() { }
-	inheritence.prototype = baseClass.prototype;
-	subClass.prototype = new inheritence();
-	subClass.prototype.constructor = subClass;
-	subClass.baseConstructor = baseClass;
-	subClass.superClass = baseClass.prototype;
-}
-
-
 RenderEntity = function(gl, world, cam, prog) {	//Render Square Class
 	RenderEntity.baseConstructor.call(this, gl, cam, prog);
 	this.world = world;

@@ -1,5 +1,5 @@
-Entity = function() {
-	this.position = vec3.create();
+Entity = function(pos) {
+	this.position = pos;
 	this.velocity = vec2.create();
 	this.rotation = 0.0;
 }
@@ -34,24 +34,24 @@ Entity.prototype = {
 
 //-------------------player--------------------//
 
-EntityPlayer = function() {
-	EntityPlayer.baseConstructor.call(this);
+EntityPlayer = function(pos) {
+	EntityPlayer.baseConstructor.call(this, pos);
 };
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.update = function() {
-	this.position += velocity;
+	this.position[0] += 0.01;
 };
 
 //-------------------enemy--------------------//
 
-EntityEnemy = function() {
-	EntityEnemy.baseConstructor.call(this);
+EntityEnemy = function(pos) {
+	EntityEnemy.baseConstructor.call(this, pos);
 };
 
 InheritenceManager.extend(EntityEnemy, Entity); //entityenemy inherites from entity
 
 EntityEnemy.prototype.update = function() {
-	this.position += velocity;
+	//this.position += this.velocity;
 };
