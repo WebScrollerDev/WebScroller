@@ -53,16 +53,6 @@ ModelBase.prototype = {
 	}
 };
 
-InheritenceManager = {};
-
-InheritenceManager.extend = function(subClass, baseClass) {
-	function inheritence() { }
-	inheritence.prototype = baseClass.prototype;
-	subClass.prototype = new inheritence();
-	subClass.prototype.constructor = subClass;
-	subClass.baseConstructor = baseClass;
-	subClass.superClass = baseClass.prototype;
-}
 
 ModelSquare = function(){
 	ModelSquare.baseConstructor.call(this);
@@ -82,7 +72,7 @@ ModelSquare = function(){
 							0.0, 0.0, 1.0,
 							0.0, 0.0, 1.0 ];
 			
-}
+};
 
 InheritenceManager.extend(ModelSquare, ModelBase);
 
