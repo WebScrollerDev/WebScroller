@@ -5,7 +5,7 @@ Camera.prototype = {
 	
 	init: function(gl, world) {
 	this.proj = mat4.perspective(mat4.create(), 3.14/4, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
-	this.lookat = mat4.lookAt(mat4.create(), [0, 0, 100], [0, 0, 0], [0, 1, 0]);
+	this.lookat = mat4.lookAt(mat4.create(), [0, 0, 300], [0, 0, 0], [0, 1, 0]);
 	this.view = this.lookat;
 	this.world = world;
 	}, 

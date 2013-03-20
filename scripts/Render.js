@@ -101,7 +101,7 @@ RenderEntity.prototype.render = function() {
 RenderEntity.prototype.renderPlayer = function() {
 	var modelView = mat4.create();
 	mat4.scale(modelView, modelView, [16, 16, 0.5]);
-	//mat4.translate(modelView, modelView, this.world.player.getPosition());
+	mat4.translate(modelView, modelView, [0.0, -7, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoPlayer);
 
@@ -142,7 +142,7 @@ RenderWorld.prototype.renderBg = function() {
 	mat4.scale(modelView, modelView, [this.world.bg[1][0], this.world.bg[1][1], 1.0]);
 	//mat4.scale(modelView, modelView, [10.0, 2.5, 1.0]);
 	var playerPos = this.world.player.getPosition();
-	mat4.translate(modelView, modelView, [-playerPos[0], playerPos[1], -10.0]);
+	mat4.translate(modelView, modelView, [-playerPos[0], -0.5, -10.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoBg);
 
@@ -160,7 +160,8 @@ RenderWorld.prototype.renderMg = function() {
 	var modelView = mat4.create();
 	mat4.scale(modelView, modelView, [this.world.bg[1][0], 32, 1.0]);
 	//mat4.scale(modelView, modelView, [10.0, 2.5, 1.0]);
-	mat4.translate(modelView, modelView, [0.0, 0.0, -5.0]);
+	var playerPos = this.world.player.getPosition();
+	mat4.translate(modelView, modelView, [-playerPos[0], -4, -1.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoMg);
 
