@@ -31,6 +31,7 @@ RenderBase.prototype = {
 		this.prog.position = this.gl.getAttribLocation(this.prog, "inPosition");
 		this.prog.texCoord = this.gl.getAttribLocation(this.prog, "inTexCoord");
 		this.prog.normal = this.gl.getAttribLocation(this.prog, "inNormal");
+		this.prog.tex = this.gl.getUniformLocation(this.prog, "inTexSample");
 		
 		this.prog.proj = this.gl.getUniformLocation(this.prog, "projMatrix");
 		this.prog.modelView = this.gl.getUniformLocation(this.prog, "modelViewMatrix");
@@ -88,10 +89,12 @@ InheritenceManager.extend = function(subClass, baseClass) {
 }
 
 
-RenderSquare = function(gl, cam, vert, frag) {
+RenderSquare = function(gl, cam, vert, frag) {	//Render Square Class
 	RenderSquare.baseConstructor.call(this, gl, cam, vert, frag);
 	this.model = new ModelSquare();
 	this.vao = this.generateModel(this.model);
+	this.texture = gl.createTexture();
+	Texture.loadImage(gl, "resources/test.png", this.texture);
 }
 
 InheritenceManager.extend(RenderSquare, RenderBase);
@@ -99,13 +102,16 @@ InheritenceManager.extend(RenderSquare, RenderBase);
 RenderSquare.prototype.render = function() {
 	
 	var modelView = mat4.create();
-	//mat4.scale(modelView, modelView, [0.5, 0.5, 0.5]);
+	mat4.scale(modelView, modelView, [1.5, 1.5, 0.5]);
 	mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vao);
 
 	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
 	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+    this.gl.uniform1i(this.prog.tex, 0);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.model.getNumVertices());
 
