@@ -4,22 +4,25 @@ function RenderManager() {
 
 RenderManager.prototype = {
 	
-	init: function(gl, cam) {
+	init: function(gl, world, cam) {
 		this.gl = gl;
-		this.renderSquare = new RenderSquare(gl, cam, 'main.vert', 'main.frag');
+		this.prog = utils.addShaderProg(gl, 'main.vert', 'main.frag');
+		this.renderEntity = new RenderEntity(gl, world, cam, this.prog);
+		this.renderWorld = new RenderWorld(gl, world, cam, this.prog);
 	},
 	
 	render: function() {
 		this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-		this.renderSquare.render();
+		this.renderWorld.render();
+		this.renderEntity.render();
 	}
 }
 
-RenderBase = function(gl, cam, vert, frag) { //the base type of renderer
+RenderBase = function(gl, cam, prog) { //the base type of renderer
 	this.gl = gl;
 	this.cam = cam;
-	this.prog = utils.addShaderProg(gl, vert, frag);
+	this.prog = prog;
 	
 	this.initShader();
 }
@@ -89,28 +92,64 @@ InheritenceManager.extend = function(subClass, baseClass) {
 }
 
 
-RenderSquare = function(gl, cam, vert, frag) {	//Render Square Class
-	RenderSquare.baseConstructor.call(this, gl, cam, vert, frag);
-	this.model = new ModelSquare();
-	this.vao = this.generateModel(this.model);
-	this.texture = gl.createTexture();
-	Texture.loadImage(gl, "resources/test.png", this.texture);
+RenderEntity = function(gl, world, cam, prog) {	//Render Square Class
+	RenderEntity.baseConstructor.call(this, gl, cam, prog);
+	this.world = world;
+	
+	this.modelPlayer = new ModelSquare();
+	this.vaoPlayer = this.generateModel(this.modelPlayer);
+	this.texPlayer = gl.createTexture();
+	Texture.loadImage(gl, "resources/player.png", this.texPlayer);
 }
 
-InheritenceManager.extend(RenderSquare, RenderBase);
+InheritenceManager.extend(RenderEntity, RenderBase);
 
-RenderSquare.prototype.render = function() {
+RenderEntity.prototype.render = function() {
+	
+	this.renderPlayer();
+	
+};
+
+RenderEntity.prototype.renderPlayer = function() {
+	var modelView = mat4.create();
+	mat4.scale(modelView, modelView, [16, 16, 0.5]);
+	mat4.translate(modelView, modelView, this.world.player.getPosition());
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoPlayer);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texPlayer);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelPlayer.getNumVertices());
+}
+
+RenderWorld = function(gl, world, cam, prog) {	//Render Square Class
+	RenderWorld.baseConstructor.call(this, gl, cam, prog);
+	this.model = new ModelSquare();
+	this.vao = this.generateModel(this.model);
+	this.world = world;
+	this.bg = gl.createTexture();
+	Texture.loadImage(gl, "resources/bg.png", this.bg);
+}
+
+InheritenceManager.extend(RenderWorld, RenderBase);
+
+RenderWorld.prototype.render = function() {
 	
 	var modelView = mat4.create();
-	mat4.scale(modelView, modelView, [1.5, 1.5, 0.5]);
-	mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	mat4.scale(modelView, modelView, [this.world.bg[1][0], this.world.bg[1][1], 1.0]);
+	//mat4.scale(modelView, modelView, [10.0, 2.5, 1.0]);
+	mat4.translate(modelView, modelView, [0.0, 0.0, -10.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vao);
 
 	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
 	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
 	
-	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.bg);
     this.gl.uniform1i(this.prog.tex, 0);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.model.getNumVertices());
