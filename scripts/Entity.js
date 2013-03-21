@@ -53,8 +53,8 @@ EntityPlayer.prototype.update = function() {
 			this.velocity[1] -= 0.2;
 	}
 	
-	if(this.position[1] <= 0) {
-		this.position[1] = 0;
+	if(this.position[1] <= 0.3) {
+		this.position[1] = 0.3;
 		this.canJump = true;
 		this.isJumping = false;
 	} else {

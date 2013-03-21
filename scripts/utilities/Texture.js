@@ -29,3 +29,41 @@ Texture.handleImage = function(gl, tex, image) {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
+
+TextureData = function() { //Class for handling imagedata loading
+}
+
+TextureData.prototype = {
+	
+	loadImage: function(path) {
+		this.loaded = false;
+		var image = new Image();
+		image.onload = function() {
+			TextureData.prototype.handleImage(image);
+		}
+		image.src = path;
+	},
+	
+	handleImage: function(image) {
+		
+		var myCanvas = document.createElement("canvas");
+		myCanvas.width = image.width; 
+		myCanvas.height = image.height;
+		var myCanvasContext = myCanvas.getContext("2d"); // Get canvas 2d context
+		myCanvasContext.drawImage(image, 0, 0); // Draw the texture
+		this.data = myCanvasContext.getImageData(0,0, myCanvas.width, myCanvas.height); // Read the texels/pixels back
+		this.data.width = image.width;
+		this.data.height = image.height;
+		this.loaded = true;
+	},
+	
+	isLoaded: function() {
+		return this.loaded;
+	}, 
+	
+	getData: function() {
+		if(this.data.size == 0)
+			return 0;
+		return this.data;
+	}
+}
