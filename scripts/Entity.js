@@ -2,6 +2,8 @@ Entity = function(pos) {
 	this.position = pos;
 	this.velocity = vec2.create();
 	this.rotation = 0.0;
+	this.canJump = false;
+	this.isJumping = false;
 }
 
 Entity.prototype = {
@@ -41,16 +43,28 @@ EntityPlayer = function(pos) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.update = function() {
+	this.velocity[1] = 0.05;
 	this.keyPress();
 	
-	/*if(this.velocity[0] > 0.009)
-		this.velocity[0] -= 0.0005;
-	else if(this.velocity[0] < -0.009)
-		this.velocity[0] += 0.0005;
-	else
-		this.velocity[0] = 0.0;*/
+	if(this.isJumping == true) {
+		if(this.position[1] > 2)
+			this.isJumping = false;
+		else
+			this.velocity[1] -= 0.2;
+	}
 	
+	if(this.position[1] <= 0) {
+		this.position[1] = 0;
+		this.canJump = true;
+		this.isJumping = false;
+	} else {
+		this.canJump = false;
+	}
+	
+
+		
 	this.position[0] += this.velocity[0];
+	this.position[1] -= this.velocity[1];
 };
 
 EntityPlayer.prototype.keyPress = function() {
@@ -62,6 +76,12 @@ EntityPlayer.prototype.keyPress = function() {
 	var friction = 0.05;
 	
 	var speed = 0.05;
+	
+	if(isKeyDown('W') && this.canJump == true)
+		this.isJumping = true;
+	
+	if(isKeyDown('A') && isKeyDown('D'))
+		return;
 	
 	if(isKeyDown('A')) {
 		if(this.velocity[0] > -maxVel)
@@ -79,14 +99,6 @@ EntityPlayer.prototype.keyPress = function() {
 		else
 			this.velocity[0] = 0.0;
 	}
-	
-	/*if(isKeyDown('D'))
-		if(this.velocity[0] < maxVel)
-			this.velocity[0] += 0.005;
-	else {
-		if(this.velocity[0] > velRange)
-			this.velocity[0] += 0.0005;
-	}*/
 };
 //-------------------enemy--------------------//
 

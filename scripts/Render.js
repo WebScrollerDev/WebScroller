@@ -102,8 +102,7 @@ RenderEntity.prototype.renderPlayer = function() {
 	var modelView = mat4.create();
 	mat4.scale(modelView, modelView, [16, 16, 0.5]);
 	var playerPos = this.world.player.getPosition();
-
-	mat4.translate(modelView, modelView, [this.gl.viewportWidth/100, 0.0, 0.0]);
+	mat4.translate(modelView, modelView, [this.gl.viewportWidth/100, playerPos[1], 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoPlayer);
 
