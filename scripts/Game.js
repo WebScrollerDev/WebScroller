@@ -34,7 +34,7 @@ function startGL() {
 	initGL(canvas);
 	cam.init(gl, world);
 	render.init(gl, world, cam);
-	//world.init();
+	world.init(gl);
 
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;

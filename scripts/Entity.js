@@ -55,13 +55,13 @@ EntityPlayer.prototype.update = function() {
 
 EntityPlayer.prototype.keyPress = function() {
 	
-	var maxVel = 0.001;
+	var maxVel = 1.0;
 	
-	var velRange = 0.000051;
+	var velRange = 0.051;
 	
-	var friction = 0.00005;
+	var friction = 0.05;
 	
-	var speed = 0.00005;
+	var speed = 0.05;
 	
 	if(isKeyDown('A')) {
 		if(this.velocity[0] > -maxVel)
