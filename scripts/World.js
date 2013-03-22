@@ -1,5 +1,4 @@
 World = function() {
-	this.bg = [[0, 0],[1024, 256]];
 	this.collisionsTex = new TextureData();
 }
 
@@ -7,7 +6,7 @@ World.prototype = {
 	
 	init: function(gl) {
 		this.collisionsTex.loadImage("resources/collisions.png");
-		this.player = new EntityPlayer([gl.viewportWidth/12.5, 0, 0]);
+		this.player = new EntityPlayer([((gl.viewportWidth/3)/2), 0, 0]);
 		this.hasGeneratedCollisions = false;
 	},
 	
