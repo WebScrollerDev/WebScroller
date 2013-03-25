@@ -100,9 +100,10 @@ RenderEntity.prototype.render = function() {
 
 RenderEntity.prototype.renderPlayer = function() {
 	var modelView = mat4.create();
-	mat4.scale(modelView, modelView, [16, 16, 0.5]);
+	
 	var playerPos = this.world.player.getPosition();
-	mat4.translate(modelView, modelView, [((this.gl.viewportWidth/3)/2)/16, playerPos[1], 0.0]);
+	mat4.translate(modelView, modelView, [((this.gl.viewportWidth)/2), playerPos[1], 0.0]);
+	mat4.scale(modelView, modelView, [64, 64, 0.5]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoPlayer);
 
@@ -140,11 +141,12 @@ RenderWorld.prototype.render = function() {
 RenderWorld.prototype.renderBg = function() {
 	
 	var modelView = mat4.create();	  //make it wider
-	mat4.scale(modelView, modelView, [this.texBg.width, this.texBg.height, 1.0]);
-
 	var playerPos = this.world.player.getPosition();
-	//----------------------------------- -playerpos      -window/3/2 to get to the middle   /Mgwidth to scale correctly -----------------//
-	mat4.translate(modelView, modelView, [(-(playerPos[0] - ((this.gl.viewportWidth/3)/2) )    /this.texMg.width) , 0.0, -10.0]);
+	//---------WiewportWidth scaled with the bg/mg ratio----------------------------------------------------------------------------------playerpos scaled with the bg/mg ratio -----------------//
+	var trans = (((this.gl.viewportWidth)/2)*((this.texBg.width - this.gl.viewportWidth)/(this.texMg.width - this.gl.viewportWidth))) - ((playerPos[0])*((this.texBg.width - this.gl.viewportWidth)/(this.texMg.width - this.gl.viewportWidth)));
+	
+	mat4.translate(modelView, modelView, [trans, 0.0, -10.0]);
+	mat4.scale(modelView, modelView, [this.texBg.width, this.texBg.height, 1.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoBg);
 
@@ -160,11 +162,12 @@ RenderWorld.prototype.renderBg = function() {
 RenderWorld.prototype.renderMg = function() {
 	
 	var modelView = mat4.create();
-	mat4.scale(modelView, modelView, [this.texMg.width, this.texMg.height, 1.0]);
+	
 	var playerPos = this.world.player.getPosition();
 	
 	//----------------------------------- -playerpos      -window/3/2 to get to the middle   /Mgwidth to scale correctly -----------------//
-	mat4.translate(modelView, modelView, [-(playerPos[0] - ((this.gl.viewportWidth/3)/2))    /this.texMg.width, 0.0, -1.0]);
+	mat4.translate(modelView, modelView, [-(playerPos[0] - ((this.gl.viewportWidth)/2)), 0.0, -1.0]);
+	mat4.scale(modelView, modelView, [this.texMg.width, this.texMg.height, 1.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoMg);
 

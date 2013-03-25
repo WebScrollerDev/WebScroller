@@ -69,13 +69,13 @@ EntityPlayer.prototype.update = function() {
 
 EntityPlayer.prototype.keyPress = function() {
 	
-	var maxVel = 1.0;
+	var maxVel = 5.0;
 	
 	var velRange = 0.051;
 	
 	var friction = 0.05;
 	
-	var speed = 0.05;
+	var speed = 0.5;
 	
 	if(isKeyDown('W') && this.canJump == true)
 		this.isJumping = true;
