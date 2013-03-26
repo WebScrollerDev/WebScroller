@@ -129,6 +129,11 @@ RenderWorld = function(gl, world, cam, prog) {
 	this.vaoMg = this.generateModel(this.modelMg);
 	this.texMg = gl.createTexture();
 	Texture.loadImage(gl, "resources/mg.png", this.texMg);
+	
+	this.modelFg = new ModelSquare();
+	this.vaoFg = this.generateModel(this.modelFg);
+	this.texFg = gl.createTexture();
+	Texture.loadImage(gl, "resources/fg.png", this.texFg);
 }
 
 InheritenceManager.extend(RenderWorld, RenderBase);
@@ -136,6 +141,7 @@ InheritenceManager.extend(RenderWorld, RenderBase);
 RenderWorld.prototype.render = function() {	
 	this.renderBg();
 	this.renderMg();
+	this.renderFg();
 };
 
 RenderWorld.prototype.renderBg = function() {
@@ -179,6 +185,27 @@ RenderWorld.prototype.renderMg = function() {
     this.gl.uniform1i(this.prog.tex, 0);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelMg.getNumVertices());
+};
+
+RenderWorld.prototype.renderFg = function() {
+	
+	var modelView = mat4.create();	  //make it wider
+	var playerPos = this.world.player.getPosition();
+	//---------WiewportWidth scaled with the bg/mg ratio----------------------------------------------------------------------------------playerpos scaled with the bg/mg ratio -----------------//
+	var trans = (((this.gl.viewportWidth)/2)*((this.texFg.width - this.gl.viewportWidth)/(this.texMg.width - this.gl.viewportWidth))) - ((playerPos[0])*((this.texFg.width - this.gl.viewportWidth)/(this.texMg.width - this.gl.viewportWidth)));
+	
+	mat4.translate(modelView, modelView, [trans, 0.0, 1.0]);
+	mat4.scale(modelView, modelView, [this.texFg.width, this.texFg.height, 1.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoFg);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texFg);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelFg.getNumVertices());
 };
 
 
