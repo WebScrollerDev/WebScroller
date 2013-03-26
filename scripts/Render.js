@@ -9,6 +9,7 @@ RenderManager.prototype = {
 		this.prog = utils.addShaderProg(gl, 'main.vert', 'main.frag');
 		this.renderEntity = new RenderEntity(gl, world, cam, this.prog);
 		this.renderWorld = new RenderWorld(gl, world, cam, this.prog);
+		this.renderParticle = new RenderParticle(gl, world, cam, this.prog);
 	},
 	
 	render: function() {
@@ -16,6 +17,7 @@ RenderManager.prototype = {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		this.renderWorld.render();
 		this.renderEntity.render();
+		this.renderParticle.render();
 	}
 }
 
@@ -121,6 +123,46 @@ RenderEntity.prototype.renderPlayer = function() {
     this.gl.uniform1i(this.prog.tex, 0);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelPlayer.getNumVertices());
+}
+
+RenderParticle = function(gl, world, cam, prog) {	//Render Square Class
+	RenderEntity.baseConstructor.call(this, gl, cam, prog);
+	this.world = world;
+	
+	this.modelParticle = new ModelSquare();
+	this.vaoParticle = this.generateModel(this.modelParticle);
+	this.texParticle = gl.createTexture();
+	Texture.loadImage(gl, "resources/particle.png", this.texParticle);
+}
+
+InheritenceManager.extend(RenderParticle, RenderBase);
+
+RenderParticle.prototype.render = function() {
+	
+	for(var i = 0; i < this.world.getEmitter().getParticles().length; i++)
+	{
+		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
+		this.renderParticle(this.world.getEmitter().getParticles()[i].getPosition());
+	}
+};
+
+RenderParticle.prototype.renderParticle = function(pos) {
+	var modelView = mat4.create();
+	var playerPos = this.world.player.getPosition();
+	mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, 0.0]);
+	mat4.scale(modelView, modelView, [16, 16, 0.0]);
+	//Used to center the player on the canvas
+	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticle);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticle);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticle.getNumVertices());
 }
 
 RenderWorld = function(gl, world, cam, prog) {
