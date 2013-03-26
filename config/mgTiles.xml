@@ -1,0 +1,28 @@
+<Tiles>
+	<Tile>
+		<Url>resources/tile1.png</Url>
+		<BoundingType>box</BoundingType>
+		<BoundingBox>
+			<Min>
+				<X>2</X>
+				<Y>6</Y>
+			</Min>
+			<Max>
+				<X>53</X>
+				<Y>13</Y>
+			</Max>
+		</BoundingBox>
+	</Tile>
+
+	<Tile>
+		<Url>resources/tile2.png</Url>
+		<BoundingType>circle</BoundingType>
+		<BoundingCircle>
+			<Radius>2</Radius>
+			<Pos>
+				<X>40</X>
+				<Y>40</Y>
+			</Pos>
+		</BoundingCircle>
+	</Tile>
+</Tiles>

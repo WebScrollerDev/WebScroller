@@ -4,6 +4,7 @@ World = function() {
 		x: 2048, 
 		y: 512
 	}
+	this.tiles = new Array();
 }
 
 World.prototype = {	
@@ -12,6 +13,10 @@ World.prototype = {
 		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 0, 0]);
 		this.hasGeneratedCollisions = false;
+	},
+	
+	setTiles: function(tiles) {
+		this.tiles = tiles;
 	},
 	
 	generateCollisions: function() {
