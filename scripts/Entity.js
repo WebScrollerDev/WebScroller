@@ -38,23 +38,27 @@ Entity.prototype = {
 
 EntityPlayer = function(pos) {
 	EntityPlayer.baseConstructor.call(this, pos);
+	this.size = {
+		x: 64, 
+		y: 64
+	}
 };
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.update = function() {
-	this.velocity[1] = 0.05;
+	this.velocity[1] = 2.0;
 	this.keyPress();
 	
 	if(this.isJumping == true) {
-		if(this.position[1] > 2)
+		if(this.position[1] > 80)
 			this.isJumping = false;
 		else
-			this.velocity[1] -= 0.2;
+			this.velocity[1] -= 4.0;
 	}
 	
-	if(this.position[1] <= 0.3) {
-		this.position[1] = 0.3;
+	if(this.position[1] <= 10) {
+		this.position[1] = 10;
 		this.canJump = true;
 		this.isJumping = false;
 	} else {

@@ -1,5 +1,9 @@
 World = function() {
 	this.collisionsTex = new TextureData();
+	this.worldSize = {
+		x: 2048, 
+		y: 512
+	}
 }
 
 World.prototype = {	
