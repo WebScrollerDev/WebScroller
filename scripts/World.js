@@ -13,7 +13,7 @@ World.prototype = {
 		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 0, 0]);
 		this.hasGeneratedCollisions = false;
- 		this.emitter = new Emitter([600,200], 1200, 1000, 10000, 0.5, 45);
+ 		 this.emitter = new Emitter([600,200], 1200, 0.1, 10000, 2000, 0.5, 1.5, 0.5);
 	},
 	
 	setTiles: function(tiles) {
@@ -38,6 +38,7 @@ World.prototype = {
 		if(this.collisionsTex.isLoaded() && !this.hasGeneratedCollisions)
 			this.generateCollisions();
 		this.player.update();
+		this.emitter.setPosition(this.player.getPosition());
 	}, 
 	
 	getEmitter: function() {
