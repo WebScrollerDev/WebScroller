@@ -140,8 +140,6 @@ function startGL() {
 
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;
-	gl.clearColor(1.0, 0.0, 0.0, 1.0);
-	gl.enable(gl.DEPTH_TEST);
 	
 	tick();
 }

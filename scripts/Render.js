@@ -9,11 +9,13 @@ RenderManager.prototype = {
 		this.prog = utils.addShaderProg(gl, 'main.vert', 'main.frag');
 		this.renderEntity = new RenderEntity(gl, world, cam, this.prog);
 		this.renderWorld = new RenderWorld(gl, world, cam, this.prog);
-		this.renderParticle = new RenderParticle(gl, world, cam, this.prog);
+		this.renderParticle = new RenderParticle(gl, world, cam, utils.addShaderProg(gl, 'particle.vert', 'particle.frag'));
 		this.renderTile = new RenderTile(gl, world, cam, this.prog);
-		
-		this.gl.enable(this.gl.BLEND);
-		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+		gl.clearColor(1.0, 0.0, 0.0, 1.0);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LESS);
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	},
 	
 	render: function() {
@@ -21,8 +23,8 @@ RenderManager.prototype = {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		this.renderWorld.render();
 		this.renderEntity.render();
-		this.renderParticle.render();
 		this.renderTile.render();
+		this.renderParticle.render();
 	}
 }
 
@@ -100,7 +102,8 @@ RenderEntity = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderEntity, RenderBase);
 
 RenderEntity.prototype.render = function() {
-	
+		
+	this.gl.useProgram(this.prog);
 	this.renderPlayer();
 	
 };
@@ -143,15 +146,17 @@ RenderParticle = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderParticle, RenderBase);
 
 RenderParticle.prototype.render = function() {
+		
+	this.gl.useProgram(this.prog);
 	
 	for(var i = 0; i < this.world.getEmitter().getParticles().length; i++)
 	{
 		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
-		this.renderParticle(this.world.getEmitter().getParticles()[i].getPosition());
+		this.renderParticle(this.world.getEmitter().getParticles()[i].getPosition(), this.world.getEmitter().getParticles()[i].getFade());
 	}
 };
 
-RenderParticle.prototype.renderParticle = function(pos) {
+RenderParticle.prototype.renderParticle = function(pos, fade) {
 	var modelView = mat4.create();
 	var playerPos = this.world.player.getPosition();
 	if(playerPos[0] < (this.gl.viewportWidth)/2)
@@ -161,7 +166,7 @@ RenderParticle.prototype.renderParticle = function(pos) {
 	else {
 		mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, 1.0]);
 	}
-	mat4.scale(modelView, modelView, [16, 16, 0.0]);
+	mat4.scale(modelView, modelView, [(32*fade), (32*fade), 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
@@ -189,6 +194,8 @@ RenderTile = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderTile, RenderBase);
 
 RenderTile.prototype.render = function() {
+		
+	this.gl.useProgram(this.prog);
 	
 	for(var i = 0; i < this.world.getTiles().length; i++)
 	{
@@ -246,6 +253,9 @@ RenderWorld = function(gl, world, cam, prog) {
 InheritenceManager.extend(RenderWorld, RenderBase);
 
 RenderWorld.prototype.render = function() {	
+		
+	this.gl.useProgram(this.prog);
+	
 	this.renderBg();
 	this.renderMg();
 	this.renderFg();
