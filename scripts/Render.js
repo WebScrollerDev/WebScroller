@@ -24,7 +24,9 @@ RenderManager.prototype = {
 		this.renderWorld.render();
 		this.renderEntity.render();
 		this.renderTile.render();
+		gl.depthMask(false);
 		this.renderParticle.render();
+		gl.depthMask(true);
 	}
 }
 
@@ -102,8 +104,8 @@ RenderEntity = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderEntity, RenderBase);
 
 RenderEntity.prototype.render = function() {
-		
 	this.gl.useProgram(this.prog);
+	
 	this.renderPlayer();
 	
 };
@@ -118,7 +120,7 @@ RenderEntity.prototype.renderPlayer = function() {
 		mat4.translate(modelView, modelView, [playerPos[0] - (this.world.worldSize.x - ((this.gl.viewportWidth))), playerPos[1], 1.0]);
 	else
 		mat4.translate(modelView, modelView, [(this.gl.viewportWidth)/2, playerPos[1], 1.0]);
-	mat4.scale(modelView, modelView, [this.world.player.size.x, this.world.player.size.y, 0.0]);
+	mat4.scale(modelView, modelView, [this.world.player.size.x, this.world.player.size.y, 1.0]);
 	//Used to center the player on the canvas
 	mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
@@ -146,9 +148,7 @@ RenderParticle = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderParticle, RenderBase);
 
 RenderParticle.prototype.render = function() {
-		
 	this.gl.useProgram(this.prog);
-	
 	for(var i = 0; i < this.world.getEmitter().getParticles().length; i++)
 	{
 		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
@@ -160,13 +160,13 @@ RenderParticle.prototype.renderParticle = function(pos, fade) {
 	var modelView = mat4.create();
 	var playerPos = this.world.player.getPosition();
 	if(playerPos[0] < (this.gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x, pos.y, 0.5]);
 	else if(playerPos[0] > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 0.5]);
 	else {
-		mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, 0.5]);
 	}
-	mat4.scale(modelView, modelView, [(32*fade), (32*fade), 0.0]);
+	mat4.scale(modelView, modelView, [32*fade, 32*fade, 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);
@@ -194,17 +194,61 @@ RenderTile = function(gl, world, cam, prog) {	//Render Square Class
 InheritenceManager.extend(RenderTile, RenderBase);
 
 RenderTile.prototype.render = function() {
-		
 	this.gl.useProgram(this.prog);
+	var tilesBg = this.world.getTilesBg();
 	
-	for(var i = 0; i < this.world.getTiles().length; i++)
+	for(var i = 0; i < tilesBg.length; i++)
 	{
 		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
-		this.renderTile(this.world.getTiles()[i].getPosition(), this.world.getTiles()[i].getTile().getTex(), this.world.getTiles()[i].getTile().getSize());
+		this.renderTileBg(tilesBg[i].getPosition(), tilesBg[i].getTile().getTex(), tilesBg[i].getTile().getSize());
+	}
+	
+	var tilesMg = this.world.getTilesMg();
+	
+	for(var i = 0; i < tilesMg.length; i++)
+	{
+		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
+		this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize());
+	}
+	
+	var tilesFg = this.world.getTilesFg();
+	
+	for(var i = 0; i < tilesFg.length; i++)
+	{
+		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
+		this.renderTileFg(tilesFg[i].getPosition(), tilesFg[i].getTile().getTex(), tilesFg[i].getTile().getSize());
 	}
 };
 
-RenderTile.prototype.renderTile = function(pos, tex, size) {
+RenderTile.prototype.renderTileBg = function(pos, tex, size) {
+	var modelView = mat4.create();
+	var playerPos = this.world.player.getPosition();
+	if(playerPos[0] < (this.gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, pos.y, -9.0]);
+	else if(playerPos[0] > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(this.world.bgSize.x - (this.gl.viewportWidth)), pos.y, -9.0]);
+	else {
+		var trans = (((this.gl.viewportWidth)/2)*((this.world.bgSize.x - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth))) - 
+					(playerPos[0]*((this.world.bgSize.x - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth)));
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, -9.0]);
+		//mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, -9.0]);
+	}
+	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
+	//Used to center the player on the canvas
+	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoTile);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
+}
+
+RenderTile.prototype.renderTileMg = function(pos, tex, size) {
 	var modelView = mat4.create();
 	var playerPos = this.world.player.getPosition();
 	if(playerPos[0] < (this.gl.viewportWidth)/2)
@@ -229,6 +273,34 @@ RenderTile.prototype.renderTile = function(pos, tex, size) {
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
 }
 
+RenderTile.prototype.renderTileFg = function(pos, tex, size) {
+	var modelView = mat4.create();
+	var playerPos = this.world.player.getPosition();
+	
+	if(playerPos[0] < (this.gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, pos.y, 2.0]);
+	else if(playerPos[0] > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(this.world.fgSize.x - (this.gl.viewportWidth)), pos.y, 2.0]);
+	else {
+		var trans = (((this.gl.viewportWidth)/2)*((this.world.fgSize.x - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth))) - 
+					(playerPos[0]*((this.world.fgSize.x - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth)));
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, 2.0]);
+		//mat4.translate(modelView, modelView, [pos.x -(playerPos[0] - ((this.gl.viewportWidth)/2)), pos.y, -9.0]);
+	}
+	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
+	//Used to center the player on the canvas
+	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoTile);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
+}
 
 RenderWorld = function(gl, world, cam, prog) {
 	RenderWorld.baseConstructor.call(this, gl, cam, prog);
@@ -243,22 +315,14 @@ RenderWorld = function(gl, world, cam, prog) {
 	this.vaoMg = this.generateModel(this.modelMg);
 	this.texMg = gl.createTexture();
 	Texture.loadImage(gl, "resources/mg.png", this.texMg);
-	
-	this.modelFg = new ModelSquare();
-	this.vaoFg = this.generateModel(this.modelFg);
-	this.texFg = gl.createTexture();
-	Texture.loadImage(gl, "resources/fg.png", this.texFg);
 }
 
 InheritenceManager.extend(RenderWorld, RenderBase);
 
 RenderWorld.prototype.render = function() {	
-		
 	this.gl.useProgram(this.prog);
-	
 	this.renderBg();
 	this.renderMg();
-	this.renderFg();
 };
 
 RenderWorld.prototype.renderBg = function() {
@@ -291,7 +355,8 @@ RenderWorld.prototype.renderBg = function() {
 RenderWorld.prototype.renderMg = function() {
 	
 	var modelView = mat4.create();
-	
+	
+
 	var playerPos = this.world.player.getPosition();
 	if(playerPos[0] < (this.gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
@@ -314,34 +379,3 @@ RenderWorld.prototype.renderMg = function() {
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelMg.getNumVertices());
 };
-
-RenderWorld.prototype.renderFg = function() {
-	
-	var modelView = mat4.create();	  //make it wider
-	var playerPos = this.world.player.getPosition();
-	
-	if(playerPos[0] < (this.gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [0.0, 0.0, 2.0]);
-	else if(playerPos[0] > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [-(this.texFg.width - (this.gl.viewportWidth)), 0.0, 2.0]);
-	else {
-		//---------WiewportWidth scaled with the bg/mg ratio----------------------------------------------------------------------------------playerpos scaled with the bg/mg ratio -----------------//
-		var trans = (((this.gl.viewportWidth)/2)*((this.texFg.width - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth))) - ((playerPos[0])*((this.texFg.width - this.gl.viewportWidth)/(this.world.worldSize.x - this.gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans, 0.0, 2.0]);
-	}
-	mat4.scale(modelView, modelView, [this.texFg.width, this.texFg.height, 1.0]);
-	mat4.multiply(modelView, this.cam.getView(), modelView);
-	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoFg);
-
-	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
-	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
-	
-	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texFg);
-    this.gl.uniform1i(this.prog.tex, 0);
-	
-	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelFg.getNumVertices());
-};
-
-
-
-

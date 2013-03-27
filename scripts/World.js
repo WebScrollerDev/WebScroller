@@ -4,7 +4,19 @@ World = function() {
 		x: 2048, 
 		y: 512
 	}
-	this.tiles = new Array();
+	
+	this.bgSize = {
+		x: 1024, 
+		y: 512
+	}
+	
+	this.fgSize = {
+		x: 4096, 
+		y: 512
+	}
+	this.tilesBg = new Array();
+	this.tilesMg = new Array();
+	this.tilesFg = new Array();
 }
 
 World.prototype = {	
@@ -13,15 +25,31 @@ World.prototype = {
 		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 0, 0]);
 		this.hasGeneratedCollisions = false;
- 		 this.emitter = new Emitter([600,200], 1200, 0.1, 10000, 2000, 0.5, 1.5, 0.5);
+		this.emitter = new Emitter([600,200], 1200, 0.1, 1000, 2000, 0.5, 1.5, 0.5);
 	},
 	
-	setTiles: function(tiles) {
-		this.tiles = tiles;
+	setTilesBg: function(tiles) {
+		this.tilesBg = tiles;
 	},
 	
-	getTiles: function() {
-		return this.tiles;
+	getTilesBg: function() {
+		return this.tilesBg;
+	},
+	
+	setTilesMg: function(tiles) {
+		this.tilesMg = tiles;
+	},
+	
+	getTilesMg: function() {
+		return this.tilesMg;
+	},
+	
+	setTilesFg: function(tiles) {
+		this.tilesFg = tiles;
+	},
+	
+	getTilesFg: function() {
+		return this.tilesFg;
 	},
 	
 	generateCollisions: function() {

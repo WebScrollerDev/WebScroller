@@ -1,6 +1,6 @@
 <Worlds>
 	<World>
-		<Tiles>
+		<TilesMg>
 			<Tile>
 				<Id>0</Id>
 				<Pos>
@@ -22,6 +22,54 @@
 					<Y>150</Y>
 				</Pos>
 			</Tile>
-		</Tiles>
+		</TilesMg>
+		
+		<TilesBg>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>100</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>1</Id>
+				<Pos>
+					<X>500</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>2</Id>
+				<Pos>
+					<X>700</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+		</TilesBg>
+		
+		<TilesFg>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>0</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>1</Id>
+				<Pos>
+					<X>800</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>2</Id>
+				<Pos>
+					<X>1500</X>
+					<Y>400</Y>
+				</Pos>
+			</Tile>
+		</TilesFg>
 	</World>
 </Worlds>

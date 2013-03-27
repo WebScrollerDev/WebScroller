@@ -1,7 +1,7 @@
 <Tiles>
 	<Tile>
 		<Id>0</Id>
-		<Url>resources/tile1.png</Url>
+		<Url>resources/tiles/mg/tile1.png</Url>
 		<BoundingType>box</BoundingType>
 		<BoundingBox>
 			<Min>
@@ -21,7 +21,7 @@
 
 	<Tile>
 		<Id>1</Id>
-		<Url>resources/tile2.png</Url>
+		<Url>resources/tiles/mg/tile2.png</Url>
 		<BoundingType>circle</BoundingType>
 		<BoundingCircle>
 			<Radius>2</Radius>
@@ -38,7 +38,7 @@
 	
 	<Tile>
 		<Id>2</Id>
-		<Url>resources/tile3.png</Url>
+		<Url>resources/tiles/mg/tile3.png</Url>
 		<BoundingType>box</BoundingType>
 		<BoundingBox>
 			<Min>

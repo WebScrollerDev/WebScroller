@@ -1,0 +1,28 @@
+<Tiles>
+	<Tile>
+		<Id>0</Id>
+		<Url>resources/tiles/bg/tile1.png</Url>
+		<Size>
+			<X>128</X>
+			<Y>128</Y>
+		</Size>
+	</Tile>
+
+	<Tile>
+		<Id>1</Id>
+		<Url>resources/tiles/bg/tile2.png</Url>
+		<Size>
+			<X>256</X>
+			<Y>256</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
+		<Id>2</Id>
+		<Url>resources/tiles/bg/tile3.png</Url>
+		<Size>
+			<X>512</X>
+			<Y>512</Y>
+		</Size>
+	</Tile>
+</Tiles>
