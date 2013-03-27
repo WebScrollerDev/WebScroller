@@ -5,6 +5,8 @@ window.requestAnimFrame = (function() {
 	};
 })();
 
+var tilesMg = new Array();
+
 function loadXml() {
 	$.ajax({
     	type: "GET",
@@ -14,15 +16,45 @@ function loadXml() {
   	});
 }
 
+function loadWorldXml() {
+	  	$.ajax({
+    	type: "GET",
+    	url: "config/worlds.xml",
+    	dataType: "xml",
+    	success: parseWorlds
+  	});
+}
+
+function parseWorlds(xml) {
+	$(xml).find("Worlds").each(function() {
+		$(this).find("World").each(function() {
+			var tilesPlaceable = new Array();
+			$(this).find("Tiles").each(function() {
+				$(this).find("Tile").each(function() {
+					var id = parseInt($(this).find("Id").text());
+					var pos;
+					$(this).find("Pos").each(function() {
+						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
+					});
+					var tilePlaceable = new TilePlaceable(tilesMg[id], pos);
+					tilesPlaceable.push(tilePlaceable);
+				});
+			});
+			world.setTiles(tilesPlaceable);
+		});
+	});
+}
+
 function parseMgTiles(xml)
 {
-	var tiles = new Array();
+	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
 			var tile = new Tile(gl, $(this).find("Url").text());
+			var id = parseInt($(this).find("Id").text());
+			var sizeX, sizeY;
 			if($(this).find("BoundingType").text() == "box") {
 				var minX, maxX, minY, maxY;
-				
 				$(this).find("BoundingBox").each(function() {
 					
 					$(this).find("Min").each(function() {
@@ -41,7 +73,6 @@ function parseMgTiles(xml)
 			}
 			if($(this).find("BoundingType").text() == "circle") {
 				var radius, posX, posY;
-				
 				$(this).find("BoundingCircle").each(function() {
 					
 					radius = parseInt($(this).find("Radius").text());
@@ -55,10 +86,23 @@ function parseMgTiles(xml)
 				
 				tile.addBoundingCircle(radius, [posX, posY]);
 			}
-			tiles.push(tile);
+			
+			$(this).find("Size").each(function() {
+				var size = {
+					x: parseInt($(this).find("X").text()), 
+					y: parseInt($(this).find("Y").text())
+				}
+				
+				tile.setSize(size);
+			});
+			
+			
+			//console.log("Adding tile to tiles");
+			tilesMg[id] = tile;
 		});
 	});
-	world.setTiles(tiles);
+	//world.setTiles(tiles);
+	loadWorldXml();
 }
 
 var gl;

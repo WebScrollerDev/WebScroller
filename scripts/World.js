@@ -20,6 +20,10 @@ World.prototype = {
 		this.tiles = tiles;
 	},
 	
+	getTiles: function() {
+		return this.tiles;
+	},
+	
 	generateCollisions: function() {
 		var collisions = this.collisionsTex.getData();
 		for(var x = 0; x < collisions.width; x++) {

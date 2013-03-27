@@ -1,0 +1,27 @@
+<Worlds>
+	<World>
+		<Tiles>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>800</X>
+					<Y>50</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>1</Id>
+				<Pos>
+					<X>1700</X>
+					<Y>100</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>2</Id>
+				<Pos>
+					<X>700</X>
+					<Y>150</Y>
+				</Pos>
+			</Tile>
+		</Tiles>
+	</World>
+</Worlds>

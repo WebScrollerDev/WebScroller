@@ -46,4 +46,34 @@ Tile.prototype = {
 		console.log("Adding a boundingCircle");
 		this.bounding = new BoundingCircle(radius, pos);
 	}, 
+	
+	getTex: function() {
+		return this.tex;
+	}, 
+	
+	setSize: function(size) {
+		this.size = size;
+	}, 
+	
+	getSize: function() {
+		return this.size;
+	}
+}
+
+TilePlaceable = function(tile, pos) {
+	this.tile = tile;
+	this.pos = {
+		x: pos[0], 
+		y: pos[1]
+	}
+}
+
+TilePlaceable.prototype = {
+	getTile: function() {
+		return this.tile;
+	},
+	
+	getPosition: function() {
+		return this.pos;
+	}
 }
