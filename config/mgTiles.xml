@@ -5,17 +5,17 @@
 		<BoundingType>box</BoundingType>
 		<BoundingBox>
 			<Min>
-				<X>2</X>
-				<Y>6</Y>
+				<X>0</X>
+				<Y>0</Y>
 			</Min>
 			<Max>
-				<X>53</X>
-				<Y>13</Y>
+				<X>156</X>
+				<Y>36</Y>
 			</Max>
 		</BoundingBox>
 		<Size>
-			<X>56</X>
-			<Y>13</Y>
+			<X>156</X>
+			<Y>36</Y>
 		</Size>
 	</Tile>
 

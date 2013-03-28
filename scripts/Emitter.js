@@ -56,8 +56,8 @@ Emitter.prototype = {
 		
 	setPosition: function(newPos) {
 		this.position = {
-			x: newPos[0], 
-			y: newPos[1]
+			x: newPos.x, 
+			y: newPos.y
 		}
 	}
 

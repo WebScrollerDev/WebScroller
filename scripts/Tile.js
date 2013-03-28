@@ -1,6 +1,12 @@
 BoundingBox = function(min, max) {
-	this.min = min;
-	this.max = max;
+	this.min = {
+		x: min[0], 
+		y: min[1]
+	};
+	this.max = {
+		x: max[0], 
+		y: max[1]
+	};
 }
 
 BoundingBox.prototype = {
@@ -18,7 +24,7 @@ BoundingCircle = function(radius, pos) {
 	this.pos = pos;
 }
 
-BoundingBox.prototype = {
+BoundingCircle.prototype = {
 	getRadius: function() {
 		return this.radius;
 	}, 
@@ -33,7 +39,7 @@ BoundingBox.prototype = {
 Tile = function(gl, path) {
 	this.tex = gl.createTexture();
 	Texture.loadImage(gl, path, this.tex);
-	//this.bounding = {};
+	//this.bounding = [];
 }
 
 Tile.prototype = {
@@ -57,15 +63,20 @@ Tile.prototype = {
 	
 	getSize: function() {
 		return this.size;
+	}, 
+	
+	getBB: function() {
+		return this.bounding;
 	}
 }
 
 TilePlaceable = function(tile, pos) {
 	this.tile = tile;
+	
 	this.pos = {
 		x: pos[0], 
 		y: pos[1]
-	}
+	};//vec2.fromValues(pos[0], pos[1]);
 }
 
 TilePlaceable.prototype = {

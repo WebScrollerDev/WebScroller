@@ -5,20 +5,41 @@
 				<Id>0</Id>
 				<Pos>
 					<X>800</X>
+					<Y>25</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>1000</X>
 					<Y>50</Y>
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>1</Id>
+				<Id>0</Id>
 				<Pos>
-					<X>1700</X>
+					<X>1200</X>
+					<Y>75</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>1400</X>
 					<Y>100</Y>
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>2</Id>
+				<Id>0</Id>
 				<Pos>
-					<X>700</X>
+					<X>1600</X>
+					<Y>125</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>1800</X>
 					<Y>150</Y>
 				</Pos>
 			</Tile>
