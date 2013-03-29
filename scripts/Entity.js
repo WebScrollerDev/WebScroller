@@ -5,8 +5,6 @@ Entity = function(pos, bbMin, bbMax) {
 	};
 	this.velocity = vec2.create();
 	this.rotation = 0.0;
-	this.canJump = false;
-	this.isJumping = false;
 	this.boundingBox = new BoundingBox(bbMin, bbMax);
 	this.collides = false;
 }
@@ -40,13 +38,13 @@ Entity.prototype = {
 	intersects: function(otherBB, otherPos) {
 		
 		var thisMin = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.min.x, 
-			y: this.position.y + this.boundingBox.min.y
+			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.min.x, 
+			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.min.y
 		}
 		
 		var thisMax = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.max.x, 
-			y: this.position.y + this.boundingBox.max.y
+			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.max.x, 
+			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.max.y
 		}
 		
 		var otherMin = {
@@ -70,14 +68,24 @@ Entity.prototype = {
 	}, 
 	
 	collidedWith: function(otherBB, otherPos) {
-		var thisMin = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.min.x, 
+		var thisMinX = {
+			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.min.x, 
 			y: this.position.y + this.boundingBox.min.y
 		}
 		
-		var thisMax = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.max.x, 
+		var thisMaxX = {
+			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.max.x, 
 			y: this.position.y + this.boundingBox.max.y
+		}
+		
+		var thisMinY = {
+			x: this.position.x - this.size.x/2 + this.boundingBox.min.x, 
+			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.min.y
+		}
+		
+		var thisMaxY = {
+			x: this.position.x - this.size.x/2 + this.boundingBox.max.x, 
+			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.max.y
 		}
 		
 		var otherMin = {
@@ -90,23 +98,28 @@ Entity.prototype = {
 			y: otherPos.y + otherBB.max.y
 		}
 		
-		var below = thisMin.y < otherMax.y;
+		var below = thisMinY.y < otherMax.y;
+		var belowNoVel = thisMinX.y < otherMax.y;
+		var left = thisMinX.x < otherMax.x;
+		var right = thisMaxX.x > otherMin.x;
 		
 		if(below) {
 			this.collides = true;
-			this.canJump = true;
-			this.isJumping = false;
-			//this.velocity[1] -= 2.0;
-			this.position.y = otherMax.y; //Should use velocity
+			this.velocity[1] = 0.0;
+			//this.position.y = otherMax.y; //Should use velocity			
 		} else {
 			this.collides = false;
-			this.canJump = false;
 		}
 		
-		if(below) console.log("below");
-		
-	}
+		if((right)  && belowNoVel) {
+			this.collides = false;
+			this.velocity[0] = 0.0;
+		}
+	}, 
 	
+	setColliding: function(collides) {
+		this.collides = collides;
+	}
 };
 
 //-------------------player--------------------//
@@ -121,14 +134,17 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
-EntityPlayer.prototype.update = function() {
-	
+EntityPlayer.prototype.temp = function() {
 	if(!this.collides)
-		this.velocity[1] += 2.0;
-	else
-		this.velocity[1] = 0.0;
+		this.velocity[1] += 0.5;
+	
 	this.keyPress();
-		
+}
+
+EntityPlayer.prototype.update = function() {
+	//var gravity = 2.0;
+	//if(!this.collides)
+	//	gravity = 2.0;
 	this.position.x += this.velocity[0];
 	this.position.y -= this.velocity[1];
 };
@@ -143,8 +159,11 @@ EntityPlayer.prototype.keyPress = function() {
 	
 	var speed = 0.5;
 	
-	if(isKeyDown('W') && this.canJump == true)
-		this.velocity[1] -= 20.0;//this.isJumping = true;
+	if(isKeyDown('W') && this.collides) {
+		console.log("JUMP");
+		this.velocity[1] -= 10.0;//this.isJumping = true;
+	}
+		
 	
 	if(isKeyDown('A') && isKeyDown('D'))
 		return;

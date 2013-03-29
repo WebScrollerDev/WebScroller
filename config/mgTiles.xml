@@ -10,12 +10,12 @@
 			</Min>
 			<Max>
 				<X>156</X>
-				<Y>36</Y>
+				<Y>24</Y>
 			</Max>
 		</BoundingBox>
 		<Size>
 			<X>156</X>
-			<Y>36</Y>
+			<Y>33</Y>
 		</Size>
 	</Tile>
 
@@ -46,12 +46,12 @@
 				<Y>0</Y>
 			</Min>
 			<Max>
-				<X>15</X>
-				<Y>15</Y>
+				<X>32</X>
+				<Y>16</Y>
 			</Max>
 		</BoundingBox>
 		<Size>
-			<X>16</X>
+			<X>32</X>
 			<Y>16</Y>
 		</Size>
 	</Tile>

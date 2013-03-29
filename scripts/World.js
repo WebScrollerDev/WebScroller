@@ -23,7 +23,7 @@ World.prototype = {
 	
 	init: function(gl) {
 		this.collisionsTex.loadImage("resources/collisions.png");
-		this.player = new EntityPlayer([((gl.viewportWidth)/2), 0, 0], [0, 0], [64, 64]);
+		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		this.hasGeneratedCollisions = false;
 		this.emitter = new Emitter([600,200], 1200, 0.1, 1000, 2000, 0.5, 1.5, 0.5);
 	},
@@ -65,14 +65,17 @@ World.prototype = {
 	update: function() {
 		if(this.collisionsTex.isLoaded() && !this.hasGeneratedCollisions)
 			this.generateCollisions();
-		this.player.update();
+		this.player.temp();
 		this.emitter.setPosition(this.player.getPosition());
 		
 		var worldPos = {
 			x: 0, 
 			y: 0
 		}
-		this.player.collidedWith(new BoundingBox([0, 0], [2048, 10]), worldPos);
+		if(this.player.intersects(new BoundingBox([0, 0], [2048, 10]), worldPos)) {
+			this.player.collidedWith(new BoundingBox([0, 0], [2048, 10]), worldPos);
+		} else
+			this.player.setColliding(false);
 		
 		var tiles = this.tilesMg;
 		for(var i = 0; i < tiles.length; i++) {
@@ -81,6 +84,8 @@ World.prototype = {
 				//console.log("Player is colliding");
 			}
 		}
+		
+		this.player.update();
 		
 	}, 
 	
