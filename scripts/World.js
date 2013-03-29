@@ -17,6 +17,8 @@ World = function() {
 	this.tilesBg = new Array();
 	this.tilesMg = new Array();
 	this.tilesFg = new Array();
+	this.smokeEmitters = new Array();
+	this.fluidEmitters = new Array();
 }
 
 World.prototype = {	
@@ -25,7 +27,9 @@ World.prototype = {
 		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		this.hasGeneratedCollisions = false;
-		this.emitter = new Emitter([600,200], 1200, 0.1, 1000, 2000, 0.5, 1.5, 0.5);
+		
+		this.smokeEmitters.push(new EmitterSmoke([600,200], 32, 50000, 1.0, 4000, 2000, 0.1, 0.2, 1.5, 0.5));
+		this.fluidEmitters.push(new EmitterFluid([600,200], 32, 50, 500, 0.5, 0.2, 1.0, 6.0, 1.0));
 	},
 	
 	setTilesBg: function(tiles) {
@@ -66,7 +70,7 @@ World.prototype = {
 		if(this.collisionsTex.isLoaded() && !this.hasGeneratedCollisions)
 			this.generateCollisions();
 		this.player.temp();
-		this.emitter.setPosition(this.player.getPosition());
+		this.smokeEmitters[0].setPosition(this.player.getPosition());
 		
 		var worldPos = {
 			x: 0, 
@@ -89,7 +93,11 @@ World.prototype = {
 		
 	}, 
 	
-	getEmitter: function() {
-		return this.emitter;
+	getSmokeEmitters: function() {
+		return this.smokeEmitters;
+	},
+	
+	getFluidEmitters: function() {
+		return this.fluidEmitters;
 	}
 }

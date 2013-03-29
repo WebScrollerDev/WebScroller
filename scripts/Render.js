@@ -26,9 +26,7 @@ RenderManager.prototype = {
 		this.renderEntity.render();
 		this.renderTile.render();
 		this.renderBB.render();
-		gl.depthMask(false);
 		this.renderParticle.render();
-		gl.depthMask(true);
 	}
 }
 
@@ -141,57 +139,107 @@ RenderEntity.prototype.renderPlayer = function() {
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelPlayer.getNumVertices());
 }
 
-RenderParticle = function(gl, world, cam, prog) {	//Render Square Class
+//----------------------------------PARTICLES------------------------------------//
+RenderParticle = function(gl, world, cam, prog) {
 	RenderParticle.baseConstructor.call(this, gl, cam, prog);
 	this.world = world;
-	
-	this.modelParticle = new ModelSquare();
-	this.vaoParticle = this.generateModel(this.modelParticle);
-	this.texParticle = gl.createTexture();
-	Texture.loadImage(gl, "resources/particle.png", this.texParticle);
-}
+//------------------Smoke Particles---------------------//
+	this.modelParticleSmoke = new ModelSquare();
+	this.vaoParticleSmoke = this.generateModel(this.modelParticleSmoke);
+	this.texParticleSmoke = gl.createTexture();
+	Texture.loadImage(gl, "resources/smokeParticle.png", this.texParticleSmoke);
+//------------------Fluid Particles---------------------//
+	this.modelParticleFluid = new ModelSquare();
+	this.vaoParticleFluid = this.generateModel(this.modelParticleFluid);
+	this.texParticleFluid = gl.createTexture();
+	Texture.loadImage(gl, "resources/fluidParticle.png", this.texParticleFluid);
+};
 
 InheritenceManager.extend(RenderParticle, RenderBase);
 
 RenderParticle.prototype.render = function() {
 	this.gl.useProgram(this.prog);
-	for(var i = 0; i < this.world.getEmitter().getParticles().length; i++)
+//------------------------------------SMOKE---------------------------------//
+	this.gl.depthMask(false); //see other particles through the particles
+	var smokeEmitters = this.world.getSmokeEmitters();
+	for(var i = 0; i < smokeEmitters.length; i++)
 	{
-		//console.log(this.world.getEmitter().getParticles()[i].getPosition());
-		this.renderParticle(this.world.getEmitter().getParticles()[i].getPosition(), this.world.getEmitter().getParticles()[i].getFade());
+		var currEmitterParticles = smokeEmitters[i].getParticles();
+		for(var j = 0; j < currEmitterParticles.length; j++)
+		{
+			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), smokeEmitters[i].getParticleScale());
+		}
+	}
+//------------------------------------FLUID---------------------------------//
+	this.gl.depthMask(true); //see other particles through the particles
+	var fluidEmitters = this.world.getFluidEmitters();
+	for(var i = 0; i < fluidEmitters.length; i++)
+	{
+		var currEmitterParticles = fluidEmitters[i].getParticles();
+		for(var j = 0; j < currEmitterParticles.length; j++)
+		{
+			this.renderFluidParticle(currEmitterParticles[j].getPosition(), fluidEmitters[i].getParticleScale());
+		}
 	}
 };
 
-RenderParticle.prototype.renderParticle = function(pos, fade) {
+//------------------------------------SMOKE---------------------------------//
+RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
 	var modelView = mat4.create();
-	
 	var playerPos = {
 		x: this.world.player.getPosition().x, 
 		y: this.world.player.getPosition().y
 	}
-
+	
 	if(playerPos.x < (this.gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [pos.x, pos.y, 0.5]);
 	else if(playerPos.x > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
 		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 0.5]);
-	else {
+	else
 		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2)), pos.y, 0.5]);
-	}
-	mat4.scale(modelView, modelView, [32*fade, 32*fade, 0.0]);
-	//Used to center the player on the canvas
-	//mat4.translate(modelView, modelView, [-(this.world.player.size.x*0.5)/this.world.player.size.x, 0.0, 0.0]);
+
+	mat4.scale(modelView, modelView, [scale*fade, scale*fade, 0.0]); //shrink the particles
 	mat4.multiply(modelView, this.cam.getView(), modelView);
-	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticle);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticleSmoke);
 
 	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
 	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
 	
-	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticle);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticleSmoke);
     this.gl.uniform1i(this.prog.tex, 0);
 	
-	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticle.getNumVertices());
-}
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticleSmoke.getNumVertices());
+};
 
+//------------------------------------FLUID---------------------------------//
+RenderParticle.prototype.renderFluidParticle = function(pos, scale) {
+	var modelView = mat4.create();
+	var playerPos = {
+		x: this.world.player.getPosition().x, 
+		y: this.world.player.getPosition().y
+	}
+	
+	if(playerPos.x < (this.gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, pos.y, 0.5]);
+	else if(playerPos.x > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 0.5]);
+	else
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2)), pos.y, 0.5]);
+	
+	mat4.scale(modelView, modelView, [scale, scale, 0.0]);
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticleFluid);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticleFluid);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticleFluid.getNumVertices());
+};
+
+//----------------------------------TILES------------------------------------//
 RenderTile = function(gl, world, cam, prog) {	//Render Square Class
 	RenderTile.baseConstructor.call(this, gl, cam, prog);
 	this.world = world;

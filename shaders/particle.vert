@@ -4,6 +4,7 @@ attribute vec3 inNormal;
 uniform mat4 modelViewMatrix;
 uniform mat4 projMatrix;
 
+
 varying vec2 texCoord;
 varying vec3 normal;
 
@@ -13,3 +14,4 @@ void main(void)
 	texCoord = inTexCoord;
 	normal = inNormal;
 }
+
