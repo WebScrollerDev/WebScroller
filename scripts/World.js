@@ -28,8 +28,8 @@ World.prototype = {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		this.hasGeneratedCollisions = false;
 		
-		this.smokeEmitters.push(new EmitterSmoke([600,200], 32, 50000, 1.0, 4000, 2000, 0.1, 0.2, 1.5, 0.5));
-		this.fluidEmitters.push(new EmitterFluid([600,200], 32, 100, 300, 0.5, 0.2, 1.0, 6.0, 1.0));
+		this.smokeEmitters.push(new EmitterSmoke([600,200], 10000, 10, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
+		this.fluidEmitters.push(new EmitterFluid([600,200], 100, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 	},
 	
 	setTilesBg: function(tiles) {

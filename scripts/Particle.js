@@ -1,10 +1,9 @@
 
 //-------------------------BASE------------------------//
 
-ParticleBase = function(position, velocity, direction, diameter) {
+ParticleBase = function(position, velocity, diameter) {
 	this.position = position;
 	this.velocity = velocity;
-	this.direction = direction;
 	this.diameter = diameter;
 };
 
@@ -13,23 +12,21 @@ ParticleBase.prototype = {
 	getPosition: function() {
 		return this.position;
 	},	
-	getDirection: function() {
-		return this.direction;
-	},
-	setDirection: function(newDirection) {
-		this.direction = newDirection;
-	},
 	updatePosition: function() {
-		var y = Math.sin(this.direction);
-		var x = Math.cos(this.direction);
-		this.position.x += x * this.velocity;
-		this.position.y += y * this.velocity;
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
 	},
 	getVelocity: function() {
 		return this.velocity;
 	},
 	setVelocity: function(newVelocity) {
 		this.velocity = newVelocity;
+	},
+	setVelocityX: function(newX) {
+		this.velocity.x = newX;
+	},
+	setVelocityY: function(newY) {
+		this.velocity.y = newY;
 	},
 	getDiameter: function() {
 		return this.diameter;
@@ -41,9 +38,9 @@ ParticleBase.prototype = {
 
 //-------------------------SMOKE------------------------//
 
-ParticleSmoke = function(position, velocity, direction, timeToLive, diameter) {
+ParticleSmoke = function(position, velocity, diameter, timeToLive) {
 	
-	ParticleSmoke.baseConstructor.call(this, position, velocity, direction, diameter);
+	ParticleSmoke.baseConstructor.call(this, position, velocity, diameter);
 	
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
@@ -63,8 +60,8 @@ ParticleSmoke.prototype.getFade = function() {
 
 //-------------------------FLUID------------------------//
 
-ParticleFluid = function(position, velocity, direction, diameter, density){
-	ParticleFluid.baseConstructor.call(this, position, velocity, direction, diameter);
+ParticleFluid = function(position, velocity, diameter, density){
+	ParticleFluid.baseConstructor.call(this, position, velocity, diameter);
 	
 	this.density = density;
 };
