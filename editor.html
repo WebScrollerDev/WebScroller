@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    	<link rel="stylesheet" type="text/css" href="editor.css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="scripts/utilities/gl-matrix.js"></script>
+        <script type="text/javascript" src="scripts/utilities/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="scripts/utilities/utils.js"></script>
+        <script type="text/javascript" src="scripts/utilities/Inheritance.js"></script>
+        <script type="text/javascript" src="scripts/utilities/KeyManager.js"></script>
+        <script type="text/javascript" src="scripts/utilities/Texture.js"></script>        
+        
+        <script type="text/javascript" src="scripts/xml.js"></script>
+        <script type="text/javascript" src="scripts/Tile.js"></script>
+        <script type="text/javascript" src="scripts/Camera.js"></script>
+        <script type="text/javascript" src="scripts/Render.js"></script>
+        <script type="text/javascript" src="scripts/Model.js"></script>
+        <script type="text/javascript" src="scripts/Entity.js"></script>
+        <script type="text/javascript" src="scripts/World.js"></script>
+        <script type="text/javascript" src="scripts/Game.js"></script>
+        <script type="text/javascript" src="scripts/Emitter.js"></script>
+        <script type="text/javascript" src="scripts/Particle.js"></script>
+        <script type="text/javascript" src="scripts/Editor.js"></script>
+        
+        <title>Editor for WebScroller</title>
+    </head>
+    <body onload="startEditor();">
+        <canvas id="canvas" style="border: none;" width="1200" height="600"> </canvas>
+        <a href="index.html">Back to game</a>
+        <div class="tileBase"></div>
+		<div class="tile">
+        	<h2>Background Tile</h2>
+        	<input type="file" id="bgImage"/>
+        	<div>
+	        	<div class = "sameLine">
+	        		<label for="name">Size X</label>
+	        		<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+				<div class = "sameLine">
+	     			<label for="name">Size Y</label>
+	     			<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+			</div>
+        	<button type="submit" onclick="addBgTile();">Add Tile</button>
+		</div>
+		<div class="tile">
+        	<h2>Middleground Tile</h2>
+        	<input type="file" id="mgImage"/>
+        	<div>
+	        	<div class = "sameLine">
+	        		<label for="name">Size X</label>
+	        		<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+				<div class = "sameLine">
+	     			<label for="name">Size Y</label>
+	     			<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+			</div>
+        	<form>
+				<input type="radio" name="bb" value="square" checked="yes">Square
+				<input type="radio" name="bb" value="circle">Circle
+			</form>
+			<div>
+	        	<div class = "sameLine">
+	        		<label for="name">Min X</label>
+	        		<input type="text" name="name" id="name" value="" placeholder="0" maxlength="4" size="10"/>
+				</div>
+				<div class = "sameLine">
+	     			<label for="name">Min Y</label>
+	     			<input type="text" name="name" id="name" value="" placeholder="0" maxlength="4" size="10"/>
+				</div>
+			</div>
+			<div>
+	        	<div class = "sameLine">
+	        		<label for="name">Max X</label>
+	        		<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+				<div class = "sameLine">
+	     			<label for="name">Max Y</label>
+	     			<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+			</div>
+        	<button type="submit" onclick="addMgTile();">Add Tile</button>
+		</div>
+		<div class="tile">
+        	<h2>Foreground Tile</h2>
+        	<input type="file" id="mgImage"/>
+        	<div>
+	        	<div class = "sameLine">
+	        		<label for="name">Size X</label>
+	        		<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+				<div class = "sameLine">
+	     			<label for="name">Size Y</label>
+	     			<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+				</div>
+			</div>
+        	<button type="submit" onclick="addFgTile();">Add Tile</button>
+		</div>
+    </body>
+</html>
