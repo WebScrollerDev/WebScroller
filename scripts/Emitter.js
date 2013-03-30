@@ -1,12 +1,12 @@
 
 //-------------------------BASE------------------------//
-			         //  x,y      int      int             ms            float            +- float		       radians             +- raidans
-EmitterBase = function(position, scale, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan) {
+			         //  x,y           int            int             ms            float            +- float		       radians             +- raidans
+EmitterBase = function(position, particleDiameter, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan) {
 	this.position = {
 		x: position[0], 
 		y: position[1]
 	}
-	this.scale = scale;
+	this.particleDiameter = particleDiameter;
 	this.particles = new Array();
 	this.maxParticles = maxParticles;
 	this.spawnInterval = spawnInterval;
@@ -25,8 +25,13 @@ EmitterBase.prototype = {
 	
 	getParticles: function() {
 		return this.particles;
-	},	
-		
+	},
+	
+	stopSpawning: function() {
+		clearInterval(this.setSpawnInterval);
+	},
+	
+//------------------Set Functions------------------//	
 	setPosition: function(newPos) {
 		this.position = {
 			x: newPos.x, 
@@ -34,24 +39,37 @@ EmitterBase.prototype = {
 		}
 	},
 	
+	setPositionX: function(newX) {
+		this.position.x = newX;
+	},
+	
+	setPositionY: function(newY) {
+		this.position.y = newY;
+	},
+	
+//------------------Get Functions------------------//	
 	getPosition: function() {
 		return this.position;
 	},
 	
-	getParticleScale: function() {
-		return this.scale;
+	getPositionX: function() {
+		return this.position.x;
 	},
 	
-	stopSpawning: function() {
-		clearInterval(this.setSpawnInterval);
+	getPositionY: function() {
+		return this.position.y;
+	},
+	
+	getParticleDiameter: function() {
+		return this.particleDiameter;
 	}
 };
 
 //-------------------------SMOKE------------------------//
-					  //  x,y      int       int            ms              ms                 +- ms              float              +- float		       radians             +- raidans
-EmitterSmoke = function(position, scale, maxParticles, spawnInterval, particleLifetime, particleLifetimeSpan, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan) {
+					  //  x,y            int            int            ms              ms                 +- ms              float              +- float		       radians             +- raidans
+EmitterSmoke = function(position, particleDiameter, maxParticles, spawnInterval, particleLifetime, particleLifetimeSpan, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan) {
 
-	EmitterSmoke.baseConstructor.call(this, position, scale, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan);
+	EmitterSmoke.baseConstructor.call(this, position, particleDiameter, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan);
 
 	this.particleLifetime = particleLifetime; // +- particleLifetimeSpan
 	this.particleLifetimeSpan = particleLifetimeSpan;
@@ -69,7 +87,8 @@ EmitterSmoke.prototype.spawnParticle = function() { //clearInterval(int) when do
 		var tmpVelocity = this.particleVelocity + (Math.random() * this.particleVelocitySpan*2) - this.particleVelocitySpan;
 		var tmpDirection = this.particleDirection + (Math.random() * this.particleDirectionSpan*2) - this.particleDirectionSpan;
 		var tmpLifetime = this.particleLifetime + (Math.random() * this.particleLifetimeSpan*2) - this.particleLifetimeSpan;
-		this.particles.push(new ParticleSmoke(tmpPos, tmpVelocity, tmpDirection, tmpLifetime));
+		var tmpDiameter = this.particleDiameter;
+		this.particles.push(new ParticleSmoke(tmpPos, tmpVelocity, tmpDirection, tmpLifetime, tmpDiameter));
 	}			
 };
 	
@@ -87,10 +106,10 @@ EmitterSmoke.prototype.updateParticles = function() { //clearInterval(int) when 
 };
 
 //-------------------------FLUID------------------------//
-			          //  x,y      int      int             ms            float            +- float		       radians             +- raidans			  float
-EmitterFluid = function(position, scale, maxParticles, spawnInterval,  particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan, particleDensity) {
+			          //  x,y           int             int             ms            float            +- float		       radians             +- raidans			  float
+EmitterFluid = function(position, particleDiameter, maxParticles, spawnInterval,  particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan, particleDensity) {
 
-	EmitterSmoke.baseConstructor.call(this, position, scale, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan);
+	EmitterSmoke.baseConstructor.call(this, position, particleDiameter, maxParticles, spawnInterval, particleVelocity, particleVelocitySpan, particleDirection, particleDirectionSpan);
 
 	this.particleDensity = particleDensity;
 };
@@ -106,7 +125,8 @@ EmitterFluid.prototype.spawnParticle = function() { //clearInterval(int) when do
 		var tmpVelocity = this.particleVelocity + (Math.random() * this.particleVelocitySpan*2) - this.particleVelocitySpan;
 		var tmpDirection = this.particleDirection + (Math.random() * this.particleDirectionSpan*2) - this.particleDirectionSpan;
 		var tmpDensity = this.particleDensity;
-		this.particles.push(new ParticleFluid(tmpPos, tmpVelocity, tmpDirection, tmpDensity));
+		var tmpDiameter = this.particleDiameter;
+		this.particles.push(new ParticleFluid(tmpPos, tmpVelocity, tmpDirection, tmpDiameter, tmpDensity));
 	}			
 };
 	
@@ -115,22 +135,20 @@ EmitterFluid.prototype.updateParticles = function() { //clearInterval(int) when 
 		
 		var currParticle = this.particles[i];
 		currParticle.updatePosition();
-		var currX = currParticle.getPosition().x + this.scale/2; //the middle of the particle
-		var currY = currParticle.getPosition().y + this.scale/2;
+		var currX = currParticle.getPosition().x + currParticle.getDiameter()/2; //the middle of the particle
+		var currY = currParticle.getPosition().y + currParticle.getDiameter()/2;
 		
 		for(var j = i+1; j < this.particles.length; j++) {
-			//if(j!=i) { //if not current particle
 				var otherParticle = this.particles[j];
-				var otherX = otherParticle.getPosition().x + this.scale/2; //the middle of the particle
-				var otherY = otherParticle.getPosition().y + this.scale/2;
+				var otherX = otherParticle.getPosition().x + otherParticle.getDiameter()/2; //the middle of the particle
+				var otherY = otherParticle.getPosition().y + otherParticle.getDiameter()/2;
 				
-				if( this.scale > Math.sqrt(Math.pow((currX-otherX),2)+Math.pow((currY-otherY),2))) {
+				if( ((currParticle.getDiameter()/2) + (otherParticle.getDiameter()/2)) > Math.sqrt(Math.pow((currX-otherX),2)+Math.pow((currY-otherY),2))) {
 					console.log("COLLISION");
 					var currDirection = currParticle.getDirection();
 					currParticle.setDirection(otherParticle.getDirection());
 					otherParticle.setDirection(currDirection);
 				}
-			//}
 		}
 		
 	

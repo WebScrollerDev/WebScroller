@@ -167,7 +167,7 @@ RenderParticle.prototype.render = function() {
 		var currEmitterParticles = smokeEmitters[i].getParticles();
 		for(var j = 0; j < currEmitterParticles.length; j++)
 		{
-			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), smokeEmitters[i].getParticleScale());
+			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter());
 		}
 	}
 //------------------------------------FLUID---------------------------------//
@@ -178,7 +178,7 @@ RenderParticle.prototype.render = function() {
 		var currEmitterParticles = fluidEmitters[i].getParticles();
 		for(var j = 0; j < currEmitterParticles.length; j++)
 		{
-			this.renderFluidParticle(currEmitterParticles[j].getPosition(), fluidEmitters[i].getParticleScale());
+			this.renderFluidParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getDiameter());
 		}
 	}
 };
@@ -192,11 +192,11 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
 	}
 	
 	if(playerPos.x < (this.gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x-(scale/2), pos.y-(scale/2), 0.5]);
 	else if(playerPos.x > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth))-(scale/2), pos.y-(scale/2), 0.5]);
 	else
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2)), pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y-(scale/2), 0.5]);
 
 	mat4.scale(modelView, modelView, [scale*fade, scale*fade, 0.0]); //shrink the particles
 	mat4.multiply(modelView, this.cam.getView(), modelView);
@@ -220,11 +220,11 @@ RenderParticle.prototype.renderFluidParticle = function(pos, scale) {
 	}
 	
 	if(playerPos.x < (this.gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x-(scale/2), pos.y-(scale/2), 0.5]);
 	else if(playerPos.x > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth)), pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth))-(scale/2), pos.y-(scale/2), 0.5]);
 	else
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2)), pos.y, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y-(scale/2), 0.5]);
 	
 	mat4.scale(modelView, modelView, [scale, scale, 0.0]);
 	mat4.multiply(modelView, this.cam.getView(), modelView);

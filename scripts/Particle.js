@@ -1,10 +1,11 @@
 
 //-------------------------BASE------------------------//
 
-ParticleBase = function(position, velocity, direction) {
+ParticleBase = function(position, velocity, direction, diameter) {
 	this.position = position;
 	this.velocity = velocity;
 	this.direction = direction;
+	this.diameter = diameter;
 };
 
 ParticleBase.prototype = {
@@ -29,14 +30,20 @@ ParticleBase.prototype = {
 	},
 	setVelocity: function(newVelocity) {
 		this.velocity = newVelocity;
+	},
+	getDiameter: function() {
+		return this.diameter;
+	},
+	setDiameter: function(newDiameter) {
+		this.diameter = newDiameter;
 	}
 };
 
 //-------------------------SMOKE------------------------//
 
-ParticleSmoke = function(position, velocity, direction, timeToLive) {
+ParticleSmoke = function(position, velocity, direction, timeToLive, diameter) {
 	
-	ParticleSmoke.baseConstructor.call(this, position, velocity, direction);
+	ParticleSmoke.baseConstructor.call(this, position, velocity, direction, diameter);
 	
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
@@ -56,8 +63,8 @@ ParticleSmoke.prototype.getFade = function() {
 
 //-------------------------FLUID------------------------//
 
-ParticleFluid = function(position, velocity, direction, density){
-	ParticleFluid.baseConstructor.call(this, position, velocity, direction);
+ParticleFluid = function(position, velocity, direction, diameter, density){
+	ParticleFluid.baseConstructor.call(this, position, velocity, direction, diameter);
 	
 	this.density = density;
 };

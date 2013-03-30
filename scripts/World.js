@@ -29,7 +29,7 @@ World.prototype = {
 		this.hasGeneratedCollisions = false;
 		
 		this.smokeEmitters.push(new EmitterSmoke([600,200], 32, 50000, 1.0, 4000, 2000, 0.1, 0.2, 1.5, 0.5));
-		this.fluidEmitters.push(new EmitterFluid([600,200], 32, 50, 500, 0.5, 0.2, 1.0, 6.0, 1.0));
+		this.fluidEmitters.push(new EmitterFluid([600,200], 32, 100, 300, 0.5, 0.2, 1.0, 6.0, 1.0));
 	},
 	
 	setTilesBg: function(tiles) {
@@ -70,7 +70,9 @@ World.prototype = {
 		if(this.collisionsTex.isLoaded() && !this.hasGeneratedCollisions)
 			this.generateCollisions();
 		this.player.temp();
-		this.smokeEmitters[0].setPosition(this.player.getPosition());
+		
+		this.fluidEmitters[0].setPosition(this.player.getPosition());
+		this.fluidEmitters[0].setPositionY(this.fluidEmitters[0].getPositionY()+this.player.size.y/2);		
 		
 		var worldPos = {
 			x: 0, 
