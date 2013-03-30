@@ -125,7 +125,6 @@ EmitterFluid.prototype.updateParticles = function() { //clearInterval(int) when 
 				var otherY = otherParticle.getPosition().y + this.scale/2;
 				
 				if( this.scale > Math.sqrt(Math.pow((currX-otherX),2)+Math.pow((currY-otherY),2))) {
-					console.log("COLLISION");
 					var currDirection = currParticle.getDirection();
 					currParticle.setDirection(otherParticle.getDirection());
 					otherParticle.setDirection(currDirection);
