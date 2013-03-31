@@ -1,10 +1,11 @@
 
 //-------------------------BASE------------------------//
 
-ParticleBase = function(position, velocity, diameter) {
+ParticleBase = function(position, velocity, diameter, rotation) {
 	this.position = position;
 	this.velocity = velocity;
 	this.diameter = diameter;
+	this.rotation = rotation;
 };
 
 ParticleBase.prototype = {
@@ -33,14 +34,20 @@ ParticleBase.prototype = {
 	},
 	setDiameter: function(newDiameter) {
 		this.diameter = newDiameter;
+	},
+	getRotation: function() {
+		return this.rotation;
+	},
+	setRotation: function(newRotation) {
+		this.rotation = newRotation;
 	}
 };
 
 //-------------------------SMOKE------------------------//
 
-ParticleSmoke = function(position, velocity, diameter, timeToLive) {
+ParticleSmoke = function(position, velocity, diameter, rotation, timeToLive) {
 	
-	ParticleSmoke.baseConstructor.call(this, position, velocity, diameter);
+	ParticleSmoke.baseConstructor.call(this, position, velocity, diameter, rotation);
 	
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
@@ -60,9 +67,9 @@ ParticleSmoke.prototype.getFade = function() {
 
 //-------------------------FIRE------------------------//
 
-ParticleFire = function(position, velocity, diameter, timeToLive) {
+ParticleFire = function(position, velocity, diameter, rotation, timeToLive) {
 	
-	ParticleFire.baseConstructor.call(this, position, velocity, diameter);
+	ParticleFire.baseConstructor.call(this, position, velocity, diameter, rotation);
 	
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
@@ -82,8 +89,8 @@ ParticleFire.prototype.getFade = function() {
 
 //-------------------------FLUID------------------------//
 
-ParticleFluid = function(position, velocity, diameter, density){
-	ParticleFluid.baseConstructor.call(this, position, velocity, diameter);
+ParticleFluid = function(position, velocity, diameter, rotation, density){
+	ParticleFluid.baseConstructor.call(this, position, velocity, diameter, rotation);
 	
 	this.density = density;
 };

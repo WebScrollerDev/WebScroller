@@ -153,8 +153,9 @@ EmitterSmoke.prototype.spawnParticle = function() { //clearInterval(int) when do
 			y: this.particleVelocity.y + (Math.random() * this.particleVelocitySpan.y*2) - this.particleVelocitySpan.y
 		}
 		var tmpDiameter = this.particleDiameter;
+		var tmpRotation = Math.random()*2*Math.PI;
 		var tmpLifetime = this.particleLifetime + (Math.random() * this.particleLifetimeSpan*2) - this.particleLifetimeSpan;
-		this.particles.push(new ParticleSmoke(tmpPos, tmpVelocity, tmpDiameter, tmpLifetime));
+		this.particles.push(new ParticleSmoke(tmpPos, tmpVelocity, tmpDiameter, tmpRotation, tmpLifetime));
 	}			
 };
 	
@@ -195,8 +196,9 @@ EmitterFire.prototype.spawnParticle = function() { //clearInterval(int) when don
 			y: this.particleVelocity.y + (Math.random() * this.particleVelocitySpan.y*2) - this.particleVelocitySpan.y
 		}
 		var tmpDiameter = this.particleDiameter;
+		var tmpRotation = Math.random()*2*Math.PI;
 		var tmpLifetime = this.particleLifetime + (Math.random() * this.particleLifetimeSpan*2) - this.particleLifetimeSpan;
-		this.particles.push(new ParticleFire(tmpPos, tmpVelocity, tmpDiameter, tmpLifetime));
+		this.particles.push(new ParticleFire(tmpPos, tmpVelocity, tmpDiameter, tmpRotation, tmpLifetime));
 	}			
 };
 	
@@ -238,8 +240,9 @@ EmitterFluid.prototype.spawnParticle = function() { //clearInterval(int) when do
 			y: this.particleVelocity.y + (Math.random() * this.particleVelocitySpan.y*2) - this.particleVelocitySpan.y
 		}
 		var tmpDiameter = this.particleDiameter;
+		var tmpRotation = 0;
 		var tmpDensity = this.particleDensity;
-		this.particles.push(new ParticleFluid(tmpPos, tmpVelocity, tmpDiameter, tmpDensity));
+		this.particles.push(new ParticleFluid(tmpPos, tmpVelocity, tmpDiameter, tmpRotation, tmpDensity));
 	}			
 };
 	

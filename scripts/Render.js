@@ -172,7 +172,7 @@ RenderParticle.prototype.render = function() {
 		var currEmitterParticles = smokeEmitters[i].getParticles();
 		for(var j = 0; j < currEmitterParticles.length; j++)
 		{
-			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter());
+			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), currEmitterParticles[j].getRotation());
 		}
 	}
 //------------------------------------FIRE---------------------------------//
@@ -183,7 +183,7 @@ RenderParticle.prototype.render = function() {
 		var currEmitterParticles = fireEmitters[i].getParticles();
 		for(var j = 0; j < currEmitterParticles.length; j++)
 		{
-			this.renderFireParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), j);
+			this.renderFireParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), currEmitterParticles[j].getRotation());
 		}
 	}
 //------------------------------------FLUID---------------------------------//
@@ -200,7 +200,7 @@ RenderParticle.prototype.render = function() {
 };
 
 //------------------------------------SMOKE---------------------------------//
-RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
+RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotation) {
 	var modelView = mat4.create();
 	var playerPos = {
 		x: this.world.player.getPosition().x, 
@@ -213,6 +213,8 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
 		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth))-(scale/2), pos.y-(scale/2), 0.5]);
 	else
 		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y-(scale/2), 0.5]);
+
+	mat4.rotate(modelView, modelView, rotation, [0,0,1]);
 
 	mat4.scale(modelView, modelView, [scale/(fade+0.4), scale/(fade+0.4), 0.0]); //shrink the particles
 	mat4.multiply(modelView, this.cam.getView(), modelView);
@@ -228,7 +230,7 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
 };
 
 //------------------------------------FIRE---------------------------------//
-RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, number) {
+RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, rotation) {
 	var modelView = mat4.create();
 	var playerPos = {
 		x: this.world.player.getPosition().x, 
@@ -242,7 +244,7 @@ RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, number)
 	else
 		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y, 0.5]);
 	
-	mat4.rotate(modelView, modelView, number%6.2, [0,0,1]);
+	mat4.rotate(modelView, modelView, rotation, [0,0,1]);
 	
 	mat4.scale(modelView, modelView, [scale*fade, scale*fade, 0.0]); //shrink the particles
 
