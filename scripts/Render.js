@@ -148,6 +148,11 @@ RenderParticle = function(gl, world, cam, prog) {
 	this.vaoParticleSmoke = this.generateModel(this.modelParticleSmoke);
 	this.texParticleSmoke = gl.createTexture();
 	Texture.loadImage(gl, "resources/smokeParticle.png", this.texParticleSmoke);
+//------------------Fire Particles---------------------//
+	this.modelParticleFire = new ModelSquare();
+	this.vaoParticleFire = this.generateModel(this.modelParticleFire);
+	this.texParticleFire = gl.createTexture();
+	Texture.loadImage(gl, "resources/fireParticle.png", this.texParticleFire);
 //------------------Fluid Particles---------------------//
 	this.modelParticleFluid = new ModelSquare();
 	this.vaoParticleFluid = this.generateModel(this.modelParticleFluid);
@@ -168,6 +173,17 @@ RenderParticle.prototype.render = function() {
 		for(var j = 0; j < currEmitterParticles.length; j++)
 		{
 			this.renderSmokeParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter());
+		}
+	}
+//------------------------------------FIRE---------------------------------//
+	this.gl.depthMask(false); //see other particles through the particles
+	var fireEmitters = this.world.getFireEmitters();
+	for(var i = 0; i < fireEmitters.length; i++)
+	{
+		var currEmitterParticles = fireEmitters[i].getParticles();
+		for(var j = 0; j < currEmitterParticles.length; j++)
+		{
+			this.renderFireParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), j);
 		}
 	}
 //------------------------------------FLUID---------------------------------//
@@ -198,7 +214,7 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
 	else
 		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y-(scale/2), 0.5]);
 
-	mat4.scale(modelView, modelView, [scale*fade, scale*fade, 0.0]); //shrink the particles
+	mat4.scale(modelView, modelView, [scale/(fade+0.4), scale/(fade+0.4), 0.0]); //shrink the particles
 	mat4.multiply(modelView, this.cam.getView(), modelView);
 	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticleSmoke);
 
@@ -209,6 +225,37 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale) {
     this.gl.uniform1i(this.prog.tex, 0);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticleSmoke.getNumVertices());
+};
+
+//------------------------------------FIRE---------------------------------//
+RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, number) {
+	var modelView = mat4.create();
+	var playerPos = {
+		x: this.world.player.getPosition().x, 
+		y: this.world.player.getPosition().y
+	}
+		
+	if(playerPos.x < (this.gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x-(scale/2), pos.y, 0.5]);
+	else if(playerPos.x > this.world.worldSize.x - ((this.gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(this.world.worldSize.x - (this.gl.viewportWidth))-(scale/2), pos.y, 0.5]);
+	else
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((this.gl.viewportWidth)/2))-(scale/2), pos.y, 0.5]);
+	
+	mat4.rotate(modelView, modelView, number%6.2, [0,0,1]);
+	
+	mat4.scale(modelView, modelView, [scale*fade, scale*fade, 0.0]); //shrink the particles
+
+	mat4.multiply(modelView, this.cam.getView(), modelView);
+	this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoParticleFire);
+
+	this.gl.uniformMatrix4fv(this.prog.proj, false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.prog.modelView, false, modelView);
+	
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticleFire);
+    this.gl.uniform1i(this.prog.tex, 0);
+	
+	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticleFire.getNumVertices());
 };
 
 //------------------------------------FLUID---------------------------------//

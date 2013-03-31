@@ -171,6 +171,49 @@ EmitterSmoke.prototype.updateParticles = function() { //clearInterval(int) when 
 	}
 };
 
+//-------------------------FIRE------------------------//
+			          //  x,y         int             ms            float              x,y               +- x,y			      ms					ms
+EmitterFire = function(position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan, particleLifetime, particleLifetimeSpan) {
+
+	EmitterFire.baseConstructor.call(this, position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan);
+
+	this.particleLifetime = particleLifetime; // +- particleLifetimeSpan
+	this.particleLifetimeSpan = particleLifetimeSpan;
+
+};
+
+InheritenceManager.extend(EmitterFire, EmitterBase);
+
+EmitterFire.prototype.spawnParticle = function() { //clearInterval(int) when done	
+	if(this.particles.length < this.maxParticles) {
+		var tmpPos = {
+			x: this.position.x, 
+			y: this.position.y
+		}
+		var tmpVelocity = {
+			x: this.particleVelocity.x + (Math.random() * this.particleVelocitySpan.x*2) - this.particleVelocitySpan.x, 
+			y: this.particleVelocity.y + (Math.random() * this.particleVelocitySpan.y*2) - this.particleVelocitySpan.y
+		}
+		var tmpDiameter = this.particleDiameter;
+		var tmpLifetime = this.particleLifetime + (Math.random() * this.particleLifetimeSpan*2) - this.particleLifetimeSpan;
+		this.particles.push(new ParticleFire(tmpPos, tmpVelocity, tmpDiameter, tmpLifetime));
+	}			
+};
+	
+EmitterFire.prototype.updateParticles = function() { //clearInterval(int) when done
+	
+	for(var i = 0; i < this.particles.length; i++) {
+		if(this.particles[i].getLifetime() < 0) { //time for the particle to die?
+			this.particles.splice(i,1);
+			i--;
+		}
+		else {
+		this.particles[i].decreaseLifetime(this.updateTime);
+		this.particles[i].updatePosition();
+		}	
+	}
+};
+
 //-------------------------FLUID------------------------//
 			          //  x,y         int             ms             float            x,y               +- x,y			     float
 EmitterFluid = function(position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan, particleDensity) {
@@ -179,6 +222,7 @@ EmitterFluid = function(position, maxParticles, spawnInterval, particleDiameter,
 	EmitterSmoke.baseConstructor.call(this, position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan);
 
 	this.particleDensity = particleDensity;
+	this.particleGrid = new Array(100,100);
 };
 
 InheritenceManager.extend(EmitterFluid, EmitterBase);
@@ -213,7 +257,7 @@ EmitterFluid.prototype.updateParticles = function() { //clearInterval(int) when 
 				var otherY = otherParticle.getPosition().y + otherParticle.getDiameter()/2;
 				
 				if( ((currParticle.getDiameter()/2) + (otherParticle.getDiameter()/2)) > Math.sqrt(Math.pow((currX-otherX),2)+Math.pow((currY-otherY),2))) {
-					console.log("COLLISION");
+					//console.log("COLLISION");
 					var currVelocity = currParticle.getVelocity();
 					currParticle.setVelocity(otherParticle.getVelocity());
 					otherParticle.setVelocity(currVelocity);

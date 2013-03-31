@@ -58,6 +58,28 @@ ParticleSmoke.prototype.getFade = function() {
 	return (this.timeToLive/this.maxTimeToLive);
 };
 
+//-------------------------FIRE------------------------//
+
+ParticleFire = function(position, velocity, diameter, timeToLive) {
+	
+	ParticleFire.baseConstructor.call(this, position, velocity, diameter);
+	
+	this.timeToLive = timeToLive;
+	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
+};
+
+InheritenceManager.extend(ParticleFire, ParticleBase);
+
+ParticleFire.prototype.getLifetime = function() {
+	return this.timeToLive;
+};
+ParticleFire.prototype.decreaseLifetime = function(decrement) {
+	this.timeToLive -= decrement;
+};
+ParticleFire.prototype.getFade = function() {
+	return (this.timeToLive/this.maxTimeToLive);
+};
+
 //-------------------------FLUID------------------------//
 
 ParticleFluid = function(position, velocity, diameter, density){
