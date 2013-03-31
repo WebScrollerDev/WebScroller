@@ -49,6 +49,8 @@ RenderBase.prototype = {
 		
 		this.prog.proj = this.gl.getUniformLocation(this.prog, "projMatrix");
 		this.prog.modelView = this.gl.getUniformLocation(this.prog, "modelViewMatrix");
+		
+		this.prog.fade = this.gl.getUniformLocation(this.prog, "fade");
 	}, 
 	
 	generateModel: function(model) { //generate the model
@@ -225,6 +227,7 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotati
 	
 	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texParticleSmoke);
     this.gl.uniform1i(this.prog.tex, 0);
+    this.gl.uniform1f(this.prog.fade, fade);
 	
 	this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.modelParticleSmoke.getNumVertices());
 };

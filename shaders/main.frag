@@ -4,6 +4,7 @@ varying vec2 texCoord;
 
 uniform sampler2D inTexSample;
 
+
 uniform float alpha;
 
 void main(void)

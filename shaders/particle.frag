@@ -3,6 +3,7 @@ varying vec3 normal;
 varying vec2 texCoord;
 
 uniform sampler2D inTexSample;
+uniform float fade;
 
 uniform float alpha;
 
@@ -42,6 +43,6 @@ void main(void)
 		if (sum.a < 0.1)
 			discard;
 		else
-			gl_FragColor = sum;
+			gl_FragColor = sum * vec4(fade);
 //	}
 }

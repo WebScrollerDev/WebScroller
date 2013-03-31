@@ -31,7 +31,7 @@ World.prototype = {
 		
 		this.smokeEmitters.push(new EmitterSmoke([200,200], 10000, 10, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
 		this.smokeEmitters.push(new EmitterSmoke([600,200], 10000, 10, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
-		this.fireEmitters.push(new EmitterFire([800,200], 10000, 500, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
+		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 	},
 	
@@ -74,8 +74,8 @@ World.prototype = {
 			this.generateCollisions();
 		this.player.temp();
 		
-		this.fluidEmitters[0].setPosition(this.player.getPosition());
-		this.fluidEmitters[0].setPositionY(this.fluidEmitters[0].getPositionY()+this.player.size.y/2);		
+		this.fireEmitters[0].setPosition(this.player.getPosition());
+		this.fireEmitters[0].setPositionY(this.fireEmitters[0].getPositionY()+this.player.size.y/2);		
 		
 		var worldPos = {
 			x: 0, 
