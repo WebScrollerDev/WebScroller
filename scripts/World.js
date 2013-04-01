@@ -29,8 +29,7 @@ World.prototype = {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		this.hasGeneratedCollisions = false;
 		
-		this.smokeEmitters.push(new EmitterSmoke([200,200], 10000, 10, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
-		this.smokeEmitters.push(new EmitterSmoke([600,200], 10000, 10, 32, [0.0,0.2], [0.1,0.0], 4000, 500));
+		this.smokeEmitters.push(new EmitterSmoke([437,290], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 	},
@@ -88,6 +87,8 @@ World.prototype = {
 		
 		var tiles = this.tilesMg;
 		for(var i = 0; i < tiles.length; i++) {
+			if(tiles[i].getTile().getBB() == null)
+				continue;
 			if(this.player.intersects(tiles[i].getTile().getBB(), tiles[i].getPosition())) {
 				this.player.collidedWith(tiles[i].getTile().getBB(), tiles[i].getPosition());
 				//console.log("Player is colliding");

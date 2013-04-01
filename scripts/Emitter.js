@@ -180,7 +180,6 @@ EmitterFire = function(position, maxParticles, spawnInterval, particleDiameter, 
 
 	this.particleLifetime = particleLifetime; // +- particleLifetimeSpan
 	this.particleLifetimeSpan = particleLifetimeSpan;
-
 };
 
 InheritenceManager.extend(EmitterFire, EmitterBase);

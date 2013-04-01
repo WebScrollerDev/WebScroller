@@ -43,6 +43,15 @@
 					<Y>150</Y>
 				</Pos>
 			</Tile>
+			
+			<Tile>
+				<Id>3</Id>
+				<Pos>
+					<X>400</X>
+					<Y>32</Y>
+				</Pos>
+			</Tile>
+			
 		</TilesMg>
 		
 		<TilesBg>

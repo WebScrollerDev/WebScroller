@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 varying vec3 normal;
 varying vec2 texCoord;
 
@@ -40,9 +40,9 @@ void main(void)
 		sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 2.0*blurSize)) * 0.03;
 		sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 3.0*blurSize)) * 0.02;
 		sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 4.0*blurSize)) * 0.01;
-		if (sum.a < 0.1)
+		if (sum.a < 0.001)
 			discard;
 		else
-			gl_FragColor = sum * vec4(fade);
+			gl_FragColor = sum * vec4(1.0,1.0,1.0,fade);
 //	}
 }

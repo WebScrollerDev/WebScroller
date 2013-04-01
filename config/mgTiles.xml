@@ -55,4 +55,14 @@
 			<Y>16</Y>
 		</Size>
 	</Tile>
+	
+	<Tile>
+		<Id>3</Id>
+		<Url>resources/tiles/mg/house.png</Url>
+		<BoundingType>null</BoundingType>
+		<Size>
+			<X>128</X>
+			<Y>256</Y>
+		</Size>
+	</Tile>
 </Tiles>
