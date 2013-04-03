@@ -22,6 +22,7 @@ RenderManager.prototype = {
 	render: function() {
 		this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+		this.gl.activeTexture(this.gl.TEXTURE0);
 		this.renderWorld.render();
 		this.renderEntity.render();
 		this.renderTile.render();
@@ -160,9 +161,128 @@ RenderParticle = function(gl, world, cam, prog) {
 	this.vaoParticleFluid = this.generateModel(this.modelParticleFluid);
 	this.texParticleFluid = gl.createTexture();
 	Texture.loadImage(gl, "resources/fluidParticle.png", this.texParticleFluid);
+	
+	this.init(gl);
 };
 
 InheritenceManager.extend(RenderParticle, RenderBase);
+
+RenderParticle.prototype.init = function(gl) { 
+	var err = "Your browser does not support ";
+	var ext;
+	try {
+		ext = gl.getExtension("OES_texture_float");
+	} catch(e) {
+		
+	}
+	if (!ext) {
+		alert(err + "OES_texture_float extension"); 
+		return;
+	}
+	if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0){
+		alert(err + "Vertex texture"); return;
+	}
+	
+	this.progParticle = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
+	
+	gl.useProgram(this.progParticle);
+	this.progParticle.pos = gl.getAttribLocation(this.progParticle, "inPos");
+	this.progParticle.tex = gl.getAttribLocation(this.progParticle, "inTex");
+	gl.enableVertexAttribArray(this.progParticle.pos);
+	gl.enableVertexAttribArray(this.progParticle.tex);
+	var data = new Float32Array([	-1, -1, 	0, 0, 
+									1, -1, 		1, 0, 
+									-1, 1, 		0, 1, 
+									1, 1, 		1, 1]);
+	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+	gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+	gl.vertexAttribPointer(this.progParticle.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(this.progParticle.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+	
+	var n = 256;
+	
+	var posVel = new Float32Array(4*n*n);
+	var i = 0;
+	
+	for(var x = 0; x < n; x++) {
+		for(var y = 0; y < n; y++) {
+			var velocity = {
+				x: Math.random() * 2 - 1, 
+				y: Math.random() * 2 - 1
+			}
+			//if((x % 10 == 0) && (y % 10 == 0)) {
+				posVel[i++] = x;
+				posVel[i++] = y;
+				posVel[i++] = velocity.x;
+				posVel[i++] = velocity.y;
+			//}
+		}
+	}
+//-------This texture stores the position and velocity-------//
+	this.texParticle1 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE1);
+	gl.bindTexture(gl.TEXTURE_2D, this.texParticle1);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, n, n, 0, gl.RGB, gl.FLOAT, posVel);
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//-------This texture also stores the position and velocity-------//
+  	this.texParticle2 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE2);
+	gl.bindTexture(gl.TEXTURE_2D, this.texParticle2);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, n, n, 0, gl.RGB, gl.FLOAT, posVel);
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//----------This framebuffer stores the texture so we can use it as a output in the shader----//
+	this.FBO1 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBO1);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texParticle1, 0);
+	
+	this.FBO2 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, FBO2);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texParticle2, 0);
+
+	if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
+		console.log(err + "FLOAT as the color attachment to an FBO");
+		
+	this.progParticle.sampLoc1 = gl.getUniformLocation(this.progParticle, "samp1");
+	this.progParticle.sampLoc2 = gl.getUniformLocation(this.progParticle, "samp2");
+	
+	this.progParticleShow = utils.addShaderProg(gl, 'particle-calc-show.vert', 'particle-calc-show.frag');
+	
+	gl.useProgram(this.progParticleShow);
+	this.progParticleShow.position = this.gl.getAttribLocation(this.progParticleShow, "inPosition");
+	
+	var posTrans = new Float32Array(8*(n-1)*(n-1));
+	var i = 0;
+	h = 1/(n-1);
+	for(var x = 0; x < n-1; x++) {
+		for(var y = 0; y < n-1; y++) {
+			posTrans[i++] = x*h;
+			posTrans[i++] = y*h;
+			
+			posTrans[i++] = x*h;
+			posTrans[i++] = (y+1)*h;
+			
+			posTrans[i++] = (x+1)*h;
+			posTrans[i++] = y*h;
+			
+			posTrans[i++] = (x+1)*h;
+			posTrans[i++] = (y+1)*h;
+		}
+	}
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+	gl.bufferData(gl.ARRAY_BUFFER, posTrans, gl.STATIC_DRAW);
+	gl.vertexAttribPointer(this.progParticleShow.position, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(this.progParticleShow.position);
+	gl.activeTexture(gl.TEXTURE0);
+}
 
 RenderParticle.prototype.render = function() {
 	this.gl.useProgram(this.prog);
@@ -199,7 +319,36 @@ RenderParticle.prototype.render = function() {
 			this.renderFluidParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getDiameter());
 		}
 	}
+	
+	//this.renderTemp();
 };
+
+RenderParticle.prototype.renderTemp = function() {
+	this.gl.useProgram(this.progParticle);
+	
+	this.gl.uniform1i(this.progParticle.sampLoc1, 1);
+	this.gl.uniform1i(this.progParticle.sampLoc2, 2);
+	this.gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBO1);
+	this.gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	this.gl.flush();
+	
+	this.gl.uniform1i(this.progParticle.sampLoc1, 2);
+	this.gl.uniform1i(this.progParticle.sampLoc2, 1);
+	this.gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBO2);
+	this.gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	this.gl.flush();
+	
+	this.gl.useProgram(this.progParticleShow);
+	//PROJ AND MODELVIEW NEEDED
+	this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.progParticleShow, "projMatrix"), false, this.cam.getProj());
+	this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.progParticleShow, "modelViewMatrix"), false, this.cam.getView());
+	
+		
+	/*this.gl.enable(this.gl.BLEND);
+	this.gl.drawArrays(this.gl.POINTS, 0, 256);
+	this.gl.disable(this.gl.BLEND);
+	this.gl.flush();*/
+}
 
 //------------------------------------SMOKE---------------------------------//
 RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotation) {

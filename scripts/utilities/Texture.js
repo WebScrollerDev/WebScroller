@@ -13,6 +13,7 @@ Texture.handleImage = function(gl, tex, image) {
 	
 	tex.width = image.width;
 	tex.height = image.height;
+	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, tex);
 	
 	// Set the tex-parameters so we can render images with any size by clamping to edges
