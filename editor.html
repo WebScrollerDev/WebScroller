@@ -21,6 +21,8 @@
         <script type="text/javascript" src="scripts/Game.js"></script>
         <script type="text/javascript" src="scripts/Emitter.js"></script>
         <script type="text/javascript" src="scripts/Particle.js"></script>
+        <script type="text/javascript" src="scripts/EditorXml.js"></script>
+        <script type="text/javascript" src="scripts/EditorRenderer.js"></script>
         <script type="text/javascript" src="scripts/Editor.js"></script>
         
         <title>Editor for WebScroller</title>
@@ -83,17 +85,17 @@
 			</div>
         	<button type="submit" onclick="addMgTile();">Add Tile</button>
 		</div>
-		<div class="tile">
+		<div class="tile" id="fg">
         	<h2>Foreground Tile</h2>
-        	<input type="file" id="mgImage"/>
+        	<input type="file" id="fgImage" accept="image/x-png"/>
         	<div>
 	        	<div class = "sameLine">
-	        		<label for="name">Size X</label>
-	        		<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+	        		<label for="sizeX">Size X</label>
+	        		<input type="text" name="sizeX" id="fgSizeX" value="" placeholder="32" maxlength="4" size="10"/>
 				</div>
 				<div class = "sameLine">
-	     			<label for="name">Size Y</label>
-	     			<input type="text" name="name" id="name" value="" placeholder="32" maxlength="4" size="10"/>
+	     			<label for="sizeY">Size Y</label>
+	     			<input type="text" name="sizeY" id="fgSizeY" value="" placeholder="32" maxlength="4" size="10"/>
 				</div>
 			</div>
         	<button type="submit" onclick="addFgTile();">Add Tile</button>
