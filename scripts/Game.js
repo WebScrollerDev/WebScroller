@@ -39,9 +39,9 @@ function keyInput() {
 function startGL() {
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
-	cam.init(gl, world);
-	render.init(gl, world, cam);
-	world.init(gl);
+	cam.init();
+	render.init();
+	world.init();
 	
 	loadXml();
 

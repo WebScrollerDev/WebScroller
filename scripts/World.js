@@ -24,7 +24,7 @@ World = function() {
 
 World.prototype = {	
 	
-	init: function(gl) {
+	init: function() {
 		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		this.hasGeneratedCollisions = false;
