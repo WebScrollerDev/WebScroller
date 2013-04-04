@@ -58,11 +58,10 @@
 	
 	<Tile>
 		<Id>3</Id>
-		<Url>resources/tiles/mg/house.png</Url>
-		<BoundingType>null</BoundingType>
+		<Url>resources/tiles/mg/house2.png</Url>
 		<Size>
-			<X>128</X>
-			<Y>256</Y>
+			<X>185.5</X>
+			<Y>317</Y>
 		</Size>
 	</Tile>
 </Tiles>

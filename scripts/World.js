@@ -27,7 +27,7 @@ World.prototype = {
 	init: function() {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
 		
-		this.smokeEmitters.push(new EmitterSmoke([437,290], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
+		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 	},
