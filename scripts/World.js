@@ -25,9 +25,7 @@ World = function() {
 World.prototype = {	
 	
 	init: function() {
-		this.collisionsTex.loadImage("resources/collisions.png");
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [64, 64]);
-		this.hasGeneratedCollisions = false;
 		
 		this.smokeEmitters.push(new EmitterSmoke([437,290], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
@@ -58,19 +56,7 @@ World.prototype = {
 		return this.tilesFg;
 	},
 	
-	generateCollisions: function() {
-		var collisions = this.collisionsTex.getData();
-		for(var x = 0; x < collisions.width; x++) {
-			for(var y = 0; y < collisions.height; y++) {
-				//TODO add collision objects
-			}
-		}
-		this.hasGeneratedCollisions = true;
-	},
-	
 	update: function() {
-		if(this.collisionsTex.isLoaded() && !this.hasGeneratedCollisions)
-			this.generateCollisions();
 		this.player.temp();
 		
 		this.fireEmitters[0].setPosition(this.player.getPosition());
