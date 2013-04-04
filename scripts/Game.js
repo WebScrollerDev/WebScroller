@@ -41,8 +41,7 @@ function startGL() {
 	initGL(canvas);
 	cam.init();
 	render.init();
-	world.init();
-	
+	world.init();	
 	loadXml();
 
 	document.onkeydown = keyDown;
