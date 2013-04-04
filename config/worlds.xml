@@ -11,10 +11,10 @@
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>0</Id>
+				<Id>2</Id>
 				<Pos>
 					<X>1400</X>
-					<Y>100</Y>
+					<Y>25</Y>
 				</Pos>
 			</Tile>
 			<Tile>

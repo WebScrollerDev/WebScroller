@@ -50,6 +50,19 @@ ModelBase.prototype = {
 	
 	getNumVertices: function() {
 		return this.vertexArray.length / 3;	
+	}, 
+	
+	flipTexCoordsX: function(flip) {
+		if(flip)
+			this.texCoordArray = [	1.0, 1.0, 
+							   		1.0, 0.0,
+									0.0, 1.0,
+									0.0, 0.0 ];
+		else
+			this.texCoordArray = [	0.0, 1.0, 
+						   			0.0, 0.0,
+									1.0, 1.0,
+									1.0, 0.0 ];
 	}
 };
 
@@ -65,7 +78,7 @@ ModelSquare = function(){
 	this.texCoordArray = [	0.0, 1.0, 
 						   	0.0, 0.0,
 							1.0, 1.0,
-							1.0, 0.0 ];
+							1.0, 0.0];
 							
 	this.normalArray = [	0.0, 0.0, 1.0,
 							0.0, 0.0, 1.0,
@@ -75,5 +88,3 @@ ModelSquare = function(){
 };
 
 InheritenceManager.extend(ModelSquare, ModelBase);
-
-

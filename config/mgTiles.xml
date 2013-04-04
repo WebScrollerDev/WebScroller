@@ -1,7 +1,7 @@
 <Tiles>
 	<Tile>
 		<Id>0</Id>
-		<Url>resources/tiles/mg/tile1.png</Url>
+		<Url>resources/tiles/mg/platform2.png</Url>
 		<BoundingType>box</BoundingType>
 		<BoundingBox>
 			<Min>
@@ -37,8 +37,17 @@
 	</Tile>
 	
 	<Tile>
+		<Id>2</Id>
+		<Url>resources/tiles/mg/house.png</Url>
+		<Size>
+			<X>138</X>
+			<Y>222</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
 		<Id>3</Id>
-		<Url>resources/tiles/mg/house2.png</Url> // house
+		<Url>resources/tiles/mg/house2.png</Url>
 		<Size>
 			<X>185.5</X>
 			<Y>317</Y>
@@ -47,7 +56,7 @@
 	
 	<Tile>
 		<Id>4</Id>
-		<Url>resources/tiles/mg/tile4.png</Url> // broad platform
+		<Url>resources/tiles/mg/platform1.png</Url>
 		<BoundingType>box</BoundingType>
 		<BoundingBox>
 			<Min>

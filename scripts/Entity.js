@@ -127,7 +127,7 @@ Entity.prototype = {
 EntityPlayer = function(pos, bbMin, bbMax) {
 	EntityPlayer.baseConstructor.call(this, pos, bbMin, bbMax);
 	this.size = {
-		x: 64, 
+		x: 45, 
 		y: 64
 	}
 };

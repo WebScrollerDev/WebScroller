@@ -6,7 +6,7 @@ RenderManager.prototype = {
 	
 	init: function() {
 		this.prog = utils.addShaderProg(gl, 'main.vert', 'main.frag');
-		this.renderEntity = new RenderEntity(this.prog);
+		this.renderEntity = new RenderEntity(utils.addShaderProg(gl, 'player.vert', 'player.frag'));
 		this.renderWorld = new RenderWorld(this.prog);
 		this.renderParticle = new RenderParticle(utils.addShaderProg(gl, 'particle.vert', 'particle.frag'));
 		this.renderTile = new RenderTile(this.prog);
@@ -115,7 +115,26 @@ RenderEntity.prototype.renderPlayer = function() {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
-
+	
+	var playerVel = {
+		x: world.player.getVelocity()[0],
+		y: world.player.getVelocity()[1]
+	}
+	
+	//mat4.rotateZ(modelView, modelView, 3.14/2);
+	if(playerVel.x < 0)
+		this.modelPlayer.flipTexCoordsX(false);     // Set to true if you want to flip, at the moment every model will be flipped :S
+	else
+		this.modelPlayer.flipTexCoordsX(false);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
+	gl.vertexAttribPointer(gl.getAttribLocation(this.prog, "inTexCoord2"), 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(gl.getAttribLocation(this.prog, "inTexCoord2"));
+	
+	
+	
+	
 	if(playerPos.x < (gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [playerPos.x, playerPos.y, 1.0]);
 	else if(playerPos.x > (world.worldSize.x - ((gl.viewportWidth)/2)))
