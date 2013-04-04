@@ -65,5 +65,14 @@
 		</Size>
 	</Tile>
 	
+	<Tile>
+		<Id>5</Id>
+		<Url>resources/tiles/mg/tree.png</Url> // tree
+		<Size>
+			<X>300</X>
+			<Y>300</Y>
+		</Size>
+	</Tile>
+	
 	
 </Tiles>

@@ -48,6 +48,14 @@
 				</Pos>
 			</Tile>
 			
+			<Tile>
+				<Id>5</Id> // tree
+				<Pos>
+					<X>50</X>
+					<Y>32</Y>
+				</Pos>
+			</Tile>
+			
 		</TilesMg>
 		
 		<TilesBg>
