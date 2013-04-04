@@ -1,20 +1,8 @@
 <Worlds>
 	<World>
 		<TilesMg>
-			<Tile>
-				<Id>0</Id>
-				<Pos>
-					<X>800</X>
-					<Y>25</Y>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>2</Id>
-				<Pos>
-					<X>1000</X>
-					<Y>50</Y>
-				</Pos>
-			</Tile>
+
+
 			<Tile>
 				<Id>0</Id>
 				<Pos>
@@ -45,10 +33,18 @@
 			</Tile>
 			
 			<Tile>
-				<Id>3</Id>
+				<Id>3</Id> // house
 				<Pos>
 					<X>400</X>
 					<Y>32</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>4</Id>	// broad platform
+				<Pos>
+					<X>600</X>
+					<Y>45</Y>
 				</Pos>
 			</Tile>
 			
@@ -74,6 +70,13 @@
 				<Pos>
 					<X>700</X>
 					<Y>0</Y>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>3</Id>
+				<Pos>
+					<X>500</X>
+					<Y>240</Y>
 				</Pos>
 			</Tile>
 		</TilesBg>

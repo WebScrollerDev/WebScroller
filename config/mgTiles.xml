@@ -37,31 +37,33 @@
 	</Tile>
 	
 	<Tile>
-		<Id>2</Id>
-		<Url>resources/tiles/mg/tile3.png</Url>
-		<BoundingType>box</BoundingType>
-		<BoundingBox>
-			<Min>
-				<X>0</X>
-				<Y>0</Y>
-			</Min>
-			<Max>
-				<X>32</X>
-				<Y>16</Y>
-			</Max>
-		</BoundingBox>
-		<Size>
-			<X>32</X>
-			<Y>16</Y>
-		</Size>
-	</Tile>
-	
-	<Tile>
 		<Id>3</Id>
-		<Url>resources/tiles/mg/house2.png</Url>
+		<Url>resources/tiles/mg/house2.png</Url> // house
 		<Size>
 			<X>185.5</X>
 			<Y>317</Y>
 		</Size>
 	</Tile>
+	
+	<Tile>
+		<Id>4</Id>
+		<Url>resources/tiles/mg/tile4.png</Url> // broad platform
+		<BoundingType>box</BoundingType>
+		<BoundingBox>
+			<Min>
+				<X>5</X>
+				<Y>35</Y>
+			</Min>
+			<Max>
+				<X>395</X>
+				<Y>70</Y>
+			</Max>
+		</BoundingBox>
+		<Size>
+			<X>400</X>
+			<Y>96</Y>
+		</Size>
+	</Tile>
+	
+	
 </Tiles>

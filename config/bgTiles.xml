@@ -25,4 +25,13 @@
 			<Y>512</Y>
 		</Size>
 	</Tile>
+	
+	<Tile>
+		<Id>3</Id>
+		<Url>resources/tiles/bg/moon.png</Url>
+		<Size>
+			<X>150</X>
+			<Y>150</Y>
+		</Size>
+	</Tile>
 </Tiles>
