@@ -1,7 +1,7 @@
 <Tiles>
 	<Tile>
 		<Id>0</Id>
-		<Url>resources/tiles/fg/tile1.png</Url>
+		<Url>resources/tiles/fg/grass.png</Url>
 		<Size>
 			<X>128</X>
 			<Y>128</Y>
