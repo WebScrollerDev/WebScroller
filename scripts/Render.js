@@ -9,8 +9,9 @@ RenderManager.prototype = {
 		this.renderEntity = new RenderEntity(utils.addShaderProg(gl, 'player.vert', 'player.frag'));
 		this.renderWorld = new RenderWorld(this.prog);
 		this.renderParticle = new RenderParticle(utils.addShaderProg(gl, 'particle.vert', 'particle.frag'));
-		this.renderTile = new RenderTile(this.prog);
+		this.renderTile = new RenderTile(utils.addShaderProg(gl, 'tile.vert', 'tile.frag'));
 		this.renderBB = new RenderBoundingBox(utils.addShaderProg(gl, 'bb.vert', 'bb.frag'));
+		this.renderLight = new RenderLight(this.renderTile.getProg());
 		gl.clearColor(1.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
 		gl.depthFunc(gl.LESS);
@@ -737,3 +738,33 @@ RenderBoundingBox.prototype.renderBB = function(pos, size) {
 	
 	gl.drawArrays(gl.LINE_STRIP, 0, this.modelBB.getNumVertices());
 }
+
+RenderLight = function(prog) {
+	RenderLight.baseConstructor.call(this, prog);
+	
+	this.lightPos = [];
+	this.lightColor = [];
+	
+	
+	this.init();
+}
+
+InheritenceManager.extend(RenderLight, RenderBase);
+
+RenderLight.prototype.init = function() {
+	var totalNrLights = world.lights.length;
+	
+	var lights = world.lights;
+	for(var i = 0; i < totalNrLights; i++) {
+		var position = [lights[i].getPosition().x, lights[i].getPosition().y, lights[i].getPosition().z];
+		var color = [lights[i].getColor().r, lights[i].getColor().g, lights[i].getColor().b];
+		this.lightPos = this.lightPos.concat(position);
+		this.lightColor = this.lightColor.concat(color);
+	}
+	
+	gl.useProgram(this.prog);
+	gl.uniform3fv(gl.getUniformLocation(this.prog, "lightPos"), this.lightPos);
+	gl.uniform3fv(gl.getUniformLocation(this.prog, "lightColor"), this.lightColor);
+	gl.uniform1i(gl.getUniformLocation(this.prog, "lightNr"), totalNrLights);
+}
+

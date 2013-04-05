@@ -40,8 +40,8 @@ function startGL() {
 	var canvas = document.getElementById("canvas");
 	initGL(canvas);
 	cam.init();
-	render.init();
-	world.init();	
+	world.init();
+	render.init();	
 	loadXml();
 
 	document.onkeydown = keyDown;

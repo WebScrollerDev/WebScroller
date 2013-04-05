@@ -20,6 +20,8 @@ World = function() {
 	this.smokeEmitters = new Array();
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
+	
+	this.lights = new Array();
 }
 
 World.prototype = {	
@@ -30,6 +32,11 @@ World.prototype = {
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
+		
+		//this.lights.push(new LightBase([500, 20, 1], [1.0, 1.0, 0.0]));
+		//this.lights.push(new LightBase([450, 100, 1], [1.0, 1.0, 0.0]));
+		//this.lights.push(new LightBase([450, 300, 1], [1.0, 1.0, 0.0]));
+		this.lights.push(new LightBase([50, 200, 5], [1.0, 1.0, 0.0]));
 	},
 	
 	setTilesBg: function(tiles) {
