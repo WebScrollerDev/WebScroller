@@ -1,11 +1,8 @@
-precision mediump float;
-varying vec3 normal;
-varying vec2 texCoord;
-
+precision highp float;
 uniform sampler2D inTexSample;
 
-
-uniform float alpha;
+varying vec3 normal;
+varying vec2 texCoord;
 
 void main(void)
 {

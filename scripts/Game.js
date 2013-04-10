@@ -5,7 +5,7 @@ window.requestAnimFrame = (function() {
 	};
 })();
 
-var debug;
+var debug = false;
 var gl;
 var cam = new Camera();
 var render = new RenderManager();
@@ -32,8 +32,11 @@ function tick() {
 }
 
 function keyInput() {
-	if(isKeyDown('J'))
+	if(isKeyDown('J')) {
 		debug = !debug;
+	}
+		
+		
 }
 
 function startGL() {

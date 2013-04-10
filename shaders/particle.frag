@@ -5,8 +5,6 @@ varying vec2 texCoord;
 uniform sampler2D inTexSample;
 uniform float fade;
 
-uniform float alpha;
-
 
 //uniform sampler2D RTScene; // the texture with the scene you want to blur
 const float blurSize = 1.0/1024.0; // I've chosen this size because this will result in that every step will be one pixel wide if the RTScene texture is of size 512x512
