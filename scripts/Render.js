@@ -230,7 +230,7 @@ RenderParticle = function() {
 	this.texParticleFluid = gl.createTexture();
 	Texture.loadImage(gl, "resources/fluidParticle.png", this.texParticleFluid);
 	
-	//this.init();
+	this.init();
 	//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	//gl.vertexAttribPointer(progEntity, 1, gl.FLOAT, false, 0, 0);
 };
@@ -262,14 +262,14 @@ RenderParticle.prototype.init = function() {
 	progParticleGpu.tex = gl.getAttribLocation(progParticleGpu, "inTex");
 	gl.enableVertexAttribArray(progParticleGpu.pos);
 	gl.enableVertexAttribArray(progParticleGpu.tex);
-	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+	this.posTexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1,
     1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
-	gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
-	gl.vertexAttribPointer(progParticleGpu.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+	//gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	//gl.vertexAttribPointer(progParticleGpu.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
 	//gl.bindBuffer(gl.ARRAY_BUFFER, null);
-	
-	var pix = [], pix1 = [], offset = 50, lengthFromMiddle = 100;
+	var pix = [], pix1 = [], offset = 0.00001, lengthFromMiddle = 100;
 	for(var i = 0; i < n2; i++){
 		var phi = 2*i*Math.PI/n2;
 		pix.push(lengthFromMiddle*Math.cos(phi), lengthFromMiddle*Math.sin(phi), 0);
@@ -333,10 +333,11 @@ RenderParticle.prototype.init = function() {
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuShow, "samp1"), 1);
 	
 	this.mvMatLoc = gl.getUniformLocation(progParticleGpuShow, "mvMatrix");
+	this.prMatLoc = gl.getUniformLocation(progParticleGpuShow, "prMatrix");
 	
-	//console.log("pos: " + progParticleGpu.pos);
-	//console.log("tex: " + progParticleGpu.tex);
-	//console.log("points: " + progParticleGpuShow.points);
+	console.log("pos: " + progParticleGpu.pos);
+	console.log("tex: " + progParticleGpu.tex);
+	console.log("points: " + progParticleGpuShow.points);
 }
 
 RenderParticle.prototype.render = function() {
@@ -377,16 +378,20 @@ RenderParticle.prototype.render = function() {
 	}
 	
 	//gl.depthMask(false);
-	//this.renderTemp();
+	this.renderTemp();
 	//gl.depthMask(true);
 };
-/*
+
 RenderParticle.prototype.renderTemp = function() {
 	gl.useProgram(progParticleGpu);
 	gl.viewport(0, 0, 16, 16);
-	for(var i = 0; i < 10; i++) {
-		//console.log("test");
-		//gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoTMPTMTP);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
+	gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(progParticleGpu.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+		
+	for(var i = 0; i < 1; i++) {
+		
 		gl.uniform1i(progParticleGpu.sampLoc1, 1);
 		gl.uniform1i(progParticleGpu.sampLoc2, 2);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBO1);
@@ -402,13 +407,24 @@ RenderParticle.prototype.renderTemp = function() {
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	gl.useProgram(progParticleGpuShow);
-  	var mvMatrix = mat4.create();
-  	mat4.lookAt(mvMatrix, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
-  	mat4.translate(mvMatrix, mvMatrix, [gl.viewportWidth/2, gl.viewportHeight/2, 0.5]);
-  	//mvMatrix = mat4.translate(mvMatrix, mvMatrix, [size/2, size/2, -700]);
-  	//gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  	gl.uniformMatrix4fv(gl.getUniformLocation(progParticleGpuShow, "prMatrix"), false, cam.getProj());
-  	gl.uniformMatrix4fv(this.mvMatLoc, false, mvMatrix);
+  	var modelView = mat4.create();
+  	mat4.lookAt(modelView, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
+  	//mat4.translate(modelView, modelView, [gl.viewportWidth/2, gl.viewportHeight/2, 0.5]);
+  	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+  	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, gl.viewportHeight/2, 0.5]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), gl.viewportHeight/2, 0.5]);
+	else
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), gl.viewportHeight/2, 0.5]);
+
+
+  	gl.uniformMatrix4fv(this.prMatLoc, false, cam.getProj());
+  	gl.uniformMatrix4fv(this.mvMatLoc, false, modelView);
   	
 	//gl.enable(gl.BLEND);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVao);
@@ -416,7 +432,7 @@ RenderParticle.prototype.renderTemp = function() {
   	//gl.disable(gl.BLEND);
  	gl.flush();
 }
-*/
+
 //------------------------------------SMOKE---------------------------------//
 RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotation) {
 	var modelView = mat4.create();
