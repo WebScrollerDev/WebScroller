@@ -36,7 +36,11 @@ World.prototype = {
 		//this.lights.push(new LightBase([500, 20, 1], [1.0, 1.0, 0.0]));
 		//this.lights.push(new LightBase([450, 100, 1], [1.0, 1.0, 0.0]));
 		//this.lights.push(new LightBase([450, 300, 1], [1.0, 1.0, 0.0]));
-		this.lights.push(new LightBase([50, 200, 5], [1.0, 1.0, 0.0]));
+		//this.lights.push(new LightBase([415.0, 50.0, 1.0], [0.0, 0.0, 1.0]));
+		//this.lights.push(new LightBase([415.0, 50.0, 1.0], [1.0, 0.0, 0.0]));
+		this.lights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
+		this.lights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
+		this.lights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
 	},
 	
 	setTilesBg: function(tiles) {

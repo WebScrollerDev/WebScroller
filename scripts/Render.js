@@ -47,6 +47,7 @@ RenderManager.prototype = {
 		progTile.view = gl.getUniformLocation(progTile, "viewMatrix");
 		progTile.lightPos = gl.getUniformLocation(progTile, "lightPos");
 		progTile.lightColor = gl.getUniformLocation(progTile, "lightColor");
+		progTile.trans = gl.getUniformLocation(progTile, "trans");
 		//progTile.lightNr = gl.getUniformLocation(progTile, "lightNr");
 		
 		
@@ -597,6 +598,8 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size) {
 	mat4.transpose(tmp, tmp);
 	gl.uniformMatrix4fv(progTile.view, false, tmp);
 	
+	gl.uniform2f(progTile.trans, pos.x, pos.y);
+	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.uniform1i(progTile.tex, 0);
 	
@@ -636,6 +639,7 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size) {
 	var tmp = mat4.copy(mat4.create(), modelView);
 	mat4.transpose(tmp, tmp);
 	gl.uniformMatrix4fv(progTile.view, false, tmp);
+	gl.uniform2f(progTile.trans, pos.x, pos.y);
 	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.uniform1i(progTile.tex, 0);
@@ -681,6 +685,7 @@ RenderTile.prototype.renderTileFg = function(pos, tex, size) {
 	var tmp = mat4.copy(mat4.create(), modelView);
 	mat4.transpose(tmp, tmp);
 	gl.uniformMatrix4fv(progTile.view, false, tmp);
+	gl.uniform2f(progTile.trans, pos.x, pos.y);
 	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.uniform1i(progTile.tex, 0);
@@ -893,12 +898,7 @@ RenderLight.prototype.init = function() {
 		this.lightColor = this.lightColor.concat(color);
 	}
 	
-	var tmpPos = [50, 100, 5];
-	var tmpColor = [0.0, 0.0, 1.0];
-	
 	gl.useProgram(progTile);
-	//gl.uniform3fv(progTile.lightPos, this.lightPos);
-	//gl.uniform3fv(progTile.lightColor, this.lightColor);
-	gl.uniform3fv(progTile.lightPos, tmpPos);
-	gl.uniform3fv(progTile.lightColor, tmpColor);
+	gl.uniform3fv(progTile.lightPos, this.lightPos);
+	gl.uniform3fv(progTile.lightColor, this.lightColor);
 }
