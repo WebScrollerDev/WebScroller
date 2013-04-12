@@ -1,5 +1,6 @@
 var progEntity, progWorld, progTile, progParticle, progParticleGpu, progParticleGpuShow, progBB;
 
+var nrOfParticles = 256;
 function RenderManager() {
 	
 }
@@ -252,7 +253,7 @@ RenderParticle.prototype.init = function() {
 	if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0){
 		alert(err + "Vertex texture"); return;
 	}
-	var n = 16;
+	var n = nrOfParticles;
 	var n2 = n*n;
 	
 	
@@ -277,10 +278,10 @@ RenderParticle.prototype.init = function() {
 	}
 	
 	var pos = [], vel = [];
-	for(var x = 0; x < n; x++) {
-		for(var y = 0; y < n; y++) {
-			pos.push(x, y, 0, 0);
-			vel.push((Math.random()*2 - 1), (Math.random()*2 - 1), 0, 0);
+	for(var x = 0; x < n*2; x += 2) {
+		for(var y = 0; y < n*2; y += 2) {
+			pos.push(x, y, 0);
+			vel.push(Math.random()*2 - 1, Math.random()*2 - 1, 0);
 		}
 	}
 	
@@ -394,7 +395,7 @@ RenderParticle.prototype.render = function() {
 
 RenderParticle.prototype.renderTemp = function() {
 	gl.useProgram(progParticleGpu);
-	gl.viewport(0, 0, 16, 16);
+	gl.viewport(0, 0, nrOfParticles, nrOfParticles);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
@@ -426,11 +427,11 @@ RenderParticle.prototype.renderTemp = function() {
 	}
   	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [0.0, gl.viewportHeight/2, 0.5]);
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), gl.viewportHeight/2, 0.5]);
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 0.5]);
 	else
-		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), gl.viewportHeight/2, 0.5]);
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 0.5]);
 
 
   	gl.uniformMatrix4fv(this.prMatLoc, false, cam.getProj());
@@ -438,7 +439,7 @@ RenderParticle.prototype.renderTemp = function() {
   	
 	//gl.enable(gl.BLEND);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVao);
-  	gl.drawArrays(gl.POINTS, 0, 16*16);
+  	gl.drawArrays(gl.POINTS, 0, nrOfParticles*nrOfParticles);
   	//gl.disable(gl.BLEND);
  	gl.flush();
 }
