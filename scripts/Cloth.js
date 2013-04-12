@@ -1,7 +1,7 @@
 
 var physics_accuracy = 2,
 player_influence     = 20, 
-player_cur           = 6,
+player_cut           = 6,
 gravity              = -900,
 spacing              = 14,
 tear_distance        = 60;
@@ -103,6 +103,10 @@ Point.prototype = {
 			this.px = this.x - (world.player.getPosition().x - world.player.getPrevPosition().x) * 1.8;
 			this.py = this.y - (world.player.getPosition().y - world.player.getPrevPosition().y) * 1.8;
 		}
+		
+		if ((Math.abs(world.player.getVelocity()[0]) > 1 || Math.abs(world.player.getVelocity()[1]) > 2) && dist < player_cut) this.constraints = [];
+		
+		
 	
 		this.add_force(0, gravity);
 	
@@ -173,7 +177,7 @@ Constraint.prototype = {
 			dist = Math.sqrt(diff_x * diff_x + diff_y * diff_y),
 			diff = (this.length - dist) / dist;
 	
-		//if (dist > tear_distance) this.p1.remove_constraint(this);
+		if (dist > tear_distance) this.p1.remove_constraint(this);
 	
 		var px = diff_x * diff * 0.5;
 		var py = diff_y * diff * 0.5;
