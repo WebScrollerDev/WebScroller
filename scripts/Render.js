@@ -1,6 +1,6 @@
 var progEntity, progWorld, progTile, progParticle, progParticleGpu, progParticleGpuShow, progBB, progCloth;
 
-var nrOfParticles = 16;
+var nrOfParticles = 64;
 function RenderManager() {
 	
 }
@@ -236,15 +236,18 @@ RenderCloth.prototype.render = function() {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
-	var scale = 5.0;
+	var scale = 1.0;
 	this.modelCloth = [];
 	
 	var points = world.cloth.getPoints();	// get the points
 	var i = points.length;
+	var nrLines = 0;
+	//console.log(i);
 	while(i--) {								// for each point
 		var j = points[i].constraints.length;
 		while(j--) {							// for each constraint in that point
 			this.modelCloth = this.modelCloth.concat(points[i].constraints[j].getPoints());
+			nrLines+=2;
 			//this.modelCloth.push(points[i].constraints[j].getPoints());
 		}
 	}
@@ -253,13 +256,14 @@ RenderCloth.prototype.render = function() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelCloth), gl.STATIC_DRAW);
 	
+	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [world.cloth.getPosition().x-(scale/2), world.cloth.getPosition().y-(scale/2), 2.]);
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [world.cloth.getPosition().x -(world.worldSize.x - (gl.viewportWidth))-(scale/2), world.cloth.getPosition().y-(scale/2), 2.]);
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 0.5]);
 	else
-		mat4.translate(modelView, modelView, [world.cloth.getPosition().x -(playerPos.x - ((gl.viewportWidth)/2))-(scale/2), world.cloth.getPosition().y-(scale/2), 2.]);
-
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 0.5]);
+		
 	//console.log(this.modelCloth);
 	
 	//mat4.scale(modelView, modelView, [1.0, 1.0, 0.0]);
@@ -271,7 +275,7 @@ RenderCloth.prototype.render = function() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
 	gl.vertexAttribPointer(progCloth.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.LINES, 0, points.length);
+	gl.drawArrays(gl.LINES, 0, nrLines);
 	
 };
 

@@ -30,19 +30,17 @@ World.prototype = {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [45, 64]);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
-		this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
+		//this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 		
-		//this.lights.push(new LightBase([500, 20, 1], [1.0, 1.0, 0.0]));
-		//this.lights.push(new LightBase([450, 100, 1], [1.0, 1.0, 0.0]));
-		//this.lights.push(new LightBase([450, 300, 1], [1.0, 1.0, 0.0]));
-		//this.lights.push(new LightBase([415.0, 50.0, 1.0], [0.0, 0.0, 1.0]));
-		//this.lights.push(new LightBase([415.0, 50.0, 1.0], [1.0, 0.0, 0.0]));
+
 		this.lights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
 		this.lights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
 		this.lights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
 		
-		this.cloth = new Cloth(50, 50, 150, 150);
+		this.lights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		this.lights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		this.cloth = new Cloth(700, 230, 10, 10);
 	},
 	
 	setTilesBg: function(tiles) {
@@ -72,8 +70,8 @@ World.prototype = {
 	update: function() {
 		this.player.temp();
 		
-		this.fireEmitters[0].setPosition(this.player.getPosition());
-		this.fireEmitters[0].setPositionY(this.fireEmitters[0].getPositionY()+this.player.size.y/2);		
+		//this.fireEmitters[0].setPosition(this.player.getPosition());
+		//this.fireEmitters[0].setPositionY(this.fireEmitters[0].getPositionY()+this.player.size.y/2);		
 		
 		var worldPos = {
 			x: 0, 

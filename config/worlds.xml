@@ -47,10 +47,10 @@
 			</Tile>
 			
 			<Tile>
-				<Id>5</Id> // tree
+				<Id>5</Id> // house2
 				<Pos>
 					<X>30</X>
-					<Y>32</Y>
+					<Y>25</Y>
 				</Pos>
 			</Tile>
 			
