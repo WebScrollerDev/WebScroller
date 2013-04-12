@@ -76,7 +76,7 @@
 	
 	<Tile>
 		<Id>5</Id>
-		<Url>resources/tiles/mg/tree.png</Url> // tree
+		<Url>resources/tiles/mg/house3.png</Url> // tree
 		<Size>
 			<X>300</X>
 			<Y>300</Y>

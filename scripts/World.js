@@ -41,6 +41,8 @@ World.prototype = {
 		this.lights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
 		this.lights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
 		this.lights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
+		
+		this.cloth = new Cloth(50, 50, 150, 150);
 	},
 	
 	setTilesBg: function(tiles) {

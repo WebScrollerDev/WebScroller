@@ -25,4 +25,13 @@
 			<Y>512</Y>
 		</Size>
 	</Tile>
+	
+	<Tile>
+		<Id>3</Id>
+		<Url>resources/tiles/fg/tree.png</Url> // tree
+		<Size>
+			<X>512</X>
+			<Y>512</Y>
+		</Size>
+	</Tile>
 </Tiles>

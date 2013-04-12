@@ -3,6 +3,10 @@ Entity = function(pos, bbMin, bbMax) {
 		x: pos[0], 
 		y: pos[1]
 	};
+	this.prevPosition = {
+		x: pos[0], 
+		y: pos[1]
+	};
 	this.velocity = vec2.create();
 	this.rotation = 0.0;
 	this.boundingBox = new BoundingBox(bbMin, bbMax);
@@ -17,6 +21,14 @@ Entity.prototype = {
 	
 	getPosition: function() {
 		return this.position;
+	},
+	
+	setPrevPosition: function(newPos) {
+		this.prevPosition = newPos;
+	},
+	
+	getPrevPosition: function() {
+		return this.prevPosition;
 	},
 	
 	setVelocity: function(newVelocity) {
@@ -130,23 +142,52 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 		x: 45, 
 		y: 64
 	}
+	this.playerStatus = {
+		IDLE: 0,
+		RUNNING: 1,
+		JUMPING: 2,
+		FALLING: 3	
+	}
+
+	this.status = this.playerStatus.IDLE;
 };
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.temp = function() {
 	if(!this.collides)
-		this.velocity[1] += 0.5;
-	
+		this.velocity[1] += 0.5; // gravity
 	this.keyPress();
 }
 
 EntityPlayer.prototype.update = function() {
-	//var gravity = 2.0;
-	//if(!this.collides)
-	//	gravity = 2.0;
+
+	this.prevPosition.x = this.position.x;
+	this.prevPosition.y = this.position.y;
+
 	this.position.x += this.velocity[0];
 	this.position.y -= this.velocity[1];
+	
+//--------------------UPDATE PLAYER STATUS-----------------------//
+	if(!this.collides && this.velocity[1] > 0.) { // falling
+		this.status = this.playerStatus.FALLING;
+	}
+	else if(!this.collides && this.velocity[1] < 0.) { // jumping
+		this.status = this.playerStatus.JUMPING;
+	}
+	else if(this.collides && this.velocity[0] != 0. ) { // running
+		this.status = this.playerStatus.RUNNING;
+	}
+	else if(this.collides && this. velocity[0] == 0) { // idle
+		this.status = this.playerStatus.IDLE;
+	}
+	
+	//console.log(this.status);
+	
+};
+
+EntityPlayer.prototype.getStatus = function() {
+	return this.status;
 };
 
 EntityPlayer.prototype.keyPress = function() {

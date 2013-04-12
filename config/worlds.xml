@@ -49,7 +49,7 @@
 			<Tile>
 				<Id>5</Id> // tree
 				<Pos>
-					<X>50</X>
+					<X>30</X>
 					<Y>32</Y>
 				</Pos>
 			</Tile>
@@ -162,6 +162,14 @@
 				<Id>0</Id>
 				<Pos>
 					<X>3600</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>3</Id>	// tree
+				<Pos>
+					<X>2000</X>
 					<Y>0</Y>
 				</Pos>
 			</Tile>
