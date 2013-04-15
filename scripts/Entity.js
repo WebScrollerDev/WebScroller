@@ -157,6 +157,18 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 	}
 
 	this.status = this.playerStatus.IDLE;
+	
+	this.totalNrAnimations = 11;
+	
+	this.animationFrames = {
+		IDLE: 11, 
+		WALK: 11, 
+		RUN: 11
+	}
+	
+	this.currFrame = 0;
+	this.counter = 0;
+	this.flipped = false;
 };
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
@@ -168,7 +180,13 @@ EntityPlayer.prototype.temp = function() {
 }
 
 EntityPlayer.prototype.update = function() {
-
+	this.counter++;
+	if(this.currFrame >= 11)
+		this.currFrame = 0;
+		
+	if(this.counter % 10 == 0)
+		this.currFrame++;
+	
 	this.prevPosition.x = this.position.x;
 	this.prevPosition.y = this.position.y;
 
@@ -188,6 +206,11 @@ EntityPlayer.prototype.update = function() {
 	else if(this.collides && this. velocity[0] == 0) { // idle
 		this.status = this.playerStatus.IDLE;
 	}
+	
+	if(this.velocity[0] > 0)
+		this.flipped = false;
+	else if(this.velocity[0] < 0)
+		this.flipped = true;
 	
 	//console.log(this.status);
 	

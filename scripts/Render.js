@@ -156,7 +156,7 @@ RenderEntity = function() {	//Render Square Class
 	this.modelPlayer = new ModelSquare();
 	this.initBuffers(this.modelPlayer);
 	this.texPlayer = gl.createTexture();
-	Texture.loadImage(gl, "resources/player.png", this.texPlayer);
+	Texture.loadImage(gl, "resources/player_ss.png", this.texPlayer);
 }
 
 InheritenceManager.extend(RenderEntity, RenderBase);
@@ -181,14 +181,19 @@ RenderEntity.prototype.renderPlayer = function() {
 	}
 	
 	//mat4.rotateZ(modelView, modelView, 3.14/2);
-	if(playerVel.x < 0)
+	/*if(playerVel.x < 0)
 		this.modelPlayer.flipTexCoordsX(true);     // Set to true if you want to flip, at the moment every model will be flipped :S
 	else if(playerVel.x > 0)
 		this.modelPlayer.flipTexCoordsX(false);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
-	
+	*/
+	//console.log(world.player.currFrame);
+	this.modelPlayer.anim(11, world.player.currFrame, 11, world.player.status, world.player.flipped);
+	//this.modelPlayer.anim(11, world.player.currFrame, 11, world.player.status);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [playerPos.x, 0.0, 1.0]);

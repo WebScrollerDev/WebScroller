@@ -50,19 +50,21 @@ ModelBase.prototype = {
 	
 	getNumVertices: function() {
 		return this.vertexArray.length / 3;	
-	}, 
+	},
 	
-	flipTexCoordsX: function(flip) {
-		if(flip)
-			this.texCoordArray = [	1.0, 1.0, 
-							   		1.0, 0.0,
-									0.0, 1.0,
-									0.0, 0.0 ];
-		else
-			this.texCoordArray = [	0.0, 1.0, 
-						   			0.0, 0.0,
-									1.0, 1.0,
-									1.0, 0.0 ];
+	anim: function(maxFrames, currFrame, maxTypes, currType, flip) {
+		if(flip) {
+			this.texCoordArray = [	(currFrame+1)/maxFrames, (currType+1)/maxTypes, 
+						   			(currFrame+1)/maxFrames, (currType)/maxTypes,
+									(currFrame)/maxFrames, (currType+1)/maxTypes,
+									(currFrame)/maxFrames, (currType)/maxTypes ];
+		}
+		else {
+			this.texCoordArray = [	(currFrame)/maxFrames, (currType+1)/maxTypes, 
+						   			(currFrame)/maxFrames, (currType)/maxTypes,
+									(currFrame+1)/maxFrames, (currType+1)/maxTypes,
+									(currFrame+1)/maxFrames, (currType)/maxTypes ];
+		}
 	}
 };
 
