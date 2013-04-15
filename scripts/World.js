@@ -1,8 +1,8 @@
 World = function() {
 	this.collisionsTex = new TextureData();
 	this.worldSize = {
-		x: 2048, 
-		y: 512
+		x: 2048,
+		y: 1024
 	}
 	
 	this.bgSize = {
@@ -12,7 +12,7 @@ World = function() {
 	
 	this.fgSize = {
 		x: 4096, 
-		y: 512
+		y: 2048
 	}
 	this.tilesBg = new Array();
 	this.tilesMg = new Array();
