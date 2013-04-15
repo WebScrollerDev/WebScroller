@@ -10,7 +10,7 @@
 			</Min>
 			<Max>
 				<X>156</X>
-				<Y>24</Y>
+				<Y>20</Y>
 			</Max>
 		</BoundingBox>
 		<Size>
@@ -65,12 +65,12 @@
 			</Min>
 			<Max>
 				<X>395</X>
-				<Y>70</Y>
+				<Y>60</Y>
 			</Max>
 		</BoundingBox>
 		<Size>
 			<X>400</X>
-			<Y>96</Y>
+			<Y>80</Y>
 		</Size>
 	</Tile>
 	

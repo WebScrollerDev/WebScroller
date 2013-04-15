@@ -112,20 +112,27 @@ Entity.prototype = {
 		
 		var below = thisMinY.y < otherMax.y;
 		var belowNoVel = thisMinX.y < otherMax.y;
-		var left = thisMinX.x < otherMax.x;
 		var right = thisMaxX.x > otherMin.x;
+		var rightNoVel = thisMaxY.x > otherMin.x;
+		var left = thisMinX.x < otherMax.x;
+		var leftNoVel = thisMinY.x < otherMax.x;
 		
-		if(below) {
-			this.collides = true;
-			this.velocity[1] = 0.0;
-			//this.position.y = otherMax.y; //Should use velocity			
-		} else {
-			this.collides = false;
+		var aboveNoVel = thisMaxX.y > otherMin.y;
+		
+		
+		
+		
+		if((rightNoVel || leftNoVel)  && belowNoVel) {
+			if(!below)
+				this.collides = false;
+			if(aboveNoVel)
+				this.velocity[0] = 0.0;
 		}
 		
-		if((right)  && belowNoVel) {
-			this.collides = false;
-			this.velocity[0] = 0.0;
+		if(below && rightNoVel && leftNoVel) {
+			if(aboveNoVel)
+				this.collides = true;
+			this.velocity[1] = 0.0;
 		}
 	}, 
 	
