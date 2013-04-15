@@ -18,21 +18,24 @@
 			<Y>33</Y>
 		</Size>
 	</Tile>
-
+	
 	<Tile>
 		<Id>1</Id>
-		<Url>resources/tiles/mg/tile2.png</Url>
-		<BoundingType>circle</BoundingType>
-		<BoundingCircle>
-			<Radius>2</Radius>
-			<Pos>
-				<X>40</X>
-				<Y>40</Y>
-			</Pos>
-		</BoundingCircle>
+		<Url>resources/tiles/mg/platform1.png</Url>
+		<BoundingType>box</BoundingType>
+		<BoundingBox>
+			<Min>
+				<X>5</X>
+				<Y>35</Y>
+			</Min>
+			<Max>
+				<X>395</X>
+				<Y>60</Y>
+			</Max>
+		</BoundingBox>
 		<Size>
-			<X>64</X>
-			<Y>64</Y>
+			<X>400</X>
+			<Y>80</Y>
 		</Size>
 	</Tile>
 	
@@ -56,26 +59,6 @@
 	
 	<Tile>
 		<Id>4</Id>
-		<Url>resources/tiles/mg/platform1.png</Url>
-		<BoundingType>box</BoundingType>
-		<BoundingBox>
-			<Min>
-				<X>5</X>
-				<Y>35</Y>
-			</Min>
-			<Max>
-				<X>395</X>
-				<Y>60</Y>
-			</Max>
-		</BoundingBox>
-		<Size>
-			<X>400</X>
-			<Y>80</Y>
-		</Size>
-	</Tile>
-	
-	<Tile>
-		<Id>5</Id>
 		<Url>resources/tiles/mg/house3.png</Url> // tree
 		<Size>
 			<X>300</X>
@@ -83,5 +66,21 @@
 		</Size>
 	</Tile>
 	
+	<Tile>
+		<Id>5</Id>
+		<Url>resources/tiles/mg/tile2.png</Url>
+		<BoundingType>circle</BoundingType>
+		<BoundingCircle>
+			<Radius>2</Radius>
+			<Pos>
+				<X>40</X>
+				<Y>40</Y>
+			</Pos>
+		</BoundingCircle>
+		<Size>
+			<X>64</X>
+			<Y>64</Y>
+		</Size>
+	</Tile>
 	
 </Tiles>

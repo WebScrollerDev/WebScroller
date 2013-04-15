@@ -59,7 +59,7 @@
 			</Tile>
 			
 			<Tile>
-				<Id>4</Id>	// broad platform
+				<Id>1</Id>	// broad platform
 				<Pos>
 					<X>600</X>
 					<Y>45</Y>
@@ -67,7 +67,7 @@
 			</Tile>
 			
 			<Tile>
-				<Id>5</Id> // house2
+				<Id>4</Id> // house2
 				<Pos>
 					<X>30</X>
 					<Y>25</Y>

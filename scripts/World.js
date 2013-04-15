@@ -77,8 +77,8 @@ World.prototype = {
 			x: 0, 
 			y: 0
 		}
-		if(this.player.intersects(new BoundingBox([0, 0], [2048, 10]), worldPos)) {
-			this.player.collidedWith(new BoundingBox([0, 0], [2048, 10]), worldPos);
+		if(this.player.intersects(new BoundingBox([0, 0], [this.worldSize.x, 10]), worldPos)) {
+			this.player.collidedWith(new BoundingBox([0, 0], [this.worldSize.x, 10]), worldPos);
 		} else
 			this.player.setColliding(false);
 		
