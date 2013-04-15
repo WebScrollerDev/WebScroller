@@ -195,16 +195,32 @@ EntityPlayer.prototype.update = function() {
 	
 //--------------------UPDATE PLAYER STATUS-----------------------//
 	if(!this.collides && this.velocity[1] > 0.) { // falling
+		var prevState = this.status;
 		this.status = this.playerStatus.FALLING;
+		
+		if(prevState != this.status)
+			this.currFrame = 0;
 	}
 	else if(!this.collides && this.velocity[1] < 0.) { // jumping
+		var prevState = this.status;
 		this.status = this.playerStatus.JUMPING;
+		
+		if(prevState != this.status)
+			this.currFrame = 0;
 	}
 	else if(this.collides && this.velocity[0] != 0. ) { // running
+		var prevState = this.status;
 		this.status = this.playerStatus.RUNNING;
+		
+		if(prevState != this.status)
+			this.currFrame = 0;
 	}
 	else if(this.collides && this. velocity[0] == 0) { // idle
+		var prevState = this.status;
 		this.status = this.playerStatus.IDLE;
+		
+		if(prevState != this.status)
+			this.currFrame = 0;
 	}
 	
 	if(this.velocity[0] > 0)
