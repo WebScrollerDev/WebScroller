@@ -22,6 +22,8 @@ World = function() {
 	this.fireEmitters = new Array();
 	
 	this.lights = new Array();
+	
+	this.gpuParticles = new Array();
 }
 
 World.prototype = {	
@@ -41,6 +43,8 @@ World.prototype = {
 		this.lights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
 		this.lights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
 		this.cloth = new Cloth(700, 230, 10, 10);
+		
+		this.gpuParticles.push(new GpuParticle([500,100], 128));
 	},
 	
 	setTilesBg: function(tiles) {

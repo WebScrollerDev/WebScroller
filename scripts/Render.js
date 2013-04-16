@@ -1,6 +1,5 @@
 var progEntity, progWorld, progTile, progParticle, progParticleGpu, progParticleGpuShow, progBB, progCloth;
 
-var nrOfParticles = 64;
 function RenderManager() {
 	
 }
@@ -8,12 +7,30 @@ function RenderManager() {
 RenderManager.prototype = {
 	
 	init: function() {
+		
+		var err = "Your browser does not support ";
+		var ext;
+		try {
+			ext = gl.getExtension("OES_texture_float");
+		} catch(e) {
+		
+		}
+		if (!ext) {
+			alert(err + "OES_texture_float extension"); 
+			return;
+		}
+		if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0){
+			alert(err + "Vertex texture"); return;
+		}
+		
+		
 		progEntity = utils.addShaderProg(gl, 'player.vert', 'player.frag');
 		progWorld = utils.addShaderProg(gl, 'main.vert', 'main.frag');
 		progParticle = utils.addShaderProg(gl, 'particle.vert', 'particle.frag');
 		progTile = utils.addShaderProg(gl, 'tile.vert', 'tile.frag');
 		progBB = utils.addShaderProg(gl, 'bb.vert', 'bb.frag');
 		progCloth = utils.addShaderProg(gl, 'cloth.vert', 'cloth.frag');
+		progParticleGpu = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
 		
 		this.initShaders();
 		this.renderEntity = new RenderEntity();
@@ -114,6 +131,15 @@ RenderManager.prototype = {
 		progParticle.proj = gl.getUniformLocation(progParticle, "projMatrix");
 		progParticle.modelView = gl.getUniformLocation(progParticle, "modelViewMatrix");
 		progParticle.fade = gl.getUniformLocation(progParticle, "fade");
+		
+		gl.useProgram(progParticleGpu);
+		progParticleGpu.pos = gl.getAttribLocation(progParticleGpu, "inPos");
+		gl.enableVertexAttribArray(progParticleGpu.pos);
+		progParticleGpu.tex = gl.getAttribLocation(progParticleGpu, "inTex");
+		gl.enableVertexAttribArray(progParticleGpu.tex);
+		progParticleGpu.posLoc = gl.getUniformLocation(progParticleGpu, "posSamp");
+		progParticleGpu.velLoc = gl.getUniformLocation(progParticleGpu, "velSamp");
+		
 	},
 	
 	render: function() {
@@ -179,19 +205,7 @@ RenderEntity.prototype.renderPlayer = function() {
 		x: world.player.getVelocity()[0],
 		y: world.player.getVelocity()[1]
 	}
-	
-	//mat4.rotateZ(modelView, modelView, 3.14/2);
-	/*if(playerVel.x < 0)
-		this.modelPlayer.flipTexCoordsX(true);     // Set to true if you want to flip, at the moment every model will be flipped :S
-	else if(playerVel.x > 0)
-		this.modelPlayer.flipTexCoordsX(false);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
-	*/
-	//console.log(world.player.currFrame);
-	this.modelPlayer.anim(11, world.player.currFrame, 11, world.player.status, world.player.flipped);
-	//this.modelPlayer.anim(11, world.player.currFrame, 11, world.player.status);
+	this.modelPlayer.anim(world.player.animationFrames[world.player.status], world.player.currFrame, world.player.totalNrAnimations, world.player.status, world.player.flipped);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
 	
@@ -323,67 +337,25 @@ RenderParticle = function() {
 	//this.vaoParticleFluid = generateModel(this.modelParticleFluid, progParticle);
 	this.texParticleFluid = gl.createTexture();
 	Texture.loadImage(gl, "resources/fluidParticle.png", this.texParticleFluid);
-	
-	this.init();
-	//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	//gl.vertexAttribPointer(progEntity, 1, gl.FLOAT, false, 0, 0);
+
+	this.initGpuParticle(world.gpuParticles[0].getAmount(), world.gpuParticles[0].getPos(), world.gpuParticles[0].getVel(), world.gpuParticles[0].getVertices());
 };
 
 InheritenceManager.extend(RenderParticle, RenderBase);
 
-RenderParticle.prototype.init = function() { 
-	var err = "Your browser does not support ";
-	var ext;
-	try {
-		ext = gl.getExtension("OES_texture_float");
-	} catch(e) {
-		
-	}
-	if (!ext) {
-		alert(err + "OES_texture_float extension"); 
-		return;
-	}
-	if (gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0){
-		alert(err + "Vertex texture"); return;
-	}
-	var n = nrOfParticles;
-	var n2 = n*n;
+RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, vel, vertices) { 
+	var particleAmount2 = particleAmount*particleAmount;
 	
-	
-	progParticleGpu = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
-	gl.useProgram(progParticleGpu);
-	progParticleGpu.pos = gl.getAttribLocation(progParticleGpu, "inPos");
-	progParticleGpu.tex = gl.getAttribLocation(progParticleGpu, "inTex");
-	gl.enableVertexAttribArray(progParticleGpu.pos);
-	gl.enableVertexAttribArray(progParticleGpu.tex);
 	this.posTexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1,
-    1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
-	//gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
-	//gl.vertexAttribPointer(progParticleGpu.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
-	//gl.bindBuffer(gl.ARRAY_BUFFER, null);
-	var pix = [], pix1 = [], offset = 0.00001, lengthFromMiddle = 100;
-	for(var i = 0; i < n2; i++){
-		var phi = 2*i*Math.PI/n2;
-		pix.push(lengthFromMiddle*Math.cos(phi), lengthFromMiddle*Math.sin(phi), 0);
-		pix1.push((lengthFromMiddle + offset)*Math.cos(phi), (lengthFromMiddle + offset)*Math.sin(phi), 0);
-	}
-	
-	var pos = [], vel = [];
-	for(var x = 0; x < n*2; x += 2) {
-		for(var y = 0; y < n*2; y += 2) {
-			pos.push(x, y, 0);
-			vel.push(Math.random()*2 - 1, Math.random()*2 - 1, 0);
-		}
-	}
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
 	
 //-------This texture stores the position and velocity-------//
 	this.texParticlePos1 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE1);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos1);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, n, n, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 //-------This texture also stores the position and velocity-------//
@@ -391,7 +363,7 @@ RenderParticle.prototype.init = function() {
 	gl.activeTexture(gl.TEXTURE2);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos2);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, n, n, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
  	
@@ -399,7 +371,7 @@ RenderParticle.prototype.init = function() {
 	gl.activeTexture(gl.TEXTURE3);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleVel1);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, n, n, 0, gl.RGB, gl.FLOAT, new Float32Array(vel));
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(vel));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 //-------This texture also stores the position and velocity-------//
@@ -417,20 +389,11 @@ RenderParticle.prototype.init = function() {
 		console.log(err + "FLOAT as the color attachment to an FBO");
 	
 	
-	
-	progParticleGpu.posLoc = gl.getUniformLocation(progParticleGpu, "posSamp");
-	progParticleGpu.velLoc = gl.getUniformLocation(progParticleGpu, "velSamp");
-	
 	progParticleGpuShow = utils.addShaderProg(gl, 'particle-calc-show.vert', 'particle-calc-show.frag');
 	progParticleGpuShow.points = 3;
 	gl.bindAttribLocation(progParticleGpuShow, progParticleGpuShow.points, "inPoints");
 	gl.linkProgram(progParticleGpuShow);
 	gl.useProgram(progParticleGpuShow);
-	
-	var vertices = [], d = 1/n;
-	for (var x = 0; x < 1; x += d)
-		for (var y = 0; y < 1; y += d)
-			vertices.push (x, y);
 			
 	this.gpuParticleVao = gl.createBuffer();
 	gl.enableVertexAttribArray(progParticleGpuShow.points);
@@ -440,8 +403,8 @@ RenderParticle.prototype.init = function() {
 	
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuShow, "samp1"), 1);
 	
-	this.mvMatLoc = gl.getUniformLocation(progParticleGpuShow, "mvMatrix");
-	this.prMatLoc = gl.getUniformLocation(progParticleGpuShow, "prMatrix");
+	progParticleGpuShow.modelView = gl.getUniformLocation(progParticleGpuShow, "modelViewMatrix");
+	progParticleGpuShow.proj = gl.getUniformLocation(progParticleGpuShow, "projMatrix");
 }
 
 RenderParticle.prototype.render = function() {
@@ -472,13 +435,13 @@ RenderParticle.prototype.render = function() {
 //------------------------------------FLUID---------------------------------//
 	gl.depthMask(true); //see other particles through the particles
 	//gl.depthMask(false);
-	this.renderTemp();
+	this.renderGpuParticle(world.gpuParticles[0].getAmount());
 	//gl.depthMask(true);
 };
 
-RenderParticle.prototype.renderTemp = function() {
+RenderParticle.prototype.renderGpuParticle = function(amount) {
 	gl.useProgram(progParticleGpu);
-	gl.viewport(0, 0, nrOfParticles, nrOfParticles);
+	gl.viewport(0, 0, amount, amount);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.vertexAttribPointer(progParticleGpu.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
@@ -500,6 +463,7 @@ RenderParticle.prototype.renderTemp = function() {
 	}
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+	
 	gl.useProgram(progParticleGpuShow);
   	var modelView = mat4.create();
   	mat4.lookAt(modelView, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
@@ -523,12 +487,12 @@ RenderParticle.prototype.renderTemp = function() {
 	else
 		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 
-  	gl.uniformMatrix4fv(this.prMatLoc, false, cam.getProj());
-  	gl.uniformMatrix4fv(this.mvMatLoc, false, modelView);
+  	gl.uniformMatrix4fv(progParticleGpuShow.proj, false, cam.getProj());
+  	gl.uniformMatrix4fv(progParticleGpuShow.modelView, false, modelView);
   	
 	//gl.enable(gl.BLEND);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVao);
-  	gl.drawArrays(gl.POINTS, 0, nrOfParticles*nrOfParticles);
+  	gl.drawArrays(gl.POINTS, 0, amount*amount);
   	//gl.disable(gl.BLEND);
  	gl.flush();
 }

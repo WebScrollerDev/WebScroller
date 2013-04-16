@@ -99,5 +99,52 @@ InheritenceManager.extend(ParticleFluid, ParticleBase);
 
 
 
+GpuParticle = function(position, particleAmount) {
+	
+	this.startPos = {
+		x: position[0], 
+		y: position[1]
+	};
+	this.pos = [];
+	this.vel = [];
+	this.vertices = [];
+	this.amount = particleAmount;
+	this.init();
+}
+
+GpuParticle.prototype = {
+	init: function() {
+		for(var x = 0; x < this.amount*2; x += 2) {
+			for(var y = 0; y < this.amount*2; y += 2) {
+				this.pos.push(this.startPos.x + x, this.startPos.y + y, 0);
+				this.vel.push(Math.random()*2 - 1, Math.random()*2 - 1, 0);
+			}
+		}
+		
+		var d = 1/this.amount;
+		for (var x = 0; x < 1; x += d) {
+			for (var y = 0; y < 1; y += d) {
+				this.vertices.push(x, y);
+			}
+		}
+	},
+	 
+	getPos: function() {
+		return this.pos;
+	},
+	
+	getVel: function() {
+		return this.vel;
+	},
+	
+	getVertices: function() {
+		return this.vertices;
+	}, 
+	
+	getAmount: function() {
+		return this.amount;
+	}
+}
+
 
 

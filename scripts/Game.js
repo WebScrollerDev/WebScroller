@@ -50,5 +50,9 @@ function startGL() {
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;
 	
+	canvas.onmousedown = mouseDown;
+    document.onmouseup = mouseUp;
+    document.onmousemove = mouseMove;
+	
 	tick();
 }

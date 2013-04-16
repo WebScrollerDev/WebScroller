@@ -160,11 +160,7 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 	
 	this.totalNrAnimations = 11;
 	
-	this.animationFrames = {
-		IDLE: 11, 
-		WALK: 11, 
-		RUN: 11
-	}
+	this.animationFrames = [11, 11, 11, 11];
 	
 	this.currFrame = 0;
 	this.counter = 0;
@@ -181,7 +177,7 @@ EntityPlayer.prototype.temp = function() {
 
 EntityPlayer.prototype.update = function() {
 	this.counter++;
-	if(this.currFrame >= 11)
+	if(this.currFrame >= this.animationFrames[this.status])
 		this.currFrame = 0;
 		
 	if(this.counter % 10 == 0)
