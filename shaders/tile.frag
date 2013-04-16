@@ -24,7 +24,7 @@ void main(void)
     }
 
   vec4 textureColor = texture2D(inTexSample, texCoord) * vec4(vec3(Ia + Id), 1.0);
-  if (textureColor.a < 0.5) 
+  if (textureColor.a < 0.9) 
     discard;
   else
     gl_FragColor = vec4(textureColor.rgb, textureColor.a);
