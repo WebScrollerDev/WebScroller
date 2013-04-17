@@ -7,8 +7,9 @@ varying vec3 viewNorm;
 uniform mat4 modelViewMatrix;
 uniform mat4 viewMatrix;
 uniform sampler2D inTexSample;
-uniform vec3 lightPos[5];
-uniform vec3 lightColor[5];
+uniform vec3 lightPos[32];
+uniform vec3 lightColor[32];
+uniform float lightIntensity[32];
 
 uniform vec2 trans;
 
@@ -20,7 +21,7 @@ void main(void)
 		vec3 lightPosTrans = vec3(lightPos[i].x - trans.x, lightPos[i].y - trans.y, lightPos[i].z);
         vec3 lightDirection = normalize(lightPosTrans - viewPos);
 		float distfactor = pow(1./(length(lightPosTrans - viewPos)),0.4);
-        Id += lightColor[i] * vec3(distfactor);
+        Id += lightColor[i] * vec3(distfactor) * lightIntensity[i];
     }
 
   vec4 textureColor = texture2D(inTexSample, texCoord) * vec4(vec3(Ia + Id), 1.0);

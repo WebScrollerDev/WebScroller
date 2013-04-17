@@ -66,8 +66,11 @@ RenderManager.prototype = {
 		progTile.proj = gl.getUniformLocation(progTile, "projMatrix");
 		progTile.modelView = gl.getUniformLocation(progTile, "modelViewMatrix");
 		progTile.view = gl.getUniformLocation(progTile, "viewMatrix");
+		
 		progTile.lightPos = gl.getUniformLocation(progTile, "lightPos");
 		progTile.lightColor = gl.getUniformLocation(progTile, "lightColor");
+		progTile.lightIntensity = gl.getUniformLocation(progTile, "lightIntensity");
+		
 		progTile.trans = gl.getUniformLocation(progTile, "trans");
 		//progTile.lightNr = gl.getUniformLocation(progTile, "lightNr");
 		
@@ -148,6 +151,7 @@ RenderManager.prototype = {
 		gl.activeTexture(gl.TEXTURE0);
 		this.renderWorld.render();
 		this.renderEntity.render();
+		this.renderLight.update();
 		this.renderTile.render();
 		this.renderBB.render();
 		this.renderParticle.render();
@@ -986,26 +990,77 @@ RenderBoundingBox.prototype.renderBB = function(pos, size) {
 RenderLight = function() {
 	//RenderLight.baseConstructor.call(this);
 	
+	this.staticLights = world.staticLights;
+	this.flickeringLights = world.flickeringLights;
+	this.morphingLights = world.morphingLights;
+	
 	this.lightPos = [];
 	this.lightColor = [];
+	this.lightIntensity = [];
 	
-	this.init();
+	this.initLights();
 }
 
 //InheritenceManager.extend(RenderLight, RenderBase);
 
-RenderLight.prototype.init = function() {
-	var totalNrLights = world.lights.length;
+RenderLight.prototype.initLights = function() {
 	
-	var lights = world.lights;
-	for(var i = 0; i < totalNrLights; i++) {
-		var position = [lights[i].getPosition().x, lights[i].getPosition().y, lights[i].getPosition().z];
-		var color = [lights[i].getColor().r, lights[i].getColor().g, lights[i].getColor().b];
+//-------------------------STATIC LIGHTS-----------------------------//
+	var totalNrStaticLights = this.staticLights.length;	
+	for(var i = 0; i < totalNrStaticLights; i++) {
+		var position = [this.staticLights[i].getPosition().x, this.staticLights[i].getPosition().y, this.staticLights[i].getPosition().z];
+		var color = [this.staticLights[i].getColor().r, this.staticLights[i].getColor().g, this.staticLights[i].getColor().b];
 		this.lightPos = this.lightPos.concat(position);
 		this.lightColor = this.lightColor.concat(color);
+		this.lightIntensity = this.lightIntensity.concat(1.0);
+	}
+//-----------------------FLICKERING LIGHTS---------------------------//	
+	var totalNrFlickeringLights = this.flickeringLights.length;
+	for(var i = 0; i < totalNrFlickeringLights; i++) {
+		var position = [this.flickeringLights[i].getPosition().x, this.flickeringLights[i].getPosition().y, this.flickeringLights[i].getPosition().z];
+		var color = [this.flickeringLights[i].getColor().r, this.flickeringLights[i].getColor().g, this.flickeringLights[i].getColor().b];
+		this.lightPos = this.lightPos.concat(position);
+		this.lightColor = this.lightColor.concat(color);
+		this.lightIntensity = this.lightIntensity.concat(this.flickeringLights[i].getCurrentIntensity());
+	}
+//------------------------MORPHING LIGHTS----------------------------//	
+	var totalNrMorphingLights = this.morphingLights.length;
+	for(var i = 0; i < totalNrMorphingLights; i++) {
+		var position = [this.morphingLights[i].getPosition().x, this.morphingLights[i].getPosition().y, this.morphingLights[i].getPosition().z];
+		var color = [this.morphingLights[i].getColor().r, this.morphingLights[i].getColor().g, this.morphingLights[i].getColor().b];
+		this.lightPos = this.lightPos.concat(position);
+		this.lightColor = this.lightColor.concat(color);
+		this.lightIntensity = this.lightIntensity.concat(this.morphingLights[i].getCurrentIntensity());
 	}
 	
 	gl.useProgram(progTile);
 	gl.uniform3fv(progTile.lightPos, this.lightPos);
 	gl.uniform3fv(progTile.lightColor, this.lightColor);
+	gl.uniform1fv(progTile.lightIntensity, this.lightIntensity);
 }
+
+RenderLight.prototype.update = function() {
+	
+	var totalNrStaticLights = this.staticLights.length;	
+	var totalNrFlickeringLights = this.flickeringLights.length;
+	var totalNrMorphingLights = this.morphingLights.length;
+	
+	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
+		this.lightIntensity[i] = this.flickeringLights[i - totalNrStaticLights].getCurrentIntensity();
+	}
+	for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
+		this.lightIntensity[i] = this.morphingLights[i - (totalNrStaticLights + totalNrFlickeringLights)].getCurrentIntensity();
+		var tmpColor = this.morphingLights[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
+		this.lightColor[i*3] = tmpColor.r;
+		this.lightColor[i*3+1] = tmpColor.g;
+		this.lightColor[i*3+2] = tmpColor.b;
+	}
+	
+	gl.useProgram(progTile);
+	gl.uniform3fv(progTile.lightPos, this.lightPos);
+	gl.uniform3fv(progTile.lightColor, this.lightColor);
+	gl.uniform1fv(progTile.lightIntensity, this.lightIntensity);
+}
+
+
+

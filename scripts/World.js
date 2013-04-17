@@ -21,7 +21,9 @@ World = function() {
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
 	
-	this.lights = new Array();
+	this.staticLights = new Array();
+	this.flickeringLights = new Array();
+	this.morphingLights = new Array();
 	
 	this.gpuParticles = new Array();
 }
@@ -36,12 +38,17 @@ World.prototype = {
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 		
 
-		this.lights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
-		this.lights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
-		this.lights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
+		//this.staticLights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
+		//this.staticLights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
+		this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
 		
-		this.lights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
-		this.lights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		this.staticLights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		
+		this.flickeringLights.push(new LightFlickering([520.0, 80.0, 1.0], [1.0, 0.0, 0.0], 10, 5, 1, 0));
+		
+		this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 1.0, 0.0], [1.0, 0.0, 0.0] ], 30, 0, 1, 0.3, 100, 0));
+		
 		this.cloth = new Cloth(700, 230, 10, 10);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 128));
