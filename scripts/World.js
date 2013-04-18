@@ -34,20 +34,20 @@ World.prototype = {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [45, 64]);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
-		//this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
-		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
-		
 
-		//this.staticLights.push(new LightBase([520.0, 80.0, 1.0], [1.0, 1.0, 0.0]));
-		//this.staticLights.push(new LightBase([495.0, 150.0, 1.0], [1.0, 1.0, 0.0]));
-		this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));
-		
+		/*this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));		
 		this.staticLights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
-		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
+		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));*/
+		this.flickeringLights.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLights.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
 		
-		this.flickeringLights.push(new LightFlickering([520.0, 80.0, 1.0], [1.0, 0.0, 0.0], 10, 5, 1, 0));
+		this.flickeringLights.push(new LightFlickering([491.0, 250.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLights.push(new LightFlickering([495.0, 150.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLights.push(new LightFlickering([522.0, 80.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
 		
-		this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 1.0, 0.0], [1.0, 0.0, 0.0] ], 30, 0, 1, 0.3, 100, 0));
+		this.flickeringLights.push(new LightFlickering([1025.0, 130.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.2, 1.3));
+		
+		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
 		this.cloth = new Cloth(700, 230, 10, 10);
 		

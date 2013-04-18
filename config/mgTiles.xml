@@ -83,4 +83,13 @@
 		</Size>
 	</Tile>
 	
+	<Tile>
+		<Id>6</Id>
+		<Url>resources/tiles/mg/streetlight.png</Url>
+		<Size>
+			<X>50</X>
+			<Y>130</Y>
+		</Size>
+	</Tile>
+	
 </Tiles>

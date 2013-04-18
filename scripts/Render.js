@@ -1057,7 +1057,6 @@ RenderLight.prototype.update = function() {
 	}
 	
 	gl.useProgram(progTile);
-	gl.uniform3fv(progTile.lightPos, this.lightPos);
 	gl.uniform3fv(progTile.lightColor, this.lightColor);
 	gl.uniform1fv(progTile.lightIntensity, this.lightIntensity);
 }

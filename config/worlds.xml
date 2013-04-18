@@ -75,6 +75,14 @@
 			</Tile>
 			
 			<Tile>
+				<Id>6</Id> // streetlight
+				<Pos>
+					<X>1000</X>
+					<Y>25</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
 				<Id>2</Id>
 				<Pos>
 					<X>1100</X>

@@ -18,6 +18,7 @@ var lastMouseX = null;
 var lastMouseY = null;
 
 function mouseDown(event) {
+	console.log("mouse down");
 	mouseDown = true;
 	lastMouseX = event.clientX;
 	lastMouseY = event.clientY;

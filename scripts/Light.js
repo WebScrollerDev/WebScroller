@@ -35,8 +35,8 @@ LightBase.prototype = {
 };
 //-------------------------------------------------------------------------------------------------------------//
 //-----------------------FLICKERING LIGHT----------------------------------------------------------------------//
-//					      x,y,z  rgb		ms				ms			  float <= 1		 float >= 0
-LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensityMaxValue, intensityMinValue) {
+//					      x,y,z  rgb	   float			float		  float >= 0		 float <= 1
+LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue) {
 	LightFlickering.baseConstructor.call(this, pos, color);
 	
 	this.flickerSpeed = flickerSpeed;
@@ -44,18 +44,24 @@ LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensity
 	
 	this.intensityChangeDirection = {
 		UP: 0,
-		DOWN: 1
+		DOWN: 1,
+		NONE: 2
 	};
 	this.intensityValues = {
-		MAX: intensityMaxValue,
-		MIN: intensityMinValue
+		MIN: intensityMinValue,
+		MAX: intensityMaxValue
 	};
 	
 	this.currentIntensity = this.intensityValues.MAX;	// max 1 min 0
-	this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
 	
+	if(this.intensityValues.MAX > this.intensityValues.MIN)
+		this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
+	else
+		this.intensityChangeStatus = this.intensityChangeDirection.NONE;
+	
+	this.updateInterval = 10;
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, (_this.flickerSpeed + (Math.random()*2 -1)*_this.flickerSpeedSpan) );
+	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, _this.updateInterval );
 };
 
 InheritenceManager.extend(LightFlickering, LightBase);
@@ -77,60 +83,76 @@ LightFlickering.prototype.getFlickerSpeedSpan = function() {
 	return this.flickerSpeedSpan;
 };
 
+LightFlickering.prototype.getUpdateInterval = function() {
+	return this.updateInterval;
+};
+
 //------------------------SET FUNCTIONS-------------------------//
+LightFlickering.prototype.setFlickerSpeed = function(newSpeed) {
+	this.flickerSpeed = newSpeed;
+};
+
+LightFlickering.prototype.setFlickerSpeedSpan = function(newSpan) {
+	this.flickerSpeedSpan = newSpan;
+};
+
 LightFlickering.prototype.setCurrentIntensity = function(newIntensity) {
 	this.currentIntensity = newIntensity;
 };
 
 LightFlickering.prototype.setintensityChangeStatus = function(newStatus) {
-	this.intensityChangeStatus = newStatus;
+	if(this.intensityValues.MAX > this.intensityValues.MIN)	
+		this.intensityChangeStatus = newStatus;
+	else
+		this.intensityChangeStatus = this.intensityChangeDirection.NONE;
 };
 
-LightFlickering.prototype.setFlickerSpeed = function(newSpeed) { // requires resetFlicering to work
-	this.flickerSpeed = newSpeed;
-};
-
-LightFlickering.prototype.setFlickerSpeedSpan = function(newSpeedSpan) {  // requires resetFlicering to work
-	this.flickerSpeedSpan = newSpeedSpan;
+LightFlickering.prototype.setUpdateInterval = function(newSpeed) { // requires resetUpdate to work
+	this.updateInterval = newSpeed;
 };
 
 //--------------------START/STOP FLICKERING---------------------//
-LightFlickering.prototype.stopFlickering = function() {
+LightFlickering.prototype.stopUpdating = function() {
 	clearinterval(this.UpdateIntensityInterval);
 };
 
-LightFlickering.prototype.startFlickering = function() {
+LightFlickering.prototype.startUpdating = function() {
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, (_this.flickerSpeed + (Math.random()*2 -1)*_this.flickerSpeedSpan) );
+	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, _this.updateInterval );
 };
 
-LightFlickering.prototype.resetFlickering = function() {
+LightFlickering.prototype.resetUpdating = function() {
 	clearinterval(this.UpdateIntensityInterval);
 	this.currentIntensity = this.intensityValues.MAX;	// max 1 min 0
-	this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
+	
+	if(this.intensityValues.MAX > this.intensityValues.MIN)
+		this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
+	else
+		this.intensityChangeStatus = this.intensityChangeDirection.NONE;
+		
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, (_this.flickerSpeed + (Math.random()*2 -1)*_this.flickerSpeedSpan) );
+	this.UpdateIntensityInterval = setInterval(function(){_this.updateLightIntensity()}, _this.updateInterval );
 };
 
 //----------------------UPDATE FUNCTION-----------------------//
 LightFlickering.prototype.updateLightIntensity = function() {
-	
+
 	if(this.intensityChangeStatus == this.intensityChangeDirection.UP) {
-		this.currentIntensity += Math.random() * 0.1;			// A little bit random here as well
+		this.currentIntensity += (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));	// A little bit random
 		if(this.currentIntensity >= this.intensityValues.MAX)
 			this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
 	}
 	else if(this.intensityChangeStatus == this.intensityChangeDirection.DOWN) {
-		this.currentIntensity -= Math.random() * 0.1;
+		this.currentIntensity -= (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));
 		if(this.currentIntensity <= this.intensityValues.MIN)
 			this.intensityChangeStatus = this.intensityChangeDirection.UP;
 	}
 };
 //-----------------------------------------------------------------------------------------------------------//
 //-----------------------MORPHING LIGHT----------------------------------------------------------------------//
-//					    x,y,z   []>1       ms		      ms			  float <= 1		 float >= 0			 ms			  ms
-LightMorphing = function(pos, colors, flickerSpeed, flickerSpeedSpan, intensityMaxValue, intensityMinValue, morphSpeed, morphSpeedSpan) {
-	LightMorphing.baseConstructor.call(this, pos, colors[0], flickerSpeed, flickerSpeedSpan, intensityMaxValue, intensityMinValue);
+//					    x,y,z   []>1      float		    float			  float >= 0		 float <= 1		  float			float
+LightMorphing = function(pos, colors, flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue, morphSpeed, morphSpeedSpan) {
+	LightMorphing.baseConstructor.call(this, pos, colors[0], flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue);
 	
 	this.morphSpeed = morphSpeed;
 	this.morphSpeedSpan = morphSpeedSpan;
@@ -160,14 +182,19 @@ LightMorphing = function(pos, colors, flickerSpeed, flickerSpeedSpan, intensityM
 	this.currColorChange = {};
 
 	this.updateCurrColorChange();
-
+	
+	this.updateInterval = 10;
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, (_this.morphSpeed + (Math.random()*2 -1)*_this.morphSpeedSpan) );
+	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, _this.updateInterval );
 };
 
 InheritenceManager.extend(LightMorphing, LightFlickering);
 
 //------------------------GET FUNCTIONS-------------------------//
+LightMorphing.prototype.getUpdateInterval = function() {
+	return this.updateInterval;
+};
+
 LightMorphing.prototype.getMorphSpeed = function() {
 	return this.morphSpeed;
 };
@@ -185,11 +212,15 @@ LightMorphing.prototype.getCurrColor = function() {
 };
 
 //------------------------SET FUNCTIONS-------------------------//
-LightMorphing.prototype.setMorphSpeed = function(newSpeed) { // requires resetMorphing to work
+LightMorphing.prototype.setUpdateInterval = function(newSpeed) { // requires resetUpdate to work
+	this.updateInterval = newSpeed;
+};
+
+LightMorphing.prototype.setMorphSpeed = function(newSpeed) {
 	this.morphSpeed = newSpeed;
 };
 
-LightMorphing.prototype.setMorphSpeedSpan = function(newSpeedSpan) { // requires resetMorphing to work
+LightMorphing.prototype.setMorphSpeedSpan = function(newSpeedSpan) {
 	this.morphSpeedSpan = newSpeedSpan;
 };
 
@@ -218,7 +249,7 @@ LightMorphing.prototype.setColors = function(newColors) {
 };
 
 LightMorphing.prototype.setCurrColorPointer = function(newCurr) {
-	if(newCurr <= this.colors.length)
+	if(newCurr < this.colors.length)
 		this.currColorPointer = newCurr;
 };
 
@@ -257,16 +288,16 @@ LightMorphing.prototype.updateCurrColorChange = function() {
 };
 
 //---------------------START/STOP MORPHING----------------------//
-LightMorphing.prototype.stopMorphing = function() {
+LightMorphing.prototype.stopUpdating = function() {
 	clearinterval(this.UpdateColorInterval);
 };
 
-LightMorphing.prototype.startMorphing = function() {
+LightMorphing.prototype.startUpdating = function() {
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, (_this.morphSpeed + (Math.random()*2 -1)*_this.morphSpeedSpan) );
+	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, _this.updateInterval );
 };
 
-LightMorphing.prototype.resetMorphing = function() {
+LightMorphing.prototype.resetUpdating = function() {
 	clearinterval(this.UpdateColorInterval);
 	
 	this.currColorPointer = 0;
@@ -286,42 +317,42 @@ LightMorphing.prototype.resetMorphing = function() {
 	this.updateCurrColorChange();
 	
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, (_this.morphSpeed + (Math.random()*2 -1)*_this.morphSpeedSpan) );
+	this.UpdateColorInterval = setInterval(function(){_this.updateLightColor()}, _this.updateInterval );
 };
 
 //----------------------UPDATE FUNCTION-----------------------//
 LightMorphing.prototype.updateLightColor = function() {
 	
-	var interval = 0.1;
+	var interval = this.morphSpeed + ( Math.random() * 2 * this.morphSpeedSpan - this.morphSpeedSpan);
 	if(this.currColorChange.r == this.colorChangeDirection.UP) {	// R
-		this.currColor.r += 0.1;
+		this.currColor.r += interval;
 		if( (this.currColor.r + interval) >= this.nextColor.r && (this.currColor.r - interval ) <= this.nextColor.r) // if inside an interval
 			this.currColorChange.r = this.colorChangeDirection.NONE;
 	}
 	else if(this.currColorChange.r == this.colorChangeDirection.DOWN) {
-		this.currColor.r -= 0.1;
+		this.currColor.r -= interval;
 		if( (this.currColor.r + interval ) >= this.nextColor.r && (this.currColor.r - interval ) <= this.nextColor.r) // if inside an interval
 			this.currColorChange.r = this.colorChangeDirection.NONE;
 	}
 	
 	if(this.currColorChange.g == this.colorChangeDirection.UP) {	// G
-		this.currColor.g += 0.1;
+		this.currColor.g += interval;
 		if( (this.currColor.g + interval) >= this.nextColor.g && (this.currColor.g - interval ) <= this.nextColor.g) // if inside an interval
 			this.currColorChange.g = this.colorChangeDirection.NONE;
 	}
 	else if(this.currColorChange.g == this.colorChangeDirection.DOWN) {
-		this.currColor.g -= 0.1;
+		this.currColor.g -= interval;
 		if( (this.currColor.g + interval ) >= this.nextColor.g && (this.currColor.g - interval ) <= this.nextColor.g) // if inside an interval
 			this.currColorChange.g = this.colorChangeDirection.NONE;
 	}
 	
 	if(this.currColorChange.b == this.colorChangeDirection.UP) {	// B
-		this.currColor.b += 0.1;
+		this.currColor.b += interval;
 		if( (this.currColor.b + interval ) >= this.nextColor.b && (this.currColor.b - interval ) <= this.nextColor.b) // if inside an interval
 			this.currColorChange.b = this.colorChangeDirection.NONE;
 	}
 	else if(this.currColorChange.b == this.colorChangeDirection.DOWN) {
-		this.currColor.b -= 0.1;
+		this.currColor.b -= interval;
 		if( (this.currColor.b + interval ) >= this.nextColor.b && (this.currColor.b - interval ) <= this.nextColor.b) // if inside an interval
 			this.currColorChange.b = this.colorChangeDirection.NONE;
 	}
