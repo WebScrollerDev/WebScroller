@@ -21,9 +21,17 @@ World = function() {
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
 	
-	this.staticLights = new Array();
-	this.flickeringLights = new Array();
-	this.morphingLights = new Array();
+	this.staticLightsMg = new Array();
+	this.flickeringLightsMg = new Array();
+	this.morphingLightsMg = new Array();
+	
+	this.staticLightsBg = new Array();
+	this.flickeringLightsBg = new Array();
+	this.morphingLightsBg = new Array();
+	
+	this.staticLightsFg = new Array();
+	this.flickeringLightsFg = new Array();
+	this.morphingLightsFg = new Array();
 	
 	this.gpuParticles = new Array();
 }
@@ -40,14 +48,17 @@ World.prototype = {
 		/*this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));		
 		this.staticLights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
 		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));*/
-		this.flickeringLights.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLights.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
 		
-		this.flickeringLights.push(new LightFlickering([491.0, 250.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLights.push(new LightFlickering([495.0, 150.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLights.push(new LightFlickering([522.0, 80.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.staticLightsBg.push(new LightBase([575.0, 315.0, 40.0], [0.0, 0.0, 1.0], 5.0));
 		
-		this.flickeringLights.push(new LightFlickering([1025.0, 130.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.2, 1.3));
+		this.flickeringLightsMg.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLightsMg.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		
+		this.flickeringLightsMg.push(new LightFlickering([491.0, 250.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLightsMg.push(new LightFlickering([495.0, 150.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLightsMg.push(new LightFlickering([522.0, 80.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		
+		this.flickeringLightsMg.push(new LightFlickering([1025.0, 130.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.2, 1.3));
 		
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------------//
 //-------------------------BASELIGHT------------------------------------------------------------------------//
 
-LightBase = function(pos, color) {
+LightBase = function(pos, color, intensity) {
 	
 	this.pos = {
 		x: pos[0], 
@@ -14,6 +14,8 @@ LightBase = function(pos, color) {
 		g: color[1], 
 		b: color[2]
 	};
+	
+	this.intensity = intensity;
 };
 
 LightBase.prototype = {
@@ -31,13 +33,21 @@ LightBase.prototype = {
 	
 	setColor: function(newColor) {
 		this.color = newColor;
+	}, 
+	
+	getIntensity: function() {
+		return this.intensity;
+	}, 
+	
+	setIntensity: function(newIntensity) {
+		this.intensity = newIntensity;
 	}
 };
 //-------------------------------------------------------------------------------------------------------------//
 //-----------------------FLICKERING LIGHT----------------------------------------------------------------------//
 //					      x,y,z  rgb	   float			float		  float >= 0		 float <= 1
 LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue) {
-	LightFlickering.baseConstructor.call(this, pos, color);
+	LightFlickering.baseConstructor.call(this, pos, color, intensityMaxValue);
 	
 	this.flickerSpeed = flickerSpeed;
 	this.flickerSpeedSpan = flickerSpeedSpan;
@@ -52,8 +62,6 @@ LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensity
 		MAX: intensityMaxValue
 	};
 	
-	this.currentIntensity = this.intensityValues.MAX;	// max 1 min 0
-	
 	if(this.intensityValues.MAX > this.intensityValues.MIN)
 		this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
 	else
@@ -67,9 +75,6 @@ LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensity
 InheritenceManager.extend(LightFlickering, LightBase);
 
 //------------------------GET FUNCTIONS-------------------------//
-LightFlickering.prototype.getCurrentIntensity = function() {
-	return this.currentIntensity;
-};
 
 LightFlickering.prototype.getintensityChangeStatus = function() {
 	return this.intensityChangeStatus;
@@ -96,10 +101,6 @@ LightFlickering.prototype.setFlickerSpeedSpan = function(newSpan) {
 	this.flickerSpeedSpan = newSpan;
 };
 
-LightFlickering.prototype.setCurrentIntensity = function(newIntensity) {
-	this.currentIntensity = newIntensity;
-};
-
 LightFlickering.prototype.setintensityChangeStatus = function(newStatus) {
 	if(this.intensityValues.MAX > this.intensityValues.MIN)	
 		this.intensityChangeStatus = newStatus;
@@ -123,7 +124,7 @@ LightFlickering.prototype.startUpdating = function() {
 
 LightFlickering.prototype.resetUpdating = function() {
 	clearinterval(this.UpdateIntensityInterval);
-	this.currentIntensity = this.intensityValues.MAX;	// max 1 min 0
+	this.intensity = this.intensityValues.MAX;	// max 1 min 0
 	
 	if(this.intensityValues.MAX > this.intensityValues.MIN)
 		this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
@@ -138,13 +139,13 @@ LightFlickering.prototype.resetUpdating = function() {
 LightFlickering.prototype.updateLightIntensity = function() {
 
 	if(this.intensityChangeStatus == this.intensityChangeDirection.UP) {
-		this.currentIntensity += (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));	// A little bit random
-		if(this.currentIntensity >= this.intensityValues.MAX)
+		this.intensity += (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));	// A little bit random
+		if(this.intensity >= this.intensityValues.MAX)
 			this.intensityChangeStatus = this.intensityChangeDirection.DOWN;
 	}
 	else if(this.intensityChangeStatus == this.intensityChangeDirection.DOWN) {
-		this.currentIntensity -= (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));
-		if(this.currentIntensity <= this.intensityValues.MIN)
+		this.intensity -= (this.flickerSpeed + (Math.random() * 2 * this.flickerSpeedSpan - this.flickerSpeedSpan));
+		if(this.intensity <= this.intensityValues.MIN)
 			this.intensityChangeStatus = this.intensityChangeDirection.UP;
 	}
 };

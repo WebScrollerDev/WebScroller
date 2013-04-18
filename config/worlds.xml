@@ -115,7 +115,7 @@
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>3</Id>
+				<Id>3</Id>	// Moon
 				<Pos>
 					<X>500</X>
 					<Y>240</Y>

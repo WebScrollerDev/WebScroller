@@ -10,7 +10,7 @@
 
 	<Tile>
 		<Id>1</Id>
-		<Url>resources/tiles/bg/tile1.png</Url>
+		<Url>resources/tiles/bg/tile2.png</Url>
 		<Size>
 			<X>256</X>
 			<Y>256</Y>

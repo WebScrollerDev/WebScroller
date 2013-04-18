@@ -1,4 +1,4 @@
-var progEntity, progWorld, progTile, progParticle, progParticleGpu, progParticleGpuShow, progBB, progCloth;
+var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpu, progParticleGpuShow, progBB, progCloth;
 
 function RenderManager() {
 	
@@ -27,7 +27,9 @@ RenderManager.prototype = {
 		progEntity = utils.addShaderProg(gl, 'player.vert', 'player.frag');
 		progWorld = utils.addShaderProg(gl, 'main.vert', 'main.frag');
 		progParticle = utils.addShaderProg(gl, 'particle.vert', 'particle.frag');
-		progTile = utils.addShaderProg(gl, 'tile.vert', 'tile.frag');
+		progTileMg = utils.addShaderProg(gl, 'tileMg.vert', 'tileMg.frag');
+		progTileBg = utils.addShaderProg(gl, 'tileBg.vert', 'tileBg.frag');
+		progTileFg = utils.addShaderProg(gl, 'tileFg.vert', 'tileFg.frag');
 		progBB = utils.addShaderProg(gl, 'bb.vert', 'bb.frag');
 		progCloth = utils.addShaderProg(gl, 'cloth.vert', 'cloth.frag');
 		progParticleGpu = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
@@ -50,29 +52,74 @@ RenderManager.prototype = {
 	
 	initShaders: function() {
 		
-//---------------------------------TILE SHADER-----------------------------------//	
-		gl.useProgram(progTile);
+//---------------------------------TILE-MG SHADER-----------------------------------//	
+		gl.useProgram(progTileMg);
 		
-		progTile.position = gl.getAttribLocation(progTile, "inPosition");
-		gl.enableVertexAttribArray(progTile.position);
+		progTileMg.position = gl.getAttribLocation(progTileMg, "inPosition");
+		gl.enableVertexAttribArray(progTileMg.position);
 		
-		progTile.texCoord = gl.getAttribLocation(progTile, "inTexCoord");
-		gl.enableVertexAttribArray(progTile.texCoord);
+		progTileMg.texCoord = gl.getAttribLocation(progTileMg, "inTexCoord");
+		gl.enableVertexAttribArray(progTileMg.texCoord);
 		
-		progTile.normal = gl.getAttribLocation(progTile, "inNormal");
-		gl.enableVertexAttribArray(progTile.normal);
+		progTileMg.normal = gl.getAttribLocation(progTileMg, "inNormal");
+		gl.enableVertexAttribArray(progTileMg.normal);
 		
-		progTile.tex = gl.getUniformLocation(progTile, "inTexSample");
-		progTile.proj = gl.getUniformLocation(progTile, "projMatrix");
-		progTile.modelView = gl.getUniformLocation(progTile, "modelViewMatrix");
-		progTile.view = gl.getUniformLocation(progTile, "viewMatrix");
+		progTileMg.tex = gl.getUniformLocation(progTileMg, "inTexSample");
+		progTileMg.proj = gl.getUniformLocation(progTileMg, "projMatrix");
+		progTileMg.modelView = gl.getUniformLocation(progTileMg, "modelViewMatrix");
+		progTileMg.view = gl.getUniformLocation(progTileMg, "viewMatrix");
 		
-		progTile.lightPos = gl.getUniformLocation(progTile, "lightPos");
-		progTile.lightColor = gl.getUniformLocation(progTile, "lightColor");
-		progTile.lightIntensity = gl.getUniformLocation(progTile, "lightIntensity");
+		progTileMg.lightPos = gl.getUniformLocation(progTileMg, "lightPos");
+		progTileMg.lightColor = gl.getUniformLocation(progTileMg, "lightColor");
+		progTileMg.lightIntensity = gl.getUniformLocation(progTileMg, "lightIntensity");
 		
-		progTile.trans = gl.getUniformLocation(progTile, "trans");
-		//progTile.lightNr = gl.getUniformLocation(progTile, "lightNr");
+		progTileMg.trans = gl.getUniformLocation(progTileMg, "trans");
+		
+//---------------------------------TILE-BG SHADER-----------------------------------//	
+		gl.useProgram(progTileBg);
+		
+		progTileBg.position = gl.getAttribLocation(progTileBg, "inPosition");
+		gl.enableVertexAttribArray(progTileBg.position);
+		
+		progTileBg.texCoord = gl.getAttribLocation(progTileBg, "inTexCoord");
+		gl.enableVertexAttribArray(progTileBg.texCoord);
+		
+		progTileBg.normal = gl.getAttribLocation(progTileBg, "inNormal");
+		gl.enableVertexAttribArray(progTileBg.normal);
+		
+		progTileBg.tex = gl.getUniformLocation(progTileBg, "inTexSample");
+		progTileBg.proj = gl.getUniformLocation(progTileBg, "projMatrix");
+		progTileBg.modelView = gl.getUniformLocation(progTileBg, "modelViewMatrix");
+		progTileBg.view = gl.getUniformLocation(progTileBg, "viewMatrix");
+		
+		progTileBg.lightPos = gl.getUniformLocation(progTileBg, "lightPos");
+		progTileBg.lightColor = gl.getUniformLocation(progTileBg, "lightColor");
+		progTileBg.lightIntensity = gl.getUniformLocation(progTileBg, "lightIntensity");
+		
+		progTileBg.trans = gl.getUniformLocation(progTileBg, "trans");
+		
+//---------------------------------TILE-FG SHADER-----------------------------------//	
+		gl.useProgram(progTileFg);
+		
+		progTileFg.position = gl.getAttribLocation(progTileFg, "inPosition");
+		gl.enableVertexAttribArray(progTileFg.position);
+		
+		progTileFg.texCoord = gl.getAttribLocation(progTileFg, "inTexCoord");
+		gl.enableVertexAttribArray(progTileFg.texCoord);
+		
+		progTileFg.normal = gl.getAttribLocation(progTileFg, "inNormal");
+		gl.enableVertexAttribArray(progTileFg.normal);
+		
+		progTileFg.tex = gl.getUniformLocation(progTileFg, "inTexSample");
+		progTileFg.proj = gl.getUniformLocation(progTileFg, "projMatrix");
+		progTileFg.modelView = gl.getUniformLocation(progTileFg, "modelViewMatrix");
+		progTileFg.view = gl.getUniformLocation(progTileFg, "viewMatrix");
+		
+		progTileFg.lightPos = gl.getUniformLocation(progTileFg, "lightPos");
+		progTileFg.lightColor = gl.getUniformLocation(progTileFg, "lightColor");
+		progTileFg.lightIntensity = gl.getUniformLocation(progTileFg, "lightIntensity");
+		
+		progTileFg.trans = gl.getUniformLocation(progTileFg, "trans");
 		
 //---------------------------------ENTITY SHADER-----------------------------------//		
 		gl.useProgram(progEntity);
@@ -605,9 +652,9 @@ RenderTile = function() {	//Render Square Class
 InheritenceManager.extend(RenderTile, RenderBase);
 
 RenderTile.prototype.render = function() {
-	gl.useProgram(progTile);
+
 	var tilesBg = world.getTilesBg();
-	
+	gl.useProgram(progTileBg);	
 	for(var i = 0; i < tilesBg.length; i++)
 	{
 		//console.log(world.getEmitter().getParticles()[i].getPosition());
@@ -615,7 +662,7 @@ RenderTile.prototype.render = function() {
 	}
 	
 	var tilesMg = world.getTilesMg();
-	
+	gl.useProgram(progTileMg);
 	for(var i = 0; i < tilesMg.length; i++)
 	{
 		//console.log(world.getEmitter().getParticles()[i].getPosition());
@@ -623,7 +670,7 @@ RenderTile.prototype.render = function() {
 	}
 	
 	var tilesFg = world.getTilesFg();
-	
+	gl.useProgram(progTileFg);
 	for(var i = 0; i < tilesFg.length; i++)
 	{
 		//console.log(world.getEmitter().getParticles()[i].getPosition());
@@ -655,25 +702,25 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size) {
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progTile.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progTile.modelView, false, modelView);
+	gl.uniformMatrix4fv(progTileBg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileBg.modelView, false, modelView);
 	var tmp = mat4.copy(mat4.create(), modelView);
 	mat4.transpose(tmp, tmp);
-	gl.uniformMatrix4fv(progTile.view, false, tmp);
+	gl.uniformMatrix4fv(progTileBg.view, false, tmp);
 	
-	gl.uniform2f(progTile.trans, pos.x, pos.y);
+	gl.uniform2f(progTileBg.trans, pos.x, pos.y);
 	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.uniform1i(progTile.tex, 0);
+    gl.uniform1i(progTileBg.tex, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTile.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTile.texCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTile.normal, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
 }
@@ -705,25 +752,25 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size) {
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progTile.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progTile.modelView, false, modelView);
+	gl.uniformMatrix4fv(progTileMg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileMg.modelView, false, modelView);
 	var tmp = mat4.copy(mat4.create(), modelView);
 	mat4.transpose(tmp, tmp);
-	gl.uniformMatrix4fv(progTile.view, false, tmp);
-	gl.uniform2f(progTile.trans, pos.x, pos.y);
+	gl.uniformMatrix4fv(progTileMg.view, false, tmp);
+	gl.uniform2f(progTileMg.trans, pos.x, pos.y);
 	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.uniform1i(progTile.tex, 0);
+    gl.uniform1i(progTileMg.tex, 0);
 	
 	//console.log(tmpModelTile);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTile.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTile.texCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTile.normal, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
 }
@@ -763,24 +810,24 @@ RenderTile.prototype.renderTileFg = function(pos, tex, size) {
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progTile.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progTile.modelView, false, modelView);
+	gl.uniformMatrix4fv(progTileFg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileFg.modelView, false, modelView);
 	var tmp = mat4.copy(mat4.create(), modelView);
 	mat4.transpose(tmp, tmp);
-	gl.uniformMatrix4fv(progTile.view, false, tmp);
-	gl.uniform2f(progTile.trans, pos.x, pos.y);
+	gl.uniformMatrix4fv(progTileFg.view, false, tmp);
+	gl.uniform2f(progTileFg.trans, pos.x, pos.y);
 	
 	gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.uniform1i(progTile.tex, 0);
+    gl.uniform1i(progTileFg.tex, 0);
     
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTile.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileFg.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTile.texCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileFg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTile.normal, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileFg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
 }
@@ -838,13 +885,13 @@ RenderWorld.prototype.renderBg = function() {
     gl.uniform1i(progWorld.tex, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTile.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTile.texCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTile.normal, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());
 	
@@ -890,13 +937,13 @@ RenderWorld.prototype.renderMg = function() {
     gl.uniform1i(progWorld.tex, 0);
     
     gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTile.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTile.texCoord, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTile.normal, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progTileMg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelMg.getNumVertices());
 
@@ -980,77 +1027,221 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 }
 
 RenderLight = function() {
-	//RenderLight.baseConstructor.call(this);
 	
-	this.staticLights = world.staticLights;
-	this.flickeringLights = world.flickeringLights;
-	this.morphingLights = world.morphingLights;
+//-----------------------MG LIGHTS------------------------------//
+	this.staticLightsMg = world.staticLightsMg;
+	this.flickeringLightsMg = world.flickeringLightsMg;
+	this.morphingLightsMg = world.morphingLightsMg;
 	
-	this.lightPos = [];
-	this.lightColor = [];
-	this.lightIntensity = [];
+	this.lightPosMg = [];
+	this.lightColorMg = [];
+	this.lightIntensityMg = [];
+
+//-----------------------BG LIGHTS------------------------------//
+	this.staticLightsBg = world.staticLightsBg;
+	this.flickeringLightsBg = world.flickeringLightsBg;
+	this.morphingLightsBg = world.morphingLightsBg;
 	
+	this.lightPosBg = [];
+	this.lightColorBg = [];
+	this.lightIntensityBg = [];
+
+//-----------------------FG LIGHTS------------------------------//	
+	this.staticLightsFg = world.staticLightsFg;
+	this.flickeringLightsFg = world.flickeringLightsFg;
+	this.morphingLightsFg = world.morphingLightsFg;
+	
+	this.lightPosFg = [];
+	this.lightColorFg = [];
+	this.lightIntensityFg = [];
+
 	this.initLights();
 }
 
-//InheritenceManager.extend(RenderLight, RenderBase);
-
 RenderLight.prototype.initLights = function() {
 	
+//----------------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------MG LIGHTS--------------------------------------------------------//
+	
 //-------------------------STATIC LIGHTS-----------------------------//
-	var totalNrStaticLights = this.staticLights.length;	
+	var totalNrStaticLights = this.staticLightsMg.length;	
 	for(var i = 0; i < totalNrStaticLights; i++) {
-		var position = [this.staticLights[i].getPosition().x, this.staticLights[i].getPosition().y, this.staticLights[i].getPosition().z];
-		var color = [this.staticLights[i].getColor().r, this.staticLights[i].getColor().g, this.staticLights[i].getColor().b];
-		this.lightPos = this.lightPos.concat(position);
-		this.lightColor = this.lightColor.concat(color);
-		this.lightIntensity = this.lightIntensity.concat(1.0);
+		var position = [this.staticLightsMg[i].getPosition().x, this.staticLightsMg[i].getPosition().y, this.staticLightsMg[i].getPosition().z];
+		var color = [this.staticLightsMg[i].getColor().r, this.staticLightsMg[i].getColor().g, this.staticLightsMg[i].getColor().b];
+		this.lightPosMg = this.lightPosMg.concat(position);
+		this.lightColorMg = this.lightColorMg.concat(color);
+		this.lightIntensityMg = this.lightIntensityMg.concat(this.staticLightsBg[i].getIntensity());
 	}
 //-----------------------FLICKERING LIGHTS---------------------------//	
-	var totalNrFlickeringLights = this.flickeringLights.length;
+	var totalNrFlickeringLights = this.flickeringLightsMg.length;
 	for(var i = 0; i < totalNrFlickeringLights; i++) {
-		var position = [this.flickeringLights[i].getPosition().x, this.flickeringLights[i].getPosition().y, this.flickeringLights[i].getPosition().z];
-		var color = [this.flickeringLights[i].getColor().r, this.flickeringLights[i].getColor().g, this.flickeringLights[i].getColor().b];
-		this.lightPos = this.lightPos.concat(position);
-		this.lightColor = this.lightColor.concat(color);
-		this.lightIntensity = this.lightIntensity.concat(this.flickeringLights[i].getCurrentIntensity());
+		var position = [this.flickeringLightsMg[i].getPosition().x, this.flickeringLightsMg[i].getPosition().y, this.flickeringLightsMg[i].getPosition().z];
+		var color = [this.flickeringLightsMg[i].getColor().r, this.flickeringLightsMg[i].getColor().g, this.flickeringLightsMg[i].getColor().b];
+		this.lightPosMg = this.lightPosMg.concat(position);
+		this.lightColorMg = this.lightColorMg.concat(color);
+		this.lightIntensityMg = this.lightIntensityMg.concat(this.flickeringLightsMg[i].getIntensity());
 	}
 //------------------------MORPHING LIGHTS----------------------------//	
-	var totalNrMorphingLights = this.morphingLights.length;
+	var totalNrMorphingLights = this.morphingLightsMg.length;
 	for(var i = 0; i < totalNrMorphingLights; i++) {
-		var position = [this.morphingLights[i].getPosition().x, this.morphingLights[i].getPosition().y, this.morphingLights[i].getPosition().z];
-		var color = [this.morphingLights[i].getColor().r, this.morphingLights[i].getColor().g, this.morphingLights[i].getColor().b];
-		this.lightPos = this.lightPos.concat(position);
-		this.lightColor = this.lightColor.concat(color);
-		this.lightIntensity = this.lightIntensity.concat(this.morphingLights[i].getCurrentIntensity());
+		var position = [this.morphingLightsMg[i].getPosition().x, this.morphingLightsMg[i].getPosition().y, this.morphingLightsMg[i].getPosition().z];
+		var color = [this.morphingLightsMg[i].getColor().r, this.morphingLightsMg[i].getColor().g, this.morphingLightsMg[i].getColor().b];
+		this.lightPosMg = this.lightPosMg.concat(position);
+		this.lightColorMg = this.lightColorMg.concat(color);
+		this.lightIntensityMg = this.lightIntensityMg.concat(this.morphingLightsMg[i].getIntensity());
 	}
 	
-	gl.useProgram(progTile);
-	gl.uniform3fv(progTile.lightPos, this.lightPos);
-	gl.uniform3fv(progTile.lightColor, this.lightColor);
-	gl.uniform1fv(progTile.lightIntensity, this.lightIntensity);
+	gl.useProgram(progTileMg);
+	gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);
+	gl.uniform3fv(progTileMg.lightColor, this.lightColorMg);
+	gl.uniform1fv(progTileMg.lightIntensity, this.lightIntensityMg);
+
+//----------------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------BG LIGHTS--------------------------------------------------------//
+
+//-------------------------STATIC LIGHTS-----------------------------//
+	var totalNrStaticLights = this.staticLightsBg.length;	
+	for(var i = 0; i < totalNrStaticLights; i++) {
+		var position = [this.staticLightsBg[i].getPosition().x, this.staticLightsBg[i].getPosition().y, this.staticLightsBg[i].getPosition().z];
+		var color = [this.staticLightsBg[i].getColor().r, this.staticLightsBg[i].getColor().g, this.staticLightsBg[i].getColor().b];
+		this.lightPosBg = this.lightPosBg.concat(position);
+		this.lightColorBg = this.lightColorBg.concat(color);
+		this.lightIntensityBg = this.lightIntensityBg.concat(this.staticLightsBg[i].getIntensity());
+	}
+//-----------------------FLICKERING LIGHTS---------------------------//	
+	var totalNrFlickeringLights = this.flickeringLightsBg.length;
+	for(var i = 0; i < totalNrFlickeringLights; i++) {
+		var position = [this.flickeringLightsBg[i].getPosition().x, this.flickeringLightsBg[i].getPosition().y, this.flickeringLightsBg[i].getPosition().z];
+		var color = [this.flickeringLightsBg[i].getColor().r, this.flickeringLightsBg[i].getColor().g, this.flickeringLightsBg[i].getColor().b];
+		this.lightPosBg = this.lightPosBg.concat(position);
+		this.lightColorBg = this.lightColorBg.concat(color);
+		this.lightIntensityBg = this.lightIntensityBg.concat(this.flickeringLightsBg[i].getIntensity());
+	}
+//------------------------MORPHING LIGHTS----------------------------//	
+	var totalNrMorphingLights = this.morphingLightsBg.length;
+	for(var i = 0; i < totalNrMorphingLights; i++) {
+		var position = [this.morphingLightsBg[i].getPosition().x, this.morphingLightsBg[i].getPosition().y, this.morphingLightsBg[i].getPosition().z];
+		var color = [this.morphingLightsBg[i].getColor().r, this.morphingLightsBg[i].getColor().g, this.morphingLightsBg[i].getColor().b];
+		this.lightPosBg = this.lightPosBg.concat(position);
+		this.lightColorBg = this.lightColorBg.concat(color);
+		this.lightIntensityBg = this.lightIntensityBg.concat(this.morphingLightsBg[i].getIntensity());
+	}
+	
+	gl.useProgram(progTileBg);
+	gl.uniform3fv(progTileBg.lightPos, this.lightPosBg);
+	gl.uniform3fv(progTileBg.lightColor, this.lightColorBg);
+	gl.uniform1fv(progTileBg.lightIntensity, this.lightIntensityBg);
+	
+//----------------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------FG LIGHTS--------------------------------------------------------//
+
+//-------------------------STATIC LIGHTS-----------------------------//
+	var totalNrStaticLights = this.staticLightsFg.length;	
+	for(var i = 0; i < totalNrStaticLights; i++) {
+		var position = [this.staticLightsFg[i].getPosition().x, this.staticLightsFg[i].getPosition().y, this.staticLightsFg[i].getPosition().z];
+		var color = [this.staticLightsFg[i].getColor().r, this.staticLightsFg[i].getColor().g, this.staticLightsFg[i].getColor().b];
+		this.lightPosFg = this.lightPosFg.concat(position);
+		this.lightColorFg = this.lightColorFg.concat(color);
+		this.lightIntensityFg = this.lightIntensityFg.concat(this.staticLightsFg[i].getIntensity());
+	}
+//-----------------------FLICKERING LIGHTS---------------------------//	
+	var totalNrFlickeringLights = this.flickeringLightsFg.length;
+	for(var i = 0; i < totalNrFlickeringLights; i++) {
+		var position = [this.flickeringLightsFg[i].getPosition().x, this.flickeringLightsFg[i].getPosition().y, this.flickeringLightsFg[i].getPosition().z];
+		var color = [this.flickeringLightsFg[i].getColor().r, this.flickeringLightsFg[i].getColor().g, this.flickeringLightsFg[i].getColor().b];
+		this.lightPosFg = this.lightPosFg.concat(position);
+		this.lightColorFg = this.lightColorFg.concat(color);
+		this.lightIntensityFg = this.lightIntensityFg.concat(this.flickeringLightsFg[i].getIntensity());
+	}
+//------------------------MORPHING LIGHTS----------------------------//	
+	var totalNrMorphingLights = this.morphingLightsFg.length;
+	for(var i = 0; i < totalNrMorphingLights; i++) {
+		var position = [this.morphingLightsFg[i].getPosition().x, this.morphingLightsFg[i].getPosition().y, this.morphingLightsFg[i].getPosition().z];
+		var color = [this.morphingLightsFg[i].getColor().r, this.morphingLightsFg[i].getColor().g, this.morphingLightsFg[i].getColor().b];
+		this.lightPosFg = this.lightPosFg.concat(position);
+		this.lightColorFg = this.lightColorFg.concat(color);
+		this.lightIntensityFg = this.lightIntensityFg.concat(this.morphingLightsFg[i].getIntensity());
+	}
+	
+	gl.useProgram(progTileFg);
+	gl.uniform3fv(progTileFg.lightPos, this.lightPosFg);
+	gl.uniform3fv(progTileFg.lightColor, this.lightColorFg);
+	gl.uniform1fv(progTileFg.lightIntensity, this.lightIntensityFg);
 }
 
+//--------------------LIGHT UPDATE---------------------//
 RenderLight.prototype.update = function() {
+	this.updateMg();
+	this.updateBg();
+	this.updateFg();
+}
+//------------------------------------MG LIGHTS UPDATE-----------------------------------------//
+RenderLight.prototype.updateMg = function() {
 	
-	var totalNrStaticLights = this.staticLights.length;	
-	var totalNrFlickeringLights = this.flickeringLights.length;
-	var totalNrMorphingLights = this.morphingLights.length;
+	var totalNrStaticLights = this.staticLightsMg.length;	
+	var totalNrFlickeringLights = this.flickeringLightsMg.length;
+	var totalNrMorphingLights = this.morphingLightsMg.length;
 	
 	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
-		this.lightIntensity[i] = this.flickeringLights[i - totalNrStaticLights].getCurrentIntensity();
+		this.lightIntensityMg[i] = this.flickeringLightsMg[i - totalNrStaticLights].getIntensity();
 	}
 	for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
-		this.lightIntensity[i] = this.morphingLights[i - (totalNrStaticLights + totalNrFlickeringLights)].getCurrentIntensity();
-		var tmpColor = this.morphingLights[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
-		this.lightColor[i*3] = tmpColor.r;
-		this.lightColor[i*3+1] = tmpColor.g;
-		this.lightColor[i*3+2] = tmpColor.b;
+		this.lightIntensityMg[i] = this.morphingLightsMg[i - (totalNrStaticLights + totalNrFlickeringLights)].getIntensity();
+		var tmpColor = this.morphingLightsMg[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
+		this.lightColorMg[i*3] = tmpColor.r;
+		this.lightColorMg[i*3+1] = tmpColor.g;
+		this.lightColorMg[i*3+2] = tmpColor.b;
 	}
 	
-	gl.useProgram(progTile);
-	gl.uniform3fv(progTile.lightColor, this.lightColor);
-	gl.uniform1fv(progTile.lightIntensity, this.lightIntensity);
+	gl.useProgram(progTileMg);
+	gl.uniform3fv(progTileMg.lightColor, this.lightColorMg);
+	gl.uniform1fv(progTileMg.lightIntensity, this.lightIntensityMg);
+}
+
+//------------------------------------BG LIGHTS UPDATE-----------------------------------------//
+RenderLight.prototype.updateBg = function() {
+	
+	var totalNrStaticLights = this.staticLightsBg.length;	
+	var totalNrFlickeringLights = this.flickeringLightsBg.length;
+	var totalNrMorphingLights = this.morphingLightsBg.length;
+	
+	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
+		this.lightIntensityBg[i] = this.flickeringLightsBg[i - totalNrStaticLights].getIntensity();
+	}
+	for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
+		this.lightIntensityBg[i] = this.morphingLightsBg[i - (totalNrStaticLights + totalNrFlickeringLights)].getIntensity();
+		var tmpColor = this.morphingLightsBg[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
+		this.lightColorBg[i*3] = tmpColor.r;
+		this.lightColorBg[i*3+1] = tmpColor.g;
+		this.lightColorBg[i*3+2] = tmpColor.b;
+	}
+	
+	gl.useProgram(progTileBg);
+	gl.uniform3fv(progTileBg.lightColor, this.lightColorBg);
+	gl.uniform1fv(progTileBg.lightIntensity, this.lightIntensityBg);
+}
+
+//------------------------------------FG LIGHTS UPDATE-----------------------------------------//
+RenderLight.prototype.updateFg = function() {
+	
+	var totalNrStaticLights = this.staticLightsFg.length;	
+	var totalNrFlickeringLights = this.flickeringLightsFg.length;
+	var totalNrMorphingLights = this.morphingLightsFg.length;
+	
+	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
+		this.lightIntensityFg[i] = this.flickeringLightsFg[i - totalNrStaticLights].getIntensity();
+	}
+	for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
+		this.lightIntensityFg[i] = this.morphingLightsFg[i - (totalNrStaticLights + totalNrFlickeringLights)].getIntensity();
+		var tmpColor = this.morphingLightsFg[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
+		this.lightColorFg[i*3] = tmpColor.r;
+		this.lightColorFg[i*3+1] = tmpColor.g;
+		this.lightColorFg[i*3+2] = tmpColor.b;
+	}
+	
+	gl.useProgram(progTileFg);
+	gl.uniform3fv(progTileFg.lightColor, this.lightColorFg);
+	gl.uniform1fv(progTileFg.lightIntensity, this.lightIntensityFg);
 }
 
 
