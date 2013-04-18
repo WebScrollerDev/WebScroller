@@ -200,33 +200,17 @@ EntityPlayer.prototype.update = function() {
 	this.position.y += this.velocity[1];
 	
 //--------------------UPDATE PLAYER STATUS-----------------------//
-	if(!this.collides && this.velocity[1] > 0.) { // falling
-		var prevState = this.status;
-		this.status = this.playerStatus.FALLING;
-		
-		if(prevState != this.status)
-			this.currFrame = 0;
+	if(!this.collides && this.velocity[1] < 0.) { // falling
+		this.changeStatus(this.playerStatus.FALLING);
 	}
-	else if(!this.collides && this.velocity[1] < 0.) { // jumping
-		var prevState = this.status;
-		this.status = this.playerStatus.JUMPING;
-		
-		if(prevState != this.status)
-			this.currFrame = 0;
+	else if(!this.collides && this.velocity[1] > 0.) { // jumping
+		this.changeStatus(this.playerStatus.JUMPING);
 	}
 	else if(this.collides && this.velocity[0] != 0. ) { // running
-		var prevState = this.status;
-		this.status = this.playerStatus.RUNNING;
-		
-		if(prevState != this.status)
-			this.currFrame = 0;
+		this.changeStatus(this.playerStatus.RUNNING);
 	}
 	else if(this.collides && this. velocity[0] == 0) { // idle
-		var prevState = this.status;
-		this.status = this.playerStatus.IDLE;
-		
-		if(prevState != this.status)
-			this.currFrame = 0;
+		this.changeStatus(this.playerStatus.IDLE);
 	}
 	
 	if(this.velocity[0] > 0)
@@ -237,6 +221,12 @@ EntityPlayer.prototype.update = function() {
 	//console.log(this.status);
 	this.obb.updatePosition(this.position);
 };
+
+EntityPlayer.prototype.changeStatus = function(newState) {
+	this.status = newState;
+	if(newState != this.status)
+		this.currFrame = 0;
+} 
 
 EntityPlayer.prototype.getStatus = function() {
 	return this.status;
