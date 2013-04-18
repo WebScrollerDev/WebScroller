@@ -47,16 +47,22 @@ Entity.prototype = {
 		return this.rotation;
 	}, 
 	
+	intersects2: function(bb) {
+		
+		var tmpBB = new OBB([this.position.x + this.velocity[0], this.position.y + this.velocity[1]], [this.obb.centerLocal.x, this.obb.centerLocal.y], [this.obb.size.x, this.obb.size.y], this.obb.angle);
+		return tmpBB.overlaps(bb);
+	}, 
+	
 	intersects: function(otherBB, otherPos) {
 		
 		var thisMin = {
 			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.min.x, 
-			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.min.y
+			y: (this.position.y + this.velocity[1] + 0.5) + this.boundingBox.min.y
 		}
 		
 		var thisMax = {
 			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.max.x, 
-			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.max.y
+			y: (this.position.y + this.velocity[1] + 0.5) + this.boundingBox.max.y
 		}
 		
 		var otherMin = {
@@ -79,35 +85,35 @@ Entity.prototype = {
 		return true;
 	}, 
 	
-	collidedWith: function(otherBB, otherPos) {
+	collidedWith: function(otherBB) {
 		var thisMinX = {
-			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.min.x, 
+			x: (this.position.x + this.velocity[0]) + this.boundingBox.min.x, 
 			y: this.position.y + this.boundingBox.min.y
 		}
 		
 		var thisMaxX = {
-			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.max.x, 
+			x: (this.position.x + this.velocity[0]) + this.boundingBox.max.x, 
 			y: this.position.y + this.boundingBox.max.y
 		}
 		
 		var thisMinY = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.min.x, 
-			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.min.y
+			x: this.position.x + this.boundingBox.min.x, 
+			y: (this.position.y + this.velocity[1]) + this.boundingBox.min.y
 		}
 		
 		var thisMaxY = {
-			x: this.position.x - this.size.x/2 + this.boundingBox.max.x, 
-			y: (this.position.y - this.velocity[1] - 0.5) + this.boundingBox.max.y
+			x: this.position.x + this.boundingBox.max.x, 
+			y: (this.position.y + this.velocity[1]) + this.boundingBox.max.y
 		}
 		
 		var otherMin = {
-			x: otherPos.x + otherBB.min.x, 
-			y: otherPos.y + otherBB.min.y
+			x: otherBB.min.x, 
+			y: otherBB.min.y
 		}
 		
 		var otherMax = {
-			x: otherPos.x + otherBB.max.x, 
-			y: otherPos.y + otherBB.max.y
+			x: otherBB.max.x, 
+			y: otherBB.max.y
 		}
 		
 		var below = thisMinY.y < otherMax.y;
@@ -116,7 +122,7 @@ Entity.prototype = {
 		var rightNoVel = thisMaxY.x > otherMin.x;
 		var left = thisMinX.x < otherMax.x;
 		var leftNoVel = thisMinY.x < otherMax.x;
-		
+		var above = thisMaxY.y > otherMin.y;
 		var aboveNoVel = thisMaxX.y > otherMin.y;
 		
 		
@@ -128,6 +134,7 @@ Entity.prototype = {
 			if(aboveNoVel)
 				this.velocity[0] = 0.0;
 		}
+		
 		
 		if(below && rightNoVel && leftNoVel) {
 			if(aboveNoVel)
@@ -145,10 +152,14 @@ Entity.prototype = {
 
 EntityPlayer = function(pos, bbMin, bbMax) {
 	EntityPlayer.baseConstructor.call(this, pos, bbMin, bbMax);
+	
 	this.size = {
 		x: 45, 
 		y: 64
 	}
+	
+	this.obb = new OBB(pos, [this.size.x/2, this.size.y/2], [this.size.x, this.size.y], 0);
+	
 	this.playerStatus = {
 		IDLE: 0,
 		RUNNING: 1,
@@ -170,8 +181,7 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.temp = function() {
-	if(!this.collides)
-		this.velocity[1] += 0.5; // gravity
+	this.velocity[1] -= 0.5; // gravity
 	this.keyPress();
 }
 
@@ -187,7 +197,7 @@ EntityPlayer.prototype.update = function() {
 	this.prevPosition.y = this.position.y;
 
 	this.position.x += this.velocity[0];
-	this.position.y -= this.velocity[1];
+	this.position.y += this.velocity[1];
 	
 //--------------------UPDATE PLAYER STATUS-----------------------//
 	if(!this.collides && this.velocity[1] > 0.) { // falling
@@ -225,7 +235,7 @@ EntityPlayer.prototype.update = function() {
 		this.flipped = true;
 	
 	//console.log(this.status);
-	
+	this.obb.updatePosition(this.position);
 };
 
 EntityPlayer.prototype.getStatus = function() {
@@ -243,7 +253,7 @@ EntityPlayer.prototype.keyPress = function() {
 	var speed = 0.5;
 	
 	if(isKeyDown('W') && this.collides) {
-		this.velocity[1] -= 10.0;//this.isJumping = true;
+		this.velocity[1] += 12.0;//this.isJumping = true;
 	}
 		
 	

@@ -34,7 +34,9 @@ World.prototype = {
 		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [45, 64]);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
-
+		//this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
+		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
+		
 		/*this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));		
 		this.staticLights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
 		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));*/
@@ -49,9 +51,12 @@ World.prototype = {
 		
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
-		this.cloth = new Cloth(700, 230, 10, 10);
+		this.cloth = new Cloth([700, 230], [10, 10]);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 128));
+		//this.bbs.push(new OBB([100, 20], [10, 20], [20, 40], 3.14/4));
+		
+		this.obb = new OBB([0, 0], [1024, 5], [2048, 10], 0);
 	},
 	
 	setTilesBg: function(tiles) {
@@ -81,25 +86,19 @@ World.prototype = {
 	update: function() {
 		this.player.temp();
 		
-		//this.fireEmitters[0].setPosition(this.player.getPosition());
-		//this.fireEmitters[0].setPositionY(this.fireEmitters[0].getPositionY()+this.player.size.y/2);		
+		this.player.setColliding(false);
 		
-		var worldPos = {
-			x: 0, 
-			y: 0
+		if(this.player.intersects2(this.obb)) {
+			this.player.collidedWith(new BoundingBox([0, 0], [2048, 10]));
 		}
-		if(this.player.intersects(new BoundingBox([0, 0], [this.worldSize.x, 10]), worldPos)) {
-			this.player.collidedWith(new BoundingBox([0, 0], [this.worldSize.x, 10]), worldPos);
-		} else
-			this.player.setColliding(false);
 		
 		var tiles = this.tilesMg;
 		for(var i = 0; i < tiles.length; i++) {
-			if(tiles[i].getTile().getBB() == null)
+			if(tiles[i].getBB() == null)
 				continue;
-			if(this.player.intersects(tiles[i].getTile().getBB(), tiles[i].getPosition())) {
-				this.player.collidedWith(tiles[i].getTile().getBB(), tiles[i].getPosition());
-				//console.log("Player is colliding");
+			if(this.player.intersects2(tiles[i].getBB())) {
+				var tmpBB = new BoundingBox([tiles[i].getBB().corner[0][0], tiles[i].getBB().corner[0][1]], [tiles[i].getBB().corner[2][0], tiles[i].getBB().corner[2][1]]);
+				this.player.collidedWith(tmpBB);
 			}
 		}
 		

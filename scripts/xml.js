@@ -2,10 +2,12 @@ var tilesBg = new Array();
 var tilesMg = new Array();
 var tilesFg = new Array();
 
+var obbs = new Array();
+
 var bg = false;
 var mg = false;
 var fg = false;
-
+var doneLoading = false;
 function loadXml() {
 	$.ajax({
     	type: "GET",
@@ -66,7 +68,12 @@ function parseWorlds(xml) {
 					$(this).find("Pos").each(function() {
 						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
 					});
-					var tilePlaceable = new TilePlaceable(tilesMg[id], pos);
+					var tilePlaceable;
+					if(obbs[id] != null) {
+						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
+						tilePlaceable.addBoundingBox(new OBB(pos, obbs[id].center, obbs[id].size, obbs[id].angle));
+					} else
+						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesMg(tilesPlaceable);
@@ -87,6 +94,7 @@ function parseWorlds(xml) {
 			});
 		});
 	});
+	doneLoading = true;
 }
 
 function parseMgTiles(xml)
@@ -97,38 +105,32 @@ function parseMgTiles(xml)
 			var tile = new Tile(gl, $(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
-			if($(this).find("BoundingType").text() == "box") {
-				var minX, maxX, minY, maxY;
+			if($(this).find("BoundingType").text() == "obb") {
+				//var minX, maxX, minY, maxY;
+				var bbCenter = [];
+				var bbSize = [];
+				var bbAngle;
 				$(this).find("BoundingBox").each(function() {
 					
-					$(this).find("Min").each(function() {
-						minX = parseInt($(this).find("X").text());
-						minY = parseInt($(this).find("Y").text());
+					$(this).find("Size").each(function() {
+						bbSize[0] = parseInt($(this).find("X").text());
+						bbSize[1] = parseInt($(this).find("Y").text());
 					});
 					
-					$(this).find("Max").each(function() {
-						maxX = parseInt($(this).find("X").text());
-						maxY = parseInt($(this).find("Y").text());
+					$(this).find("Center").each(function() {
+						bbCenter[0] = parseInt($(this).find("X").text());
+						bbCenter[1] = parseInt($(this).find("Y").text());
 					});
-				
+					
+					bbAngle = (parseInt($(this).find("Angle").text())*3.14)/180;
 				});
-				
-				tile.addBoundingBox([minX, minY], [maxX, maxY]);
-			}
-			if($(this).find("BoundingType").text() == "circle") {
-				var radius, posX, posY;
-				$(this).find("BoundingCircle").each(function() {
-					
-					radius = parseInt($(this).find("Radius").text());
-					
-					$(this).find("Pos").each(function() {
-						posX = parseInt($(this).find("X").text());
-						posY = parseInt($(this).find("Y").text());
-					});
-				
-				});
-				
-				tile.addBoundingCircle(radius, [posX, posY]);
+				var obbTmp = {
+					center: bbCenter, 
+					size: bbSize, 
+					angle: bbAngle
+				}
+				obbs[id] = obbTmp;
+				//tile.addBoundingBox(new OBB(bbCenter, bbSize, bbAngle));
 			}
 			
 			$(this).find("Size").each(function() {

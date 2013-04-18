@@ -7,14 +7,14 @@ spacing              = 14,
 tear_distance        = 60;
 
 
-Cloth = function(clothPosX, clothPosY, clothW, clothH) {
+Cloth = function(pos, size) {
 	this.size = {
-		x: clothW,
-		y: clothH
+		x: size[0],
+		y: size[1]
 	}
 	this.pos = {
-		x: clothPosX,
-		y: clothPosY
+		x: pos[0],
+		y: pos[1]
 	}
 	this.updateTime = 10;
 	this.points = [];

@@ -25,10 +25,12 @@ function initGL(canvas) {
 
 function tick() {
 	requestAnimFrame(tick);
-	world.update();
-	cam.update();
-	render.render();
-	keyInput();
+	if(doneLoading) {
+		world.update();
+		cam.update();
+		render.render();
+		keyInput();
+	}
 }
 
 function keyInput() {
@@ -53,6 +55,6 @@ function startGL() {
 	canvas.onmousedown = mouseDown;
     document.onmouseup = mouseUp;
     document.onmousemove = mouseMove;
-	
+    
 	tick();
 }

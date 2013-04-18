@@ -230,7 +230,7 @@ RenderEntity.prototype.renderPlayer = function() {
 	
 	mat4.scale(modelView, modelView, [world.player.size.x, world.player.size.y, 1.0]);
 	//Used to center the player on the canvas
-	mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
+	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 	//gl.bindBuffer(gl.ARRAY_BUFFER, tmpVaoPlayer);
 
@@ -904,87 +904,79 @@ RenderWorld.prototype.renderMg = function() {
 
 RenderBoundingBox = function() {	//Render Square Class
 	RenderBoundingBox.baseConstructor.call(this);
-	
-	this.modelBB = new ModelSquare();
-	this.initBuffers(this.modelBB);
 }
 
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
 
 RenderBoundingBox.prototype.render = function() {
 	if(debug) {
-		gl.useProgram(progBB);
+		this.renderBB(world.obb);
 		
-		
-		var playerPos = {
-			x: world.player.getPosition().x - world.player.size.x/2, 
-			y: world.player.getPosition().y
-		}
-		this.renderBB(playerPos, world.player.size);
-		var groundPos = {
-			x: 0, 
-			y: 0
-		}
-		var groundSize = {
-			x: world.worldSize.x, 
-			y: 10
-		}
-		this.renderBB(groundPos, groundSize);
 		var tilesMg = world.getTilesMg();
 		for(var i = 0; i < tilesMg.length; i++) {
-			if(tilesMg[i].getTile().getBB() != null) {
-				var pos = {
-					x: tilesMg[i].getPosition().x + tilesMg[i].getTile().getBB().getMin().x, 
-					y: tilesMg[i].getPosition().y + tilesMg[i].getTile().getBB().getMin().y
-				}
-				
-				var size = {
-					x: tilesMg[i].getTile().getBB().getMax().x - tilesMg[i].getTile().getBB().getMin().x,
-					y: tilesMg[i].getTile().getBB().getMax().y - tilesMg[i].getTile().getBB().getMin().y
-				}
-				this.renderBB(pos, size);
+			if(tilesMg[i].getBB() != null) {
+				this.renderBB(tilesMg[i].getBB());
 			}
 		}
+		this.renderBB(world.player.obb);
 	}
-};
-RenderBoundingBox.prototype.renderBB = function(pos, size) {
-	var modelView = mat4.create();
 	
+};
+
+RenderBoundingBox.prototype.renderBB = function(bb) {
+	gl.useProgram(progCloth);
+	
+	var modelView = mat4.create();
 	var playerPos = {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
+	this.model = [];
+
+	var nrLines = 0;
+	
+	this.model = this.model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+	this.model = this.model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	this.model = this.model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	this.model = this.model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	this.model = this.model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	this.model = this.model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	this.model = this.model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	this.model = this.model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+
+	this.posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.model), gl.STATIC_DRAW);
+	
+	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, 0, 1.5]);
+		mat4.translate(modelView, modelView, [0.0, 0, 1.5]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.5]);
+		mat4.translate(modelView, modelView, [0.0 -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.5]);
 	else {
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.5]);
+		mat4.translate(modelView, modelView, [0.0 -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.5]);
 	}
 	
 	if(playerPos.y < (gl.viewportHeight)/2)
-		mat4.translate(modelView, modelView, [0.0, pos.y, 0.0]);
-	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [0.0, pos.y -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
 	else {
-		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
 	
-	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
-	//Used to center the player on the canvas
-	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
+	//console.log(this.modelCloth);
+	
+	//mat4.scale(modelView, modelView, [1.0, 1.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
-	
-	gl.uniformMatrix4fv(progBB.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progBB.modelView, false, modelView);
-	
-	//gl.bindTexture(gl.TEXTURE_2D, tex);
- 	//gl.uniform1i(this.prog.tex, 0);
+
+	gl.uniformMatrix4fv(progCloth.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progCloth.modelView, false, modelView);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progBB.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progCloth.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBB.getNumVertices());
+	gl.drawArrays(gl.LINES, 0, 8);
 }
 
 RenderLight = function() {

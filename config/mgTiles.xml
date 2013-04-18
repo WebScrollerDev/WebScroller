@@ -2,16 +2,17 @@
 	<Tile>
 		<Id>0</Id>
 		<Url>resources/tiles/mg/platform2.png</Url>
-		<BoundingType>box</BoundingType>
+		<BoundingType>obb</BoundingType>
 		<BoundingBox>
-			<Min>
-				<X>0</X>
-				<Y>0</Y>
-			</Min>
-			<Max>
+			<Center>
+				<X>78</X>
+				<Y>10</Y>
+			</Center>
+			<Size>
 				<X>156</X>
 				<Y>20</Y>
-			</Max>
+			</Size>
+			<Angle>0</Angle>
 		</BoundingBox>
 		<Size>
 			<X>156</X>
@@ -22,20 +23,21 @@
 	<Tile>
 		<Id>1</Id>
 		<Url>resources/tiles/mg/platform1.png</Url>
-		<BoundingType>box</BoundingType>
+		<BoundingType>obb</BoundingType>
 		<BoundingBox>
-			<Min>
-				<X>5</X>
-				<Y>35</Y>
-			</Min>
-			<Max>
-				<X>395</X>
-				<Y>60</Y>
-			</Max>
+			<Center>
+				<X>200</X>
+				<Y>48</Y>
+			</Center>
+			<Size>
+				<X>373</X>
+				<Y>41</Y>
+			</Size>
+			<Angle>0</Angle>
 		</BoundingBox>
 		<Size>
 			<X>400</X>
-			<Y>80</Y>
+			<Y>96</Y>
 		</Size>
 	</Tile>
 	
@@ -69,14 +71,6 @@
 	<Tile>
 		<Id>5</Id>
 		<Url>resources/tiles/mg/tile2.png</Url>
-		<BoundingType>circle</BoundingType>
-		<BoundingCircle>
-			<Radius>2</Radius>
-			<Pos>
-				<X>40</X>
-				<Y>40</Y>
-			</Pos>
-		</BoundingCircle>
 		<Size>
 			<X>64</X>
 			<Y>64</Y>

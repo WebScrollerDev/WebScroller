@@ -19,39 +19,12 @@ BoundingBox.prototype = {
 	}
 };
 
-BoundingCircle = function(radius, pos) {
-	this.radius = radius;
-	this.pos = pos;
-}
-
-BoundingCircle.prototype = {
-	getRadius: function() {
-		return this.radius;
-	}, 
-	
-	getPos: function() {
-		return this.pos;
-	}
-};
-
-
-
 Tile = function(gl, path) {
 	this.tex = gl.createTexture();
 	Texture.loadImage(gl, path, this.tex);
-	//this.bounding = [];
 }
 
-Tile.prototype = {
-	addBoundingBox: function(min, max) {
-		console.log("Adding a boundingBox");
-		this.bounding = new BoundingBox(min, max);
-	}, 
-	
-	addBoundingCircle: function(radius, pos) {
-		console.log("Adding a boundingCircle");
-		this.bounding = new BoundingCircle(radius, pos);
-	}, 
+Tile.prototype = { 
 	
 	getTex: function() {
 		return this.tex;
@@ -63,10 +36,6 @@ Tile.prototype = {
 	
 	getSize: function() {
 		return this.size;
-	}, 
-	
-	getBB: function() {
-		return this.bounding;
 	}
 }
 
@@ -80,11 +49,21 @@ TilePlaceable = function(tile, pos) {
 }
 
 TilePlaceable.prototype = {
+	
+	addBoundingBox: function(bounding) {
+		console.log("Adding a boundingBox");
+		this.bounding = bounding;
+	},
+	
 	getTile: function() {
 		return this.tile;
 	},
 	
 	getPosition: function() {
 		return this.pos;
+	}, 
+	
+	getBB: function() {
+		return this.bounding;
 	}
 }
