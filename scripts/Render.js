@@ -1,4 +1,4 @@
-var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpu, progParticleGpuShow, progBB, progCloth;
+var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpu, progParticleGpuShow, progBB, progFabrica;
 
 function RenderManager() {
 	
@@ -31,7 +31,7 @@ RenderManager.prototype = {
 		progTileBg = utils.addShaderProg(gl, 'tileBg.vert', 'tileBg.frag');
 		progTileFg = utils.addShaderProg(gl, 'tileFg.vert', 'tileFg.frag');
 		progBB = utils.addShaderProg(gl, 'bb.vert', 'bb.frag');
-		progCloth = utils.addShaderProg(gl, 'cloth.vert', 'cloth.frag');
+		progFabric = utils.addShaderProg(gl, 'fabric.vert', 'fabric.frag');
 		progParticleGpu = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
 		
 		this.initShaders();
@@ -41,7 +41,7 @@ RenderManager.prototype = {
 		this.renderLight = new RenderLight();
 		this.renderTile = new RenderTile();		
 		this.renderBB = new RenderBoundingBox();
-		this.renderCloth = new RenderCloth();
+		this.renderFabric = new RenderFabric();
 		
 		gl.clearColor(1.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
@@ -160,12 +160,12 @@ RenderManager.prototype = {
 		progBB.modelView = gl.getUniformLocation(progBB, "modelViewMatrix");
 		
 //---------------------------------CLOTH SHADER-----------------------------------//
-		gl.useProgram(progCloth);
+		gl.useProgram(progFabric);
 		
-		progCloth.position = gl.getAttribLocation(progCloth, "inPosition");
-		gl.enableVertexAttribArray(progCloth.position);
-		progCloth.proj = gl.getUniformLocation(progCloth, "projMatrix");
-		progCloth.modelView = gl.getUniformLocation(progCloth, "modelViewMatrix");		
+		progFabric.position = gl.getAttribLocation(progFabric, "inPosition");
+		gl.enableVertexAttribArray(progFabric.position);
+		progFabric.proj = gl.getUniformLocation(progFabric, "projMatrix");
+		progFabric.modelView = gl.getUniformLocation(progFabric, "modelViewMatrix");		
 
 //---------------------------------PARTICLE SHADER-----------------------------------//	
 		gl.useProgram(progParticle);
@@ -202,7 +202,7 @@ RenderManager.prototype = {
 		this.renderTile.render();
 		this.renderBB.render();
 		this.renderParticle.render();
-		this.renderCloth.render();
+		this.renderFabric.render();
 	}
 }
 
@@ -261,11 +261,11 @@ RenderEntity.prototype.renderPlayer = function() {
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [playerPos.x, 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [playerPos.x, 0.0, 1.2]);
 	else if(playerPos.x > (world.worldSize.x - ((gl.viewportWidth)/2)))
-		mat4.translate(modelView, modelView, [playerPos.x - (world.worldSize.x - ((gl.viewportWidth))), 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [playerPos.x - (world.worldSize.x - ((gl.viewportWidth))), 0.0, 1.2]);
 	else
-		mat4.translate(modelView, modelView, [(gl.viewportWidth)/2, 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [(gl.viewportWidth)/2, 0.0, 1.2]);
 		
 	if(playerPos.y < gl.viewportHeight/2)
 		mat4.translate(modelView, modelView, [0.0, playerPos.y, 0.0]);
@@ -301,47 +301,53 @@ RenderEntity.prototype.renderPlayer = function() {
 };
 
 //----------------------------------CLOTH------------------------------------//
-RenderCloth = function() {
-	RenderCloth.baseConstructor.call(this);	
+RenderFabric = function() {
+	RenderFabric.baseConstructor.call(this);	
+	
+	this.modelCloth = [];
+	this.posBufferCloth = gl.createBuffer();
+	
+	this.modelRope = [];
+	this.posBufferRope = gl.createBuffer();
 };
 
-InheritenceManager.extend(RenderCloth, RenderBase);
+InheritenceManager.extend(RenderFabric, RenderBase);
 
-RenderCloth.prototype.render = function() {
-	gl.useProgram(progCloth);
+RenderFabric.prototype.render = function() {
+	
+	//this.renderCloth(world.rope.getPoints());
+	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope);
+	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth);
+};
+
+RenderFabric.prototype.renderFabric = function(points, model, posBuffer) {
+	gl.useProgram(progFabric);
 	
 	var modelView = mat4.create();
 	var playerPos = {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
-	var scale = 1.0;
-	this.modelCloth = [];
-	
-	var points = world.cloth.getPoints();	// get the points
 	var i = points.length;
 	var nrLines = 0;
-	//console.log(i);
 	while(i--) {								// for each point
 		var j = points[i].constraints.length;
 		while(j--) {							// for each constraint in that point
-			this.modelCloth = this.modelCloth.concat(points[i].constraints[j].getPoints());
+			model = model.concat(points[i].constraints[j].getPoints());
 			nrLines+=2;
-			//this.modelCloth.push(points[i].constraints[j].getPoints());
 		}
 	}
-
-	this.posBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelCloth), gl.STATIC_DRAW);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
 	
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [0.0, 0.0, 1.1]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.1]);
 	else
-		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.1]);
 
 	
 	if(playerPos.y < (gl.viewportHeight)/2)
@@ -350,19 +356,16 @@ RenderCloth.prototype.render = function() {
 		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
 	else
 		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
-	//console.log(this.modelCloth);
 	
-	//mat4.scale(modelView, modelView, [1.0, 1.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progCloth.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progCloth.modelView, false, modelView);
+	gl.uniformMatrix4fv(progFabric.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progFabric.modelView, false, modelView);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progCloth.position, 3, gl.FLOAT, false, 0, 0);
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progFabric.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.LINES, 0, nrLines);
-	
 };
 
 //----------------------------------PARTICLES------------------------------------//

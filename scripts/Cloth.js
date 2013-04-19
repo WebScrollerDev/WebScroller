@@ -4,7 +4,7 @@ player_influence     = 20,
 player_cut           = 6,
 gravity              = -900,
 spacing              = 14,
-tear_distance        = 60;
+tear_distance        = 80;
 
 
 Cloth = function(pos, size) {
@@ -44,6 +44,76 @@ Cloth = function(pos, size) {
 };
 
 Cloth.prototype = {
+	
+	stopUpdating: function() {
+		clearInterval(this.updateInterval);
+	},
+	
+	getPoints: function() {
+		return this.points;
+	},
+	
+	getNumPoints: function() {
+		return this.points.length;
+	}, 
+	
+	getPosition: function() {
+		return this.pos;
+	},
+	
+	update: function() {
+
+		var i = physics_accuracy;
+		
+		while(i--) {
+			//console.log(i);
+			var p = this.points.length;
+			while(p--) this.points[p].resolve_constraints();
+		}
+	
+		i = this.points.length;
+		while(i--) this.points[i].update(.016);
+	}
+	
+};
+
+Rope = function(pos, size) {
+	this.size = {
+		x: size[0],
+		y: size[1]
+	}
+	this.pos = {
+		x: pos[0],
+		y: pos[1]
+	}
+	this.updateTime = 10;
+	this.points = [];
+
+	for(var y = 0; y <= this.size.y; y++) {
+
+		//for(var x = 0; x <= this.size.x; x++) {
+
+			var p = new Point(this.pos.x, this.pos.y + y * spacing, this.size);
+
+
+			if(y == 0) {
+				p.pin(p.x, p.y);
+			} else {
+				p.attach(this.points[(y - 1)]);
+			}
+			/*if(x != 0){
+				p.attach(this.points[this.points.length - 1]);
+			}*/
+			this.points.push(p);
+		//}
+	}
+	//console.log(this.points.length);
+
+	var _this = this; //Needed in setInterval, for specifying the correct this
+	this.updateInterval = setInterval(function(){_this.update()}, _this.updateTime);
+};
+
+Rope.prototype = {
 	
 	stopUpdating: function() {
 		clearInterval(this.updateInterval);
@@ -189,8 +259,7 @@ Constraint.prototype = {
 	}, 
 	
 	getPoints: function() {
-		var tmpPoints = [];
-		tmpPoints.push(this.p1.x, this.p1.y, 0.0, this.p2.x, this.p2.y, 0.0);
+		var tmpPoints = [this.p1.x, this.p1.y, 0.0, this.p2.x, this.p2.y, 0.0];
 		return tmpPoints;
 	}
 };
