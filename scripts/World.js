@@ -64,10 +64,7 @@ World.prototype = {
 		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
 		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.2, 0.2, 0.2]);
 		
-		this.gpuParticles.push(new GpuParticle([500,100], 16));
-		//this.bbs.push(new OBB([100, 20], [10, 20], [20, 40], 3.14/4));
-		
-		this.obb = new OBB([0, 0], [1024, 5], [2048, 10], 0);
+		this.gpuParticles.push(new GpuParticle([500,100], 32));
 	},
 	
 	setTilesBg: function(tiles) {
@@ -98,10 +95,6 @@ World.prototype = {
 		this.player.temp();
 		
 		this.player.setColliding(false);
-		
-		if(this.player.intersects2(this.obb)) {
-			this.player.collidedWith(new BoundingBox([0, 0], [2048, 10]));
-		}
 		
 		var tiles = this.tilesMg;
 		for(var i = 0; i < tiles.length; i++) {

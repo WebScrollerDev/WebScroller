@@ -1,4 +1,4 @@
-var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpu, progParticleGpuShow, progBB, progFabrica;
+var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpu, progParticleGpuShowg, progLine;
 
 function RenderManager() {
 	
@@ -30,8 +30,7 @@ RenderManager.prototype = {
 		progTileMg = utils.addShaderProg(gl, 'tileMg.vert', 'tileMg.frag');
 		progTileBg = utils.addShaderProg(gl, 'tileBg.vert', 'tileBg.frag');
 		progTileFg = utils.addShaderProg(gl, 'tileFg.vert', 'tileFg.frag');
-		progBB = utils.addShaderProg(gl, 'bb.vert', 'bb.frag');
-		progFabric = utils.addShaderProg(gl, 'fabric.vert', 'fabric.frag');
+		progLine = utils.addShaderProg(gl, 'line.vert', 'line.frag');
 		progParticleGpu = utils.addShaderProg(gl, 'particle-calc.vert', 'particle-calc.frag');
 		
 		this.initShaders();
@@ -148,25 +147,15 @@ RenderManager.prototype = {
 		progWorld.tex = gl.getUniformLocation(progWorld, "inTexSample");
 		progWorld.proj = gl.getUniformLocation(progWorld, "projMatrix");
 		progWorld.modelView = gl.getUniformLocation(progWorld, "modelViewMatrix");
-
-//---------------------------------BOUNDING BOX SHADER-----------------------------------//	
-		gl.useProgram(progBB);
 		
-		progBB.position = gl.getAttribLocation(progBB, "inPosition");
-		gl.enableVertexAttribArray(progBB.position);
+//---------------------------------FABRIC/BB SHADER-----------------------------------//
+		gl.useProgram(progLine);
 		
-		progBB.tex = gl.getUniformLocation(progBB, "inTexSample");
-		progBB.proj = gl.getUniformLocation(progBB, "projMatrix");
-		progBB.modelView = gl.getUniformLocation(progBB, "modelViewMatrix");
-		
-//---------------------------------CLOTH SHADER-----------------------------------//
-		gl.useProgram(progFabric);
-		
-		progFabric.position = gl.getAttribLocation(progFabric, "inPosition");
-		gl.enableVertexAttribArray(progFabric.position);
-		progFabric.proj = gl.getUniformLocation(progFabric, "projMatrix");
-		progFabric.modelView = gl.getUniformLocation(progFabric, "modelViewMatrix");	
-		progFabric.color = 	gl.getUniformLocation(progFabric, "inColor");
+		progLine.position = gl.getAttribLocation(progLine, "inPosition");
+		gl.enableVertexAttribArray(progLine.position);
+		progLine.proj = gl.getUniformLocation(progLine, "projMatrix");
+		progLine.modelView = gl.getUniformLocation(progLine, "modelViewMatrix");	
+		progLine.color = 	gl.getUniformLocation(progLine, "inColor");
 
 //---------------------------------PARTICLE SHADER-----------------------------------//	
 		gl.useProgram(progParticle);
@@ -303,27 +292,19 @@ RenderEntity.prototype.renderPlayer = function() {
 
 //----------------------------------CLOTH------------------------------------//
 RenderFabric = function() {
-	RenderFabric.baseConstructor.call(this);	
-	
-	this.modelCloth = [];
-	this.posBufferCloth = gl.createBuffer();
-	
-	this.modelRope = [];
-	this.posBufferRope = gl.createBuffer();
+	RenderFabric.baseConstructor.call(this);
 };
 
 InheritenceManager.extend(RenderFabric, RenderBase);
 
 RenderFabric.prototype.render = function() {
-	
-	//this.renderCloth(world.rope.getPoints());
-	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope, 10.0, world.rope.getColor());
-	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth, 1.0, world.cloth.getColor());
+	this.renderFabric(world.rope.getPoints(), 10.0, world.rope.getColor());
+	this.renderFabric(world.cloth.getPoints(), 1.0, world.cloth.getColor());
 };
 
-RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWidth, color) {
+RenderFabric.prototype.renderFabric = function(points, lineWidth, color) {
 	
-	gl.useProgram(progFabric);
+	gl.useProgram(progLine);
 	var modelView = mat4.create();
 	var playerPos = {
 		x: world.player.getPosition().x, 
@@ -331,6 +312,7 @@ RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWid
 	}
 	var i = points.length;
 	var nrLines = 0;
+	var model = [];
 	while(i--) {								// for each point
 		var j = points[i].constraints.length;
 		while(j--) {							// for each constraint in that point
@@ -338,7 +320,7 @@ RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWid
 			nrLines+=2;
 		}
 	}
-	
+	var posBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
 	
@@ -360,12 +342,12 @@ RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWid
 	
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progFabric.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progFabric.modelView, false, modelView);
-	gl.uniform3f(progFabric.color, color[0], color[1], color[2]);
+	gl.uniformMatrix4fv(progLine.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progLine.modelView, false, modelView);
+	gl.uniform3f(progLine.color, color[0], color[1], color[2]);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-	gl.vertexAttribPointer(progFabric.position, 3, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progLine.position, 3, gl.FLOAT, false, 0, 0);
 	gl.lineWidth(lineWidth);
 	gl.drawArrays(gl.LINES, 0, nrLines);
 };
@@ -858,7 +840,6 @@ InheritenceManager.extend(RenderWorld, RenderBase);
 RenderWorld.prototype.render = function() {	
 	gl.useProgram(progWorld);
 	this.renderBg();
-	this.renderMg();
 };
 
 RenderWorld.prototype.renderBg = function() {
@@ -899,59 +880,6 @@ RenderWorld.prototype.renderBg = function() {
 	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());
-	
-	//gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());
-};
-
-RenderWorld.prototype.renderMg = function() {
-	
-	var modelView = mat4.create();
-	
-
-	var playerPos = {
-		x: world.player.getPosition().x, 
-		y: world.player.getPosition().y
-	}
-	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
-	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 0.0]);
-	else {
-		//----------------------------------- -playerpos      -window/3/2 to get to the middle   /Mgwidth to scale correctly -----------------//
-		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 0.0]);
-	}
-	
-	if(playerPos.y < (gl.viewportHeight)/2)
-		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
-	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
-		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
-	else {
-		//----------------------------------- -playerpos      -window/3/2 to get to the middle   /Mgwidth to scale correctly -----------------//
-		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
-	}
-	
-	mat4.scale(modelView, modelView, [this.texMg.width, this.texMg.height, 1.0]);
-	mat4.multiply(modelView, cam.getView(), modelView);
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.vaoMg);
-
-	gl.uniformMatrix4fv(progWorld.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progWorld.modelView, false, modelView);
-	
-	//gl.enableAlphaTest();
-	gl.bindTexture(gl.TEXTURE_2D, this.texMg);
-    gl.uniform1i(progWorld.tex, 0);
-    
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progTileMg.position, 3, gl.FLOAT, false, 0, 0);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-	gl.vertexAttribPointer(progTileMg.texCoord, 2, gl.FLOAT, false, 0, 0);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-	gl.vertexAttribPointer(progTileMg.normal, 3, gl.FLOAT, false, 0, 0);
-	
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelMg.getNumVertices());
-
 };
 
 RenderBoundingBox = function() {	//Render Square Class
@@ -962,21 +890,20 @@ InheritenceManager.extend(RenderBoundingBox, RenderBase);
 
 RenderBoundingBox.prototype.render = function() {
 	if(debug) {
-		this.renderBB(world.obb);
-		
 		var tilesMg = world.getTilesMg();
 		for(var i = 0; i < tilesMg.length; i++) {
 			if(tilesMg[i].getBB() != null) {
 				this.renderBB(tilesMg[i].getBB());
 			}
 		}
+		
 		this.renderBB(world.player.obb);
 	}
 	
 };
 
 RenderBoundingBox.prototype.renderBB = function(bb) {
-	gl.useProgram(progCloth);
+	gl.useProgram(progLine);
 	
 	var modelView = mat4.create();
 	var playerPos = {
@@ -996,8 +923,8 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 	this.model = this.model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 	this.model = this.model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
 
-	this.posBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	var posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.model), gl.STATIC_DRAW);
 	
 	
@@ -1017,16 +944,14 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
 	
-	//console.log(this.modelCloth);
-	
-	//mat4.scale(modelView, modelView, [1.0, 1.0, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progCloth.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progCloth.modelView, false, modelView);
+	gl.uniformMatrix4fv(progLine.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progLine.modelView, false, modelView);
+	gl.uniform3fv(progLine.color, [1.0, 0.0, 0.0]);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
-	gl.vertexAttribPointer(progCloth.position, 3, gl.FLOAT, false, 0, 0);
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progLine.position, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.LINES, 0, 8);
 }

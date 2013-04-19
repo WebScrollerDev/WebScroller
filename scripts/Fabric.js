@@ -97,7 +97,6 @@ Rope = function(startPos, endPos, numJoints, lastPinned, color) {
 	var distY = endPos[1] - startPos[1];//vec2.distance(startPos, endPos);
 	var incrX = distX / numJoints;
 	var incrY = distY / numJoints;
-	console.log("DistTotal: " + distTotal + " distX: " + distX + " distY: " + distY + " incrX: " + incrX + " incrY: " + incrY);
 	
 	for(var i = 0; i <= numJoints; i++) {
 		var p = new Point(this.pos.x + i * incrX, this.pos.y + i * incrY, false);
@@ -135,7 +134,7 @@ Rope.prototype = {
 	},
 	
 	getColor: function() {
-		return this.color
+		return this.color;
 	}, 
 	
 	update: function() {
@@ -193,7 +192,7 @@ Point.prototype = {
 			this.px = this.x - (world.player.getPosition().x - world.player.getPrevPosition().x) * 1.8;
 			this.py = this.y - (world.player.getPosition().y - world.player.getPrevPosition().y) * 1.8;
 		}
-		
+
 		if (this.tearable && (Math.abs(world.player.getVelocity()[0]) > 1 || Math.abs(world.player.getVelocity()[1]) > 2) && dist < player_cut) this.constraints = [];
 		
 		
@@ -267,7 +266,7 @@ Constraint.prototype = {
 			dist = Math.sqrt(diff_x * diff_x + diff_y * diff_y),
 			diff = (this.length - dist) / dist;
 	
-		if (dist > tear_distance) this.p1.remove_constraint(this);
+		//if (dist > tear_distance) this.p1.remove_constraint(this);
 	
 		var px = diff_x * diff * 0.5;
 		var py = diff_y * diff * 0.5;
