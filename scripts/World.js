@@ -45,11 +45,10 @@ World.prototype = {
 		//this.fireEmitters.push(new EmitterFire([800,200], 10000, 10, 32, [0.0,0.8], [0.1,0.0], 2000, 500));
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 		
-		/*this.staticLights.push(new LightBase([495.0, 250.0, 1.0], [1.0, 1.0, 0.0]));		
-		this.staticLights.push(new LightBase([135.0, 60.0, 1.0], [1.0, 1.0, 0.0]));
-		this.staticLights.push(new LightBase([230.0, 60.0, 1.0], [1.0, 1.0, 0.0]));*/
-		
 		this.staticLightsBg.push(new LightBase([575.0, 315.0, 40.0], [0.0, 0.0, 1.0], 5.0));
+		
+		
+		this.staticLightsMg.push(new LightBase([0.0, 0.0, 40.0], [1.0, 0.0, 0.0], 3.0));
 		
 		this.flickeringLightsMg.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
 		this.flickeringLightsMg.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
@@ -62,8 +61,8 @@ World.prototype = {
 		
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
-		this.cloth = new Cloth([700, 230], [10, 10], 14);
-		this.rope = new Rope([500, 200], [600, 200], 10);
+		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
+		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.2, 0.2, 0.2]);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 16));
 		//this.bbs.push(new OBB([100, 20], [10, 20], [20, 40], 3.14/4));

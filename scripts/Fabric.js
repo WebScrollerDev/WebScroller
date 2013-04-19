@@ -6,7 +6,7 @@ gravity              = -900,
 tear_distance        = 80;
 
 
-Cloth = function(pos, size, spacing) {
+Cloth = function(pos, size, spacing, color) {
 	this.size = {
 		x: size[0],
 		y: size[1]
@@ -15,6 +15,7 @@ Cloth = function(pos, size, spacing) {
 		x: pos[0],
 		y: pos[1]
 	}
+	this.color = color;
 	this.updateTime = 10;
 	this.points = [];
 
@@ -22,7 +23,7 @@ Cloth = function(pos, size, spacing) {
 
 		for(var x = 0; x <= this.size.x; x++) {
 
-			var p = new Point(this.pos.x + x * spacing, this.pos.y + y * spacing, true);
+			var p = new Point(this.pos.x + x * spacing, this.pos.y - y * spacing, true);
 
 
 			if(y == 0) {
@@ -60,6 +61,10 @@ Cloth.prototype = {
 		return this.pos;
 	},
 	
+	getColor: function() {
+		return this.color
+	}, 
+	
 	update: function() {
 
 		var i = physics_accuracy;
@@ -76,15 +81,15 @@ Cloth.prototype = {
 	
 };
 
-Rope = function(startPos, endPos, numJoints) {
+Rope = function(startPos, endPos, numJoints, lastPinned, color) {
 	this.pos = {
 		x: startPos[0],
 		y: startPos[1]
 	}
 	this.updateTime = 10;
 	this.points = [];
-	//var spacing = length / numJoints;
 	
+	this.color = color;
 	
 	var distTotal = vec2.distance(startPos, endPos);
 	
@@ -96,19 +101,17 @@ Rope = function(startPos, endPos, numJoints) {
 	
 	for(var i = 0; i <= numJoints; i++) {
 		var p = new Point(this.pos.x + i * incrX, this.pos.y + i * incrY, false);
-		if(i == 0) {
+		if(i == 0 || (lastPinned && i == numJoints)) {
 			p.pin(p.x, p.y);
 		} else {
 			p.attach(this.points[(i - 1)], distTotal/numJoints);
 		}
 		
-		if(i == numJoints) {
-			//p.pin(p.x, p.y);
-		}
-		
 		this.points.push(p);
 	}
-
+	if(lastPinned) {
+		this.points[numJoints-1].attach(this.points[numJoints], distTotal/numJoints);
+	}
 	var _this = this; //Needed in setInterval, for specifying the correct this
 	this.updateInterval = setInterval(function(){_this.update()}, _this.updateTime);
 };
@@ -131,6 +134,10 @@ Rope.prototype = {
 		return this.pos;
 	},
 	
+	getColor: function() {
+		return this.color
+	}, 
+	
 	update: function() {
 
 		var i = physics_accuracy;
@@ -143,6 +150,19 @@ Rope.prototype = {
 	
 		i = this.points.length;
 		while(i--) this.points[i].update(.016);
+	}, 
+	
+	getPosition: function(i) {
+		var tmpPos = {
+			x: this.points[i % this.points.length].x, 
+			y: this.points[i % this.points.length].y,
+			z: 0.1
+		}
+		return tmpPos;
+	},
+	
+	getAngle: function(i) {
+		
 	}
 	
 };

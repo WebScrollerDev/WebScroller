@@ -165,7 +165,8 @@ RenderManager.prototype = {
 		progFabric.position = gl.getAttribLocation(progFabric, "inPosition");
 		gl.enableVertexAttribArray(progFabric.position);
 		progFabric.proj = gl.getUniformLocation(progFabric, "projMatrix");
-		progFabric.modelView = gl.getUniformLocation(progFabric, "modelViewMatrix");		
+		progFabric.modelView = gl.getUniformLocation(progFabric, "modelViewMatrix");	
+		progFabric.color = 	gl.getUniformLocation(progFabric, "inColor");
 
 //---------------------------------PARTICLE SHADER-----------------------------------//	
 		gl.useProgram(progParticle);
@@ -316,11 +317,12 @@ InheritenceManager.extend(RenderFabric, RenderBase);
 RenderFabric.prototype.render = function() {
 	
 	//this.renderCloth(world.rope.getPoints());
-	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope, 10.0);
-	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth, 1.0);
+	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope, 10.0, world.rope.getColor());
+	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth, 1.0, world.cloth.getColor());
 };
 
-RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWidth) {
+RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWidth, color) {
+	
 	gl.useProgram(progFabric);
 	var modelView = mat4.create();
 	var playerPos = {
@@ -360,6 +362,7 @@ RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWid
 
 	gl.uniformMatrix4fv(progFabric.proj, false, cam.getProj());
 	gl.uniformMatrix4fv(progFabric.modelView, false, modelView);
+	gl.uniform3f(progFabric.color, color[0], color[1], color[2]);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.vertexAttribPointer(progFabric.position, 3, gl.FLOAT, false, 0, 0);
@@ -1072,7 +1075,7 @@ RenderLight.prototype.initLights = function() {
 		var color = [this.staticLightsMg[i].getColor().r, this.staticLightsMg[i].getColor().g, this.staticLightsMg[i].getColor().b];
 		this.lightPosMg = this.lightPosMg.concat(position);
 		this.lightColorMg = this.lightColorMg.concat(color);
-		this.lightIntensityMg = this.lightIntensityMg.concat(this.staticLightsBg[i].getIntensity());
+		this.lightIntensityMg = this.lightIntensityMg.concat(this.staticLightsMg[i].getIntensity());
 	}
 //-----------------------FLICKERING LIGHTS---------------------------//	
 	var totalNrFlickeringLights = this.flickeringLightsMg.length;
@@ -1184,6 +1187,14 @@ RenderLight.prototype.updateMg = function() {
 	var totalNrFlickeringLights = this.flickeringLightsMg.length;
 	var totalNrMorphingLights = this.morphingLightsMg.length;
 	
+	for(var i = 0; i < totalNrStaticLights; i++) {	// static //Every static light will be placed on the rope for now
+		this.staticLightsMg[i].setPosition(world.rope.getPosition(10));
+		var tmpPos = this.staticLightsMg[i].getPosition();
+		this.lightPosMg[i*3] = tmpPos.x;
+		this.lightPosMg[i*3+1] = tmpPos.y;
+		this.lightPosMg[i*3+2] = tmpPos.z;
+	}
+	
 	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
 		this.lightIntensityMg[i] = this.flickeringLightsMg[i - totalNrStaticLights].getIntensity();
 	}
@@ -1196,6 +1207,7 @@ RenderLight.prototype.updateMg = function() {
 	}
 	
 	gl.useProgram(progTileMg);
+	gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);
 	gl.uniform3fv(progTileMg.lightColor, this.lightColorMg);
 	gl.uniform1fv(progTileMg.lightIntensity, this.lightIntensityMg);
 }
