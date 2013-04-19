@@ -3,11 +3,10 @@ var physics_accuracy = 2,
 player_influence     = 20, 
 player_cut           = 6,
 gravity              = -900,
-spacing              = 14,
 tear_distance        = 80;
 
 
-Cloth = function(pos, size) {
+Cloth = function(pos, size, spacing) {
 	this.size = {
 		x: size[0],
 		y: size[1]
@@ -23,16 +22,16 @@ Cloth = function(pos, size) {
 
 		for(var x = 0; x <= this.size.x; x++) {
 
-			var p = new Point(this.pos.x + x * spacing, this.pos.y + y * spacing, this.size);
+			var p = new Point(this.pos.x + x * spacing, this.pos.y + y * spacing, true);
 
 
 			if(y == 0) {
 				p.pin(p.x, p.y);
 			} else {
-				p.attach(this.points[x + (y - 1) * (this.size.x + 1)]);
+				p.attach(this.points[x + (y - 1) * (this.size.x + 1)], spacing);
 			}
 			if(x != 0){
-				p.attach(this.points[this.points.length - 1]);
+				p.attach(this.points[this.points.length - 1], spacing);
 			}
 			this.points.push(p);
 		}
@@ -77,37 +76,38 @@ Cloth.prototype = {
 	
 };
 
-Rope = function(pos, size) {
-	this.size = {
-		x: size[0],
-		y: size[1]
-	}
+Rope = function(startPos, endPos, numJoints) {
 	this.pos = {
-		x: pos[0],
-		y: pos[1]
+		x: startPos[0],
+		y: startPos[1]
 	}
 	this.updateTime = 10;
 	this.points = [];
-
-	for(var y = 0; y <= this.size.y; y++) {
-
-		//for(var x = 0; x <= this.size.x; x++) {
-
-			var p = new Point(this.pos.x, this.pos.y + y * spacing, this.size);
-
-
-			if(y == 0) {
-				p.pin(p.x, p.y);
-			} else {
-				p.attach(this.points[(y - 1)]);
-			}
-			/*if(x != 0){
-				p.attach(this.points[this.points.length - 1]);
-			}*/
-			this.points.push(p);
-		//}
+	//var spacing = length / numJoints;
+	
+	
+	var distTotal = vec2.distance(startPos, endPos);
+	
+	var distX = endPos[0] - startPos[0];//
+	var distY = endPos[1] - startPos[1];//vec2.distance(startPos, endPos);
+	var incrX = distX / numJoints;
+	var incrY = distY / numJoints;
+	console.log("DistTotal: " + distTotal + " distX: " + distX + " distY: " + distY + " incrX: " + incrX + " incrY: " + incrY);
+	
+	for(var i = 0; i <= numJoints; i++) {
+		var p = new Point(this.pos.x + i * incrX, this.pos.y + i * incrY, false);
+		if(i == 0) {
+			p.pin(p.x, p.y);
+		} else {
+			p.attach(this.points[(i - 1)], distTotal/numJoints);
+		}
+		
+		if(i == numJoints) {
+			//p.pin(p.x, p.y);
+		}
+		
+		this.points.push(p);
 	}
-	//console.log(this.points.length);
 
 	var _this = this; //Needed in setInterval, for specifying the correct this
 	this.updateInterval = setInterval(function(){_this.update()}, _this.updateTime);
@@ -148,8 +148,7 @@ Rope.prototype = {
 };
 
 //-------------------------POINT-------------------------//
-var Point = function(x, y, bounds) {
-	this.bounds = bounds;
+var Point = function(x, y, tearable) {
 	this.x = x;
 	this.y = y;
 	this.px = x;
@@ -159,6 +158,7 @@ var Point = function(x, y, bounds) {
 	this.pin_x = null;
 	this.pin_y = null;
 	this.constraints = [];
+	this.tearable = tearable;
 };
 
 Point.prototype = {
@@ -174,7 +174,7 @@ Point.prototype = {
 			this.py = this.y - (world.player.getPosition().y - world.player.getPrevPosition().y) * 1.8;
 		}
 		
-		if ((Math.abs(world.player.getVelocity()[0]) > 1 || Math.abs(world.player.getVelocity()[1]) > 2) && dist < player_cut) this.constraints = [];
+		if (this.tearable && (Math.abs(world.player.getVelocity()[0]) > 1 || Math.abs(world.player.getVelocity()[1]) > 2) && dist < player_cut) this.constraints = [];
 		
 		
 	
@@ -204,12 +204,12 @@ Point.prototype = {
 	
 		var i = this.constraints.length;
 		while(i--) this.constraints[i].resolve();
-	}, 
+	},
 	
-	attach: function(point) {
+	attach: function(point, spacing) {
 	
 		this.constraints.push(
-			new Constraint(this, point)
+			new Constraint(this, point, spacing)
 		);
 	}, 
 	
@@ -232,7 +232,7 @@ Point.prototype = {
 };
 
 //-------------------------CONSTRAINT-------------------------//
-var Constraint = function(p1, p2) {
+var Constraint = function(p1, p2, spacing) {
 
 	this.p1 = p1;
 	this.p2 = p2;

@@ -62,8 +62,8 @@ World.prototype = {
 		
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
-		this.cloth = new Cloth([700, 230], [10, 10]);
-		this.rope = new Rope([500, 150], [10, 10]);
+		this.cloth = new Cloth([700, 230], [10, 10], 14);
+		this.rope = new Rope([500, 200], [600, 200], 10);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 16));
 		//this.bbs.push(new OBB([100, 20], [10, 20], [20, 40], 3.14/4));

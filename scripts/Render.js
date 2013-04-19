@@ -316,13 +316,12 @@ InheritenceManager.extend(RenderFabric, RenderBase);
 RenderFabric.prototype.render = function() {
 	
 	//this.renderCloth(world.rope.getPoints());
-	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope);
-	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth);
+	this.renderFabric(world.rope.getPoints(), this.modelRope, this.posBufferRope, 10.0);
+	this.renderFabric(world.cloth.getPoints(), this.modelCloth, this.posBufferCloth, 1.0);
 };
 
-RenderFabric.prototype.renderFabric = function(points, model, posBuffer) {
+RenderFabric.prototype.renderFabric = function(points, model, posBuffer, lineWidth) {
 	gl.useProgram(progFabric);
-	
 	var modelView = mat4.create();
 	var playerPos = {
 		x: world.player.getPosition().x, 
@@ -364,7 +363,7 @@ RenderFabric.prototype.renderFabric = function(points, model, posBuffer) {
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.vertexAttribPointer(progFabric.position, 3, gl.FLOAT, false, 0, 0);
-	
+	gl.lineWidth(lineWidth);
 	gl.drawArrays(gl.LINES, 0, nrLines);
 };
 
