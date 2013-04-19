@@ -9,6 +9,13 @@
 				</Pos>
 			</Tile>
 			<Tile>
+				<Id>8</Id>
+				<Pos>
+					<X>1000</X>
+					<Y>200</Y>
+				</Pos>
+			</Tile>
+			<Tile>
 				<Id>0</Id>
 				<Pos>
 					<X>1800</X>

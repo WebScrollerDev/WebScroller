@@ -161,7 +161,17 @@ Rope.prototype = {
 	},
 	
 	getAngle: function(i) {
+		var first = [this.points[i % this.points.length].x, this.points[i % this.points.length].y];
+		var second = [this.points[i-1 % this.points.length].x, this.points[i-1 % this.points.length].y];
 		
+		var angleCos = Math.acos((second[0] - first[0]) / (second[1] - first[1]));
+		var angleSin = Math.asin((second[0] - first[0]) / (second[1] - first[1]));
+		var angleTan = Math.atan((second[1] - first[1]) / (second[0] - first[0]));
+		var angleTan2 = Math.atan2((second[0] - first[0]),  (second[1] - first[1]));
+		
+		//console.log("cos: " + angleCos + " sin: " + angleSin + " tan: " + angleTan + " tan2: " + angleTan2)
+		
+		return -angleTan2;
 	}
 	
 };

@@ -97,12 +97,21 @@
 			</Center>
 			<Size>
 				<X>2048</X>
-				<Y>10</Y>
+				<Y>5</Y>
 			</Size>
 			<Angle>0</Angle>
 		</BoundingBox>
 		<Size>
 			<X>2048</X>
+			<Y>32</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
+		<Id>8</Id>
+		<Url>resources/tiles/mg/test.png</Url>
+		<Size>
+			<X>16</X>
 			<Y>32</Y>
 		</Size>
 	</Tile>

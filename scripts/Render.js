@@ -653,7 +653,11 @@ RenderTile.prototype.render = function() {
 	for(var i = 0; i < tilesMg.length; i++)
 	{
 		//console.log(world.getEmitter().getParticles()[i].getPosition());
-		this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize());
+		if(i == 1)
+			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), world.rope.getAngle(10));
+		else
+			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), 0.0);
+		
 	}
 	
 	var tilesFg = world.getTilesFg();
@@ -712,7 +716,7 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size) {
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
 }
 
-RenderTile.prototype.renderTileMg = function(pos, tex, size) {
+RenderTile.prototype.renderTileMg = function(pos, tex, size, rot) {
 	var modelView = mat4.create();
 	
 	var playerPos = {
@@ -734,6 +738,7 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size) {
 	else {
 		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
+	mat4.rotateZ(modelView, modelView, rot);
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);

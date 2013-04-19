@@ -62,7 +62,7 @@ World.prototype = {
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
 		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
-		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.2, 0.2, 0.2]);
+		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 32));
 	},
@@ -92,6 +92,10 @@ World.prototype = {
 	},
 	
 	update: function() {
+		
+		this.tilesMg[1].pos.x = this.rope.getPosition(10).x - this.tilesMg[1].getTile().size.x/2;
+		this.tilesMg[1].pos.y = this.rope.getPosition(10).y - this.tilesMg[1].getTile().size.y/2;
+		
 		this.player.temp();
 		
 		this.player.setColliding(false);
