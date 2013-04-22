@@ -19,7 +19,7 @@ BoundingBox.prototype = {
 	}
 };
 
-Tile = function(gl, path) {
+Tile = function(path) {
 	this.tex = gl.createTexture();
 	Texture.loadImage(gl, path, this.tex);
 };
@@ -28,11 +28,14 @@ Tile.prototype = {
 	
 	getTex: function() {
 		return this.tex;
-	}, 
+	},
 	
 	setSize: function(size) {
-		this.size = size;
-	}, 
+		this.size = {
+			x: size[0], 
+			y: size[1]
+		}
+	},
 	
 	getSize: function() {
 		return this.size;
@@ -79,10 +82,14 @@ TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation,
 		ANIMATION_IDLE: 0,
 		ANIMATION_ONE: 1
 	}
-	this.status = this.tileStatus.ANIMATION_IDLE;
-	this.totalNrAnimations = totalNrAnimations;
-	this.totalNrFramesPerAnimation = totalNrFramesPerAnimation;
-	this.currFrame = 0;
+	
+	this.maxAnim = [totalNrFramesPerAnimation, totalNrAnimations];
+	this.currAnim = [0, this.tileStatus.ANIMATION_IDLE];
+	
+	//this.status = this.tileStatus.ANIMATION_IDLE;
+	//this.totalNrAnimations = totalNrAnimations;
+	//this.totalNrFramesPerAnimation = totalNrFramesPerAnimation;
+	//this.currFrame = 0;
 	this.animationSpeed = animationSpeed;
 	this.updateStatusSpeed = updateStatusSpeed;
 	//dthis.frameWidth =
@@ -94,23 +101,28 @@ TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation,
 InheritenceManager.extend(TileAnimated, TilePlaceable); //TileAnimated inherites from TilePlaceable
 
 TileAnimated.prototype.animate = function() {
-	if( (this.currFrame + 1) >= (this.totalNrFramesPerAnimation - 1) )
-		this.currFrame = 0;
+	if( (this.currAnim[0] + 1) >= this.maxAnim[0])
+		this.currAnim[0] = 0;
 	else
-		this.currFrame++;
+		this.currAnim[0]++;
 };
 
-tileAnimated.prototype.updateStatus = function() {
-	// logic for changing status, ex: if the player jumps on the tile then this.status = this.tilestatus.ANIMATION_ONE
+TileAnimated.prototype.updateStatus = function() {
+	// logic for changing status, ex: if the player jumps on the tile then this.changeStatus(this.tilestatus.ANIMATION_ONE)
 };
 
 TileAnimated.prototype.changeStatus = function(newState) {
-	this.status = newState;
-	if(newState != this.status)
-		this.currFrame = 0;
+	if(newState != this.currAnim[1]) {
+		this.currAnim[0] = 0;
+		this.currAnim[1] = newState;
+	}
 };
 
-TileAnimated.prototype.getStatus = function() {
-	return this.status;
+TileAnimated.prototype.getCurrAnim = function() {
+	return this.currAnim;
+};
+
+TileAnimated.prototype.getMaxAnim = function() {
+	return this.maxAnim;
 };
 

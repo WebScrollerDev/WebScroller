@@ -103,7 +103,7 @@ function parseMgTiles(xml)
 	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
 			if($(this).find("BoundingBoxes")) {
@@ -137,12 +137,7 @@ function parseMgTiles(xml)
 			}
 			
 			$(this).find("Size").each(function() {
-				var size = {
-					x: parseInt($(this).find("X").text()), 
-					y: parseInt($(this).find("Y").text())
-				}
-				
-				tile.setSize(size);
+				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
 			});
 			
 			
@@ -160,17 +155,12 @@ function parseBgTiles(xml)
 	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
 			
 			$(this).find("Size").each(function() {
-				var size = {
-					x: parseInt($(this).find("X").text()), 
-					y: parseInt($(this).find("Y").text())
-				}
-				
-				tile.setSize(size);
+				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
 			});
 			
 			
@@ -188,17 +178,12 @@ function parseFgTiles(xml)
 	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
 			
 			$(this).find("Size").each(function() {
-				var size = {
-					x: parseInt($(this).find("X").text()), 
-					y: parseInt($(this).find("Y").text())
-				}
-				
-				tile.setSize(size);
+				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
 			});
 			
 			

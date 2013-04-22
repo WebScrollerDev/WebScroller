@@ -204,16 +204,16 @@ RenderBase.prototype = {
 	
 	initBuffers: function(model) { //generate the model
 		
-		this.posBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+		model.posBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getVertexArray()), gl.STATIC_DRAW);
 		
-		this.texBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+		model.texBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
 		
-		this.normalBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+		model.normalBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getNormalArray()), gl.STATIC_DRAW);
 	}
 }
@@ -247,7 +247,7 @@ RenderEntity.prototype.renderPlayer = function() {
 		y: world.player.getVelocity()[1]
 	}
 	this.modelPlayer.anim(world.player.totalNrFramesPerAnimation, world.player.currFrame, world.player.totalNrAnimations, world.player.status, world.player.flipped);
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPlayer.texBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
@@ -278,13 +278,13 @@ RenderEntity.prototype.renderPlayer = function() {
     gl.uniform1i(progEntity.tex, 0);
     
     
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPlayer.posBuffer);
 	gl.vertexAttribPointer(progEntity.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPlayer.texBuffer);
 	gl.vertexAttribPointer(progEntity.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelPlayer.normalBuffer);
 	gl.vertexAttribPointer(progEntity.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelPlayer.getNumVertices());
@@ -569,13 +569,13 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotati
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleSmoke);
     gl.uniform1i(progParticle.tex, 0);
     gl.uniform1f(progParticle.fade, fade);
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleSmoke.posBuffer);
 	gl.vertexAttribPointer(progParticle.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleSmoke.texBuffer);
 	gl.vertexAttribPointer(progParticle.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleSmoke.normalBuffer);
 	gl.vertexAttribPointer(progParticle.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelParticleSmoke.getNumVertices());
@@ -616,13 +616,13 @@ RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, rotatio
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleFire);
     gl.uniform1i(progParticle.tex, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleFire.posBuffer);
 	gl.vertexAttribPointer(progParticle.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleFire.texBuffer);
 	gl.vertexAttribPointer(progParticle.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelParticleFire.normalBuffer);
 	gl.vertexAttribPointer(progParticle.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelParticleFire.getNumVertices());
@@ -631,45 +631,65 @@ RenderParticle.prototype.renderFireParticle = function(pos, fade, scale, rotatio
 //----------------------------------TILES------------------------------------//
 RenderTile = function() {	//Render Square Class
 	RenderTile.baseConstructor.call(this);
-	this.modelTile = new ModelSquare();
 	
+	this.modelTile = new ModelSquare();
 	this.initBuffers(this.modelTile);
+	
+	this.modelTileAnim = new ModelSquare();
+	this.initBuffers(this.modelTileAnim);
 }
 
 InheritenceManager.extend(RenderTile, RenderBase);
 
 RenderTile.prototype.render = function() {
-
+//----------------------------------------------STATIC BG------------------------------------------//
 	var tilesBg = world.getTilesBg();
 	gl.useProgram(progTileBg);	
 	for(var i = 0; i < tilesBg.length; i++)
 	{
-		//console.log(world.getEmitter().getParticles()[i].getPosition());
-		this.renderTileBg(tilesBg[i].getPosition(), tilesBg[i].getTile().getTex(), tilesBg[i].getTile().getSize());
+		this.renderTileBg(tilesBg[i].getPosition(), tilesBg[i].getTile().getTex(), tilesBg[i].getTile().getSize(), this.modelTile);
 	}
-	
+//---------------------------------------------ANIMATED BG-----------------------------------------//
+	var tilesAnimBg = world.getTilesAnimatedBg();
+	gl.useProgram(progTileBg);	
+	for(var i = 0; i < tilesAnimBg.length; i++)
+	{
+		this.renderTileAnimatedBg(tilesAnimBg[i].getPosition(), tilesAnimBg[i].getTile().getTex(), tilesAnimBg[i].getTile().getSize(), tilesAnimBg[i].getCurrAnim(), tilesAnimBg[i].getMaxAnim(), this.modelTileAnim);
+	}
+//----------------------------------------------STATIC MG------------------------------------------//	
 	var tilesMg = world.getTilesMg();
 	gl.useProgram(progTileMg);
 	for(var i = 0; i < tilesMg.length; i++)
 	{
-		//console.log(world.getEmitter().getParticles()[i].getPosition());
 		if(i == 0)
-			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), world.rope.getAngle(10));
+			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), world.rope.getAngle(10), this.modelTile);
 		else
-			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), 0.0);
-		
+			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), 0.0, this.modelTile);	
 	}
-	
+//---------------------------------------------ANIMATED MG-----------------------------------------//
+	var tilesAnimMg = world.getTilesAnimatedMg();
+	gl.useProgram(progTileMg);
+	for(var i = 0; i < tilesAnimMg.length; i++)
+	{
+		this.renderTileAnimatedMg(tilesAnimMg[i].getPosition(), tilesAnimMg[i].getTile().getTex(), tilesAnimMg[i].getTile().getSize(), 0.0, tilesAnimMg[i].getCurrAnim(), tilesAnimMg[i].getMaxAnim(), this.modelTileAnim);	
+	}
+//----------------------------------------------STATIC FG------------------------------------------//
 	var tilesFg = world.getTilesFg();
 	gl.useProgram(progTileFg);
 	for(var i = 0; i < tilesFg.length; i++)
 	{
-		//console.log(world.getEmitter().getParticles()[i].getPosition());
-		this.renderTileFg(tilesFg[i].getPosition(), tilesFg[i].getTile().getTex(), tilesFg[i].getTile().getSize());
+		this.renderTileFg(tilesFg[i].getPosition(), tilesFg[i].getTile().getTex(), tilesFg[i].getTile().getSize(), this.modelTile);
+	}
+//---------------------------------------------ANIMATED FG-----------------------------------------//
+	var tilesAnimFg = world.getTilesAnimatedFg();
+	gl.useProgram(progTileFg);
+	for(var i = 0; i < tilesAnimFg.length; i++)
+	{
+		this.renderTileAnimatedFg(tilesAnimFg[i].getPosition(), tilesAnimFg[i].getTile().getTex(), tilesAnimFg[i].getTile().getSize(), tilesAnimFg[i].getCurrAnim(), tilesAnimFg[i].getMaxAnim(), this.modelTileAnim);
 	}
 };
-
-RenderTile.prototype.renderTileBg = function(pos, tex, size) {
+//-----------------------------------------------RENDER STATIC BG---------------------------------------------//
+RenderTile.prototype.renderTileBg = function(pos, tex, size, model) {
 	var modelView = mat4.create();
 	
 	var playerPos = {
@@ -704,19 +724,67 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size) {
 	gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.uniform1i(progTileBg.tex, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
 	gl.vertexAttribPointer(progTileBg.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
 	gl.vertexAttribPointer(progTileBg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
 	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
 }
+//----------------------------------------------RENDER ANIMNATED BG-------------------------------------------//
+RenderTile.prototype.renderTileAnimatedBg = function(pos, tex, size, currAnim, maxAnim, model) {
+	var modelView = mat4.create();
+	
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	
+	model.anim(maxAnim[0], currAnim[0], maxAnim[1], currAnim[1], false);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, pos.y, -9.0]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, -9.0]);
+	else {
+		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
+					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
+		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, -9.0]);
+	}
+	
+	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
+	mat4.multiply(modelView, cam.getView(), modelView);
 
-RenderTile.prototype.renderTileMg = function(pos, tex, size, rot) {
+	gl.uniformMatrix4fv(progTileBg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileBg.modelView, false, modelView);
+	var tmp = mat4.copy(mat4.create(), modelView);
+	mat4.transpose(tmp, tmp);
+	gl.uniformMatrix4fv(progTileBg.view, false, tmp);
+	
+	gl.uniform2f(progTileBg.trans, pos.x, pos.y);
+	
+	gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(progTileBg.tex, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
+	gl.vertexAttribPointer(progTileBg.position, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.vertexAttribPointer(progTileBg.texCoord, 2, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
+	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
+}
+//-----------------------------------------------RENDER STATIC MG---------------------------------------------//
+RenderTile.prototype.renderTileMg = function(pos, tex, size, rot, model) {
 	var modelView = mat4.create();
 	
 	var playerPos = {
@@ -755,19 +823,76 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size, rot) {
     gl.uniform1i(progTileMg.tex, 0);
 	
 	//console.log(tmpModelTile);
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
 	gl.vertexAttribPointer(progTileMg.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
 	gl.vertexAttribPointer(progTileMg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
 	gl.vertexAttribPointer(progTileMg.normal, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
+}
+//----------------------------------------------RENDER ANIMNATED MG-------------------------------------------//
+RenderTile.prototype.renderTileAnimatedMg = function(pos, tex, size, rot, currAnim, maxAnim, model) {
+	var modelView = mat4.create();
+	
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	
+	model.anim(maxAnim[0], currAnim[0], maxAnim[1], currAnim[1], false);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, 0.0, 1.0]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.0]);
+	else {
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.0]);
+	}
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, pos.y, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, pos.y -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else {
+		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+	}
+	mat4.rotateZ(modelView, modelView, rot);
+	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
+	//Used to center the player on the canvas
+	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progTileMg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileMg.modelView, false, modelView);
+	var tmp = mat4.copy(mat4.create(), modelView);
+	mat4.transpose(tmp, tmp);
+	gl.uniformMatrix4fv(progTileMg.view, false, tmp);
+	gl.uniform2f(progTileMg.trans, pos.x, pos.y);
+	
+	gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(progTileMg.tex, 0);
+	
+	//console.log(tmpModelTile);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
+	gl.vertexAttribPointer(progTileMg.position, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.vertexAttribPointer(progTileMg.texCoord, 2, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
+	gl.vertexAttribPointer(progTileMg.normal, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
 }
 
-RenderTile.prototype.renderTileFg = function(pos, tex, size) {
+//-----------------------------------------------RENDER STATIC FG---------------------------------------------//
+RenderTile.prototype.renderTileFg = function(pos, tex, size, model) {
 	var modelView = mat4.create();
 	
 	var playerPos = {
@@ -812,16 +937,78 @@ RenderTile.prototype.renderTileFg = function(pos, tex, size) {
 	gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.uniform1i(progTileFg.tex, 0);
     
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
 	gl.vertexAttribPointer(progTileFg.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
 	gl.vertexAttribPointer(progTileFg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
 	gl.vertexAttribPointer(progTileFg.normal, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelTile.getNumVertices());
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
+}
+//----------------------------------------------RENDER ANIMNATED FG-------------------------------------------//
+
+RenderTile.prototype.renderTileAnimatedFg = function(pos, tex, size, currAnim, maxAnim, model) {
+	var modelView = mat4.create();
+	
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	
+	model.anim(maxAnim[0], currAnim[0], maxAnim[1], currAnim[1], false);
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [pos.x, 0.0, 2.0]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [pos.x -(world.fgSize.x - (gl.viewportWidth)), 0.0, 2.0]);
+	else {
+		var trans = (((gl.viewportWidth)/2)*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
+					(playerPos.x*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, 2.0]);
+		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
+	}
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, pos.y, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, pos.y -(world.fgSize.y - (gl.viewportHeight)), 0.0]);
+	else {
+		var trans = (((gl.viewportHeight)/2)*((world.fgSize.y - gl.viewportHeight)/(world.worldSize.y - gl.viewportHeight))) - 
+					(playerPos.y*((world.fgSize.y - gl.viewportHeight)/(world.worldSize.y - gl.viewportHeight)));
+		mat4.translate(modelView, modelView, [0.0, trans + pos.y, 0.0]);
+		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
+	}
+	
+	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
+	//Used to center the player on the canvas
+	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progTileFg.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progTileFg.modelView, false, modelView);
+	var tmp = mat4.copy(mat4.create(), modelView);
+	mat4.transpose(tmp, tmp);
+	gl.uniformMatrix4fv(progTileFg.view, false, tmp);
+	gl.uniform2f(progTileFg.trans, pos.x, pos.y);
+	
+	gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(progTileFg.tex, 0);
+    
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
+	gl.vertexAttribPointer(progTileFg.position, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+	gl.vertexAttribPointer(progTileFg.texCoord, 2, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
+	gl.vertexAttribPointer(progTileFg.normal, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
 }
 
 RenderWorld = function() {
@@ -875,13 +1062,13 @@ RenderWorld.prototype.renderBg = function() {
 	gl.bindTexture(gl.TEXTURE_2D, this.texBg);
     gl.uniform1i(progWorld.tex, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelBg.posBuffer);
 	gl.vertexAttribPointer(progTileBg.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelBg.texBuffer);
 	gl.vertexAttribPointer(progTileBg.texCoord, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelBg.normalBuffer);
 	gl.vertexAttribPointer(progTileBg.normal, 3, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());

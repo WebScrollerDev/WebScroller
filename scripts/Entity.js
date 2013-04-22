@@ -225,9 +225,10 @@ EntityPlayer.prototype.update = function() {
 };
 
 EntityPlayer.prototype.changeStatus = function(newState) {
-	this.status = newState;
-	if(newState != this.status)
+	if(newState != this.status) {
 		this.currFrame = 0;
+		this.status = newState;
+	}
 } 
 
 EntityPlayer.prototype.getStatus = function() {

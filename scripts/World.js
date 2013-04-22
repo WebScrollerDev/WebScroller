@@ -17,6 +17,11 @@ World = function() {
 	this.tilesBg = new Array();
 	this.tilesMg = new Array();
 	this.tilesFg = new Array();
+	
+	this.tilesAnimatedBg = new Array();
+	this.tilesAnimatedMg = new Array();
+	this.tilesAnimatedFg = new Array();
+	
 	this.smokeEmitters = new Array();
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
@@ -65,6 +70,9 @@ World.prototype = {
 		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
 		
 		this.gpuParticles.push(new GpuParticle([500,100], 32));
+		var tmpTile = new Tile("resources/tiles/mg/tile_ss.png");
+		tmpTile.setSize([100, 100]);
+		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [600, 200], 11, 11, 500, 500));
 	},
 	
 	setTilesBg: function(tiles) {
@@ -90,6 +98,34 @@ World.prototype = {
 	getTilesFg: function() {
 		return this.tilesFg;
 	},
+	
+	
+	
+	setTilesAnimatedBg: function(tiles) {
+		this.tilesAnimatedBg = tiles;
+	},
+	
+	getTilesAnimatedBg: function(tiles) {
+		return this.tilesAnimatedBg;
+	},
+	
+	setTilesAnimatedMg: function(tiles) {
+		this.tilesAnimatedMg = tiles;
+	},
+	
+	getTilesAnimatedMg: function(tiles) {
+		return this.tilesAnimatedMg;
+	},
+	
+	setTilesAnimatedFg: function(tiles) {
+		this.tilesAnimatedFg = tiles;
+	},
+	
+	getTilesAnimatedFg: function(tiles) {
+		return this.tilesAnimatedFg;
+	},
+	
+	
 	
 	update: function() {
 		
