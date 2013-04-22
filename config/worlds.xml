@@ -2,13 +2,6 @@
 	<World>
 		<TilesMg>
 			<Tile>
-				<Id>7</Id>
-				<Pos>
-					<X>0</X>
-					<Y>0</Y>
-				</Pos>
-			</Tile>
-			<Tile>
 				<Id>8</Id>
 				<Pos>
 					<X>1000</X>
@@ -27,20 +20,6 @@
 				<Pos>
 					<X>1600</X>
 					<Y>150</Y>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>0</Id>
-				<Pos>
-					<X>1400</X>
-					<Y>200</Y>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>0</Id>
-				<Pos>
-					<X>1200</X>
-					<Y>250</Y>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -101,6 +80,30 @@
 				<Pos>
 					<X>1100</X>
 					<Y>25</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>10</Id> // grass spot 1
+				<Pos>
+					<X>100</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>9</Id> // scaffold
+				<Pos>
+					<X>1230</X>
+					<Y>35</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>7</Id> // huge platform
+				<Pos>
+					<X>0</X>
+					<Y>0</Y>
 				</Pos>
 			</Tile>
 			

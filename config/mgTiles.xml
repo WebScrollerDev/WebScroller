@@ -116,4 +116,33 @@
 		</Size>
 	</Tile>
 	
+	<Tile>
+		<Id>9</Id>
+		<Url>resources/tiles/mg/scaffold.png</Url> // scaffold
+		<BoundingType>obb</BoundingType>
+		<BoundingBox>
+			<Center>
+				<X>100</X>
+				<Y>5</Y>
+			</Center>
+			<Size>
+				<X>200</X>
+				<Y>10</Y>
+			</Size>
+			<Angle>0</Angle>
+		</BoundingBox>
+		<Size>
+			<X>269</X>
+			<Y>455</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
+		<Id>10</Id>
+		<Url>resources/tiles/mg/grass_spot_1.png</Url> // grass
+		<Size>
+			<X>150</X>
+			<Y>50</Y>
+		</Size>
+	</Tile>
 </Tiles>

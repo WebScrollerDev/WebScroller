@@ -170,8 +170,9 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 	this.status = this.playerStatus.IDLE;
 	
 	this.totalNrAnimations = 11;
+	this.totalNrFramesPerAnimation = 11;
 	
-	this.animationFrames = [11, 11, 11, 11];
+	this.maxFramePerAnimation = [11, 3, 11, 11];
 	
 	this.currFrame = 0;
 	this.counter = 0;
@@ -181,13 +182,14 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.temp = function() {
-	this.velocity[1] -= 0.5; // gravity
+	this.velocity[1] -= 0.5; // gravity
+
 	this.keyPress();
 }
 
 EntityPlayer.prototype.update = function() {
 	this.counter++;
-	if(this.currFrame >= this.animationFrames[this.status])
+	if(this.currFrame >= this.maxFramePerAnimation[this.status])
 		this.currFrame = 0;
 		
 	if(this.counter % 10 == 0)

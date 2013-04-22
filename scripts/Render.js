@@ -246,7 +246,7 @@ RenderEntity.prototype.renderPlayer = function() {
 		x: world.player.getVelocity()[0],
 		y: world.player.getVelocity()[1]
 	}
-	this.modelPlayer.anim(world.player.animationFrames[world.player.status], world.player.currFrame, world.player.totalNrAnimations, world.player.status, world.player.flipped);
+	this.modelPlayer.anim(world.player.totalNrFramesPerAnimation, world.player.currFrame, world.player.totalNrAnimations, world.player.status, world.player.flipped);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.modelPlayer.getTexCoordArray()), gl.STATIC_DRAW);
 	
@@ -653,7 +653,7 @@ RenderTile.prototype.render = function() {
 	for(var i = 0; i < tilesMg.length; i++)
 	{
 		//console.log(world.getEmitter().getParticles()[i].getPosition());
-		if(i == 1)
+		if(i == 0)
 			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), world.rope.getAngle(10));
 		else
 			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), 0.0);

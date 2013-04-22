@@ -12,6 +12,7 @@ uniform vec3 lightColor[32];
 uniform float lightIntensity[32];
 
 uniform vec2 trans;
+const float blurSize = 1.0/1024.0;
 
 void main(void)
 {
@@ -23,11 +24,34 @@ void main(void)
 		float distfactor = pow(1./(length(lightPosTrans - viewPos)),0.4);
         Id += lightColor[i] * vec3(distfactor) * lightIntensity[i];
     }
+	vec4 sum = vec4(0.0);
 
-  vec4 textureColor = texture2D(inTexSample, texCoord) * vec4(vec3(Ia + Id), 1.0);
-  if (textureColor.a < 0.9) 
+	// take nine samples in x-led, with the distance blurSize between them
+	sum += texture2D(inTexSample, vec2(texCoord.x - 4.0*blurSize, texCoord.y)) * 0.03;
+	sum += texture2D(inTexSample, vec2(texCoord.x - 3.0*blurSize, texCoord.y)) * 0.05;
+	sum += texture2D(inTexSample, vec2(texCoord.x - 2.0*blurSize, texCoord.y)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x - blurSize, texCoord.y)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y)) * 0.2;
+	sum += texture2D(inTexSample, vec2(texCoord.x + blurSize, texCoord.y)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x + 2.0*blurSize, texCoord.y)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x + 3.0*blurSize, texCoord.y)) * 0.05;
+	sum += texture2D(inTexSample, vec2(texCoord.x + 4.0*blurSize, texCoord.y)) * 0.03;
+
+	// take nine samples in y-led, with the distance blurSize between them
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y - 4.0*blurSize)) * 0.03;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y - 3.0*blurSize)) * 0.05;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y - 2.0*blurSize)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y - blurSize)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y)) * 0.2;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + blurSize)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 2.0*blurSize)) * 0.1;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 3.0*blurSize)) * 0.05;
+	sum += texture2D(inTexSample, vec2(texCoord.x, texCoord.y + 4.0*blurSize)) * 0.03;
+		
+	sum *= vec4(vec3(Ia + Id), 1.0);
+  if (sum.a < 0.9) 
     discard;
   else
-    gl_FragColor = vec4(textureColor.rgb, textureColor.a);
+    gl_FragColor = sum;
 
 }

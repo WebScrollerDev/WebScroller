@@ -93,8 +93,8 @@ World.prototype = {
 	
 	update: function() {
 		
-		this.tilesMg[1].pos.x = this.rope.getPosition(10).x - this.tilesMg[1].getTile().size.x/2;
-		this.tilesMg[1].pos.y = this.rope.getPosition(10).y - this.tilesMg[1].getTile().size.y/2;
+		this.tilesMg[0].pos.x = this.rope.getPosition(10).x - this.tilesMg[0].getTile().size.x/2;
+		this.tilesMg[0].pos.y = this.rope.getPosition(10).y - this.tilesMg[0].getTile().size.y/2;
 		
 		this.player.temp();
 		
