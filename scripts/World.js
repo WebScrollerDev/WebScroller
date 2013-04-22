@@ -102,11 +102,13 @@ World.prototype = {
 		
 		var tiles = this.tilesMg;
 		for(var i = 0; i < tiles.length; i++) {
-			if(tiles[i].getBB() == null)
-				continue;
-			if(this.player.intersects2(tiles[i].getBB())) {
-				var tmpBB = new BoundingBox([tiles[i].getBB().corner[0][0], tiles[i].getBB().corner[0][1]], [tiles[i].getBB().corner[2][0], tiles[i].getBB().corner[2][1]]);
-				this.player.collidedWith(tmpBB);
+			if(tiles[i].getBBs() != null) {
+				for(var j = 0; j < tiles[i].getBBs().length; j++) {
+					if(this.player.intersects2(tiles[i].getBBs()[j])) {
+						var tmpBB = new BoundingBox([tiles[i].getBBs()[j].corner[0][0], tiles[i].getBBs()[j].corner[0][1]], [tiles[i].getBBs()[j].corner[2][0], tiles[i].getBBs()[j].corner[2][1]]);
+						this.player.collidedWith(tmpBB);
+					}
+				}
 			}
 		}
 		

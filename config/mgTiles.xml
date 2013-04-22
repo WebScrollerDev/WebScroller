@@ -2,18 +2,19 @@
 	<Tile>
 		<Id>0</Id>
 		<Url>resources/tiles/mg/platform2.png</Url>
-		<BoundingType>obb</BoundingType>
-		<BoundingBox>
-			<Center>
-				<X>78</X>
-				<Y>10</Y>
-			</Center>
-			<Size>
-				<X>156</X>
-				<Y>20</Y>
-			</Size>
-			<Angle>0</Angle>
-		</BoundingBox>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>78</X>
+					<Y>10</Y>
+				</Center>
+				<Size>
+					<X>156</X>
+					<Y>20</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
 		<Size>
 			<X>156</X>
 			<Y>33</Y>
@@ -23,18 +24,19 @@
 	<Tile>
 		<Id>1</Id>
 		<Url>resources/tiles/mg/platform1.png</Url>
-		<BoundingType>obb</BoundingType>
-		<BoundingBox>
-			<Center>
-				<X>200</X>
-				<Y>48</Y>
-			</Center>
-			<Size>
-				<X>373</X>
-				<Y>41</Y>
-			</Size>
-			<Angle>0</Angle>
-		</BoundingBox>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>200</X>
+					<Y>48</Y>
+				</Center>
+				<Size>
+					<X>373</X>
+					<Y>41</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
 		<Size>
 			<X>400</X>
 			<Y>96</Y>
@@ -89,18 +91,19 @@
 	<Tile>
 		<Id>7</Id>
 		<Url>resources/tiles/mg/big.png</Url>
-		<BoundingType>obb</BoundingType>
-		<BoundingBox>
-			<Center>
-				<X>1024</X>
-				<Y>5</Y>
-			</Center>
-			<Size>
-				<X>2048</X>
-				<Y>5</Y>
-			</Size>
-			<Angle>0</Angle>
-		</BoundingBox>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>1024</X>
+					<Y>5</Y>
+				</Center>
+				<Size>
+					<X>2048</X>
+					<Y>5</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
 		<Size>
 			<X>2048</X>
 			<Y>32</Y>
@@ -119,18 +122,31 @@
 	<Tile>
 		<Id>9</Id>
 		<Url>resources/tiles/mg/scaffold.png</Url> // scaffold
-		<BoundingType>obb</BoundingType>
-		<BoundingBox>
-			<Center>
-				<X>100</X>
-				<Y>5</Y>
-			</Center>
-			<Size>
-				<X>200</X>
-				<Y>10</Y>
-			</Size>
-			<Angle>0</Angle>
-		</BoundingBox>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>136</X>
+					<Y>210</Y>
+				</Center>
+				<Size>
+					<X>230</X>
+					<Y>20</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+			
+			<BoundingBox>
+				<Center>
+					<X>132</X>
+					<Y>430</Y>
+				</Center>
+				<Size>
+					<X>205</X>
+					<Y>20</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
 		<Size>
 			<X>269</X>
 			<Y>455</Y>

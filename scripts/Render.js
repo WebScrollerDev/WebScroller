@@ -897,8 +897,9 @@ RenderBoundingBox.prototype.render = function() {
 	if(debug) {
 		var tilesMg = world.getTilesMg();
 		for(var i = 0; i < tilesMg.length; i++) {
-			if(tilesMg[i].getBB() != null) {
-				this.renderBB(tilesMg[i].getBB());
+			if(tilesMg[i].getBBs() != null) {
+				for(var j = 0; j < tilesMg[i].getBBs().length; j++)
+					this.renderBB(tilesMg[i].getBBs()[j]);
 			}
 		}
 		

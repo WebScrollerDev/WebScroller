@@ -47,13 +47,15 @@ TilePlaceable = function(tile, pos) {
 		x: pos[0], 
 		y: pos[1]
 	};//vec2.fromValues(pos[0], pos[1]);
+	
+	this.bbs = new Array();
 };
 
 TilePlaceable.prototype = {
 	
 	addBoundingBox: function(bounding) {
 		console.log("Adding a boundingBox");
-		this.bounding = bounding;
+		this.bbs.push(bounding);
 	},
 	
 	getTile: function() {
@@ -64,8 +66,8 @@ TilePlaceable.prototype = {
 		return this.pos;
 	}, 
 	
-	getBB: function() {
-		return this.bounding;
+	getBBs: function() {
+		return this.bbs;
 	}
 };
 

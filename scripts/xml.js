@@ -71,7 +71,8 @@ function parseWorlds(xml) {
 					var tilePlaceable;
 					if(obbs[id] != null) {
 						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
-						tilePlaceable.addBoundingBox(new OBB(pos, obbs[id].center, obbs[id].size, obbs[id].angle));
+						for(var i = 0; i < obbs[id].length; i++)
+							tilePlaceable.addBoundingBox(new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle));
 					} else
 						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
 					tilesPlaceable.push(tilePlaceable);
@@ -105,13 +106,13 @@ function parseMgTiles(xml)
 			var tile = new Tile(gl, $(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
-			if($(this).find("BoundingType").text() == "obb") {
+			if($(this).find("BoundingBoxes")) {
 				//var minX, maxX, minY, maxY;
-				var bbCenter = [];
-				var bbSize = [];
-				var bbAngle;
+				var tmpBbs = new Array();
 				$(this).find("BoundingBox").each(function() {
-					
+					var bbCenter = [];
+					var bbSize = [];
+					var bbAngle;
 					$(this).find("Size").each(function() {
 						bbSize[0] = parseInt($(this).find("X").text());
 						bbSize[1] = parseInt($(this).find("Y").text());
@@ -123,13 +124,15 @@ function parseMgTiles(xml)
 					});
 					
 					bbAngle = (parseInt($(this).find("Angle").text())*3.14)/180;
+					var obbTmp = {
+						center: bbCenter, 
+						size: bbSize, 
+						angle: bbAngle
+					}
+					tmpBbs.push(obbTmp);
 				});
-				var obbTmp = {
-					center: bbCenter, 
-					size: bbSize, 
-					angle: bbAngle
-				}
-				obbs[id] = obbTmp;
+				
+				obbs[id] = tmpBbs;
 				//tile.addBoundingBox(new OBB(bbCenter, bbSize, bbAngle));
 			}
 			
