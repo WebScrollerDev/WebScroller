@@ -187,6 +187,10 @@ EntityPlayer.prototype.temp = function() {
 	this.keyPress();
 }
 
+EntityPlayer.prototype.getSize = function() {
+	return this.size;
+}
+
 EntityPlayer.prototype.update = function() {
 	this.counter++;
 	if(this.currFrame >= this.maxFramePerAnimation[this.status])

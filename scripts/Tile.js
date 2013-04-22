@@ -86,13 +86,9 @@ TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation,
 	this.maxAnim = [totalNrFramesPerAnimation, totalNrAnimations];
 	this.currAnim = [0, this.tileStatus.ANIMATION_IDLE];
 	
-	//this.status = this.tileStatus.ANIMATION_IDLE;
-	//this.totalNrAnimations = totalNrAnimations;
-	//this.totalNrFramesPerAnimation = totalNrFramesPerAnimation;
-	//this.currFrame = 0;
 	this.animationSpeed = animationSpeed;
 	this.updateStatusSpeed = updateStatusSpeed;
-	//dthis.frameWidth =
+
 	var _this = this; //Needed in setInterval, for specifying the correct this
 	this.animationInterval = setInterval(function(){_this.animate()}, _this.animationSpeed);
 	this.updateStatusInterval = setInterval(function(){_this.updateStatus()}, _this.updateStatusSpeed)

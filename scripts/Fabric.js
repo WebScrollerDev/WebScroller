@@ -1,7 +1,7 @@
 
 var physics_accuracy = 2,
 player_influence     = 20, 
-player_cut           = 6,
+player_cut           = 3,
 gravity              = -900,
 tear_distance        = 80;
 
@@ -193,8 +193,8 @@ var Point = function(x, y, tearable) {
 Point.prototype = {
 	update: function(delta) {
 	
-		var diff_x	 = this.x - world.player.getPosition().x,
-		diff_y		 = this.y - world.player.getPosition().y,
+		var diff_x	 = this.x - (world.player.getPosition().x + (world.player.getSize().x/2)),
+		diff_y		 = this.y - (world.player.getPosition().y + (world.player.getSize().y/2)),
 		dist  		 = Math.sqrt(diff_x * diff_x + diff_y * diff_y);	// distance from player to point
 		
 	

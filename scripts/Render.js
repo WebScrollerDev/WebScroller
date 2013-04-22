@@ -369,12 +369,6 @@ RenderParticle = function() {
 	this.initBuffers(this.modelParticleFire);
 	this.texParticleFire = gl.createTexture();
 	Texture.loadImage(gl, "resources/fireParticle.png", this.texParticleFire);
-//------------------Fluid Particles---------------------//
-	this.modelParticleFluid = new ModelSquare();
-	this.initBuffers(this.modelParticleFluid);
-	//this.vaoParticleFluid = generateModel(this.modelParticleFluid, progParticle);
-	this.texParticleFluid = gl.createTexture();
-	Texture.loadImage(gl, "resources/fluidParticle.png", this.texParticleFluid);
 
 	this.initGpuParticle(world.gpuParticles[0].getAmount(), world.gpuParticles[0].getPos(), world.gpuParticles[0].getVel(), world.gpuParticles[0].getVertices());
 };
@@ -388,7 +382,7 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, vel, ve
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
 	
-//-------This texture stores the position and velocity-------//
+//-------This texture stores the position-------//
 	this.texParticlePos1 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE1);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos1);
@@ -396,7 +390,7 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, vel, ve
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-//-------This texture also stores the position and velocity-------//
+//-------This texture also stores the position-------//
   	this.texParticlePos2 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE2);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos2);
@@ -412,7 +406,6 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, vel, ve
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(vel));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-//-------This texture also stores the position and velocity-------//
  	
 //----------This framebuffer stores the texture so we can use it as a output in the shader----//
 	this.FBO1 = gl.createFramebuffer();
@@ -470,11 +463,9 @@ RenderParticle.prototype.render = function() {
 			this.renderFireParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), currEmitterParticles[j].getRotation());
 		}
 	}
-//------------------------------------FLUID---------------------------------//
+//-------------------------------GPU FLUID---------------------------------//
 	gl.depthMask(true); //see other particles through the particles
-	//gl.depthMask(false);
 	this.renderGpuParticle(world.gpuParticles[0].getAmount());
-	//gl.depthMask(true);
 };
 
 RenderParticle.prototype.renderGpuParticle = function(amount) {
@@ -671,7 +662,7 @@ RenderTile.prototype.render = function() {
 	gl.useProgram(progTileMg);
 	for(var i = 0; i < tilesAnimMg.length; i++)
 	{
-		this.renderTileAnimatedMg(tilesAnimMg[i].getPosition(), tilesAnimMg[i].getTile().getTex(), tilesAnimMg[i].getTile().getSize(), 0.0, tilesAnimMg[i].getCurrAnim(), tilesAnimMg[i].getMaxAnim(), this.modelTileAnim);	
+		this.renderTileAnimatedMg(tilesAnimMg[i].getPosition(), tilesAnimMg[i].getTile().getTex(), tilesAnimMg[i].getTile().getSize(), tilesAnimMg[i].getCurrAnim(), tilesAnimMg[i].getMaxAnim(), this.modelTileAnim);	
 	}
 //----------------------------------------------STATIC FG------------------------------------------//
 	var tilesFg = world.getTilesFg();
@@ -835,7 +826,7 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size, rot, model) {
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.getNumVertices());
 }
 //----------------------------------------------RENDER ANIMNATED MG-------------------------------------------//
-RenderTile.prototype.renderTileAnimatedMg = function(pos, tex, size, rot, currAnim, maxAnim, model) {
+RenderTile.prototype.renderTileAnimatedMg = function(pos, tex, size, currAnim, maxAnim, model) {
 	var modelView = mat4.create();
 	
 	var playerPos = {
@@ -862,7 +853,6 @@ RenderTile.prototype.renderTileAnimatedMg = function(pos, tex, size, rot, currAn
 	else {
 		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
-	mat4.rotateZ(modelView, modelView, rot);
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
