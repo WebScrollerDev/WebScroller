@@ -43,6 +43,8 @@ function keyInput() {
 
 function startGL() {
 	var canvas = document.getElementById("canvas");
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 	initGL(canvas);
 	cam.init();
 	world.init();

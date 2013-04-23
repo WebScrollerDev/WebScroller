@@ -52,6 +52,22 @@
 			</Tile>
 			
 			<Tile>
+				<Id>11</Id>	// wall
+				<Pos>
+					<X>0</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>11</Id>	// wall
+				<Pos>
+					<X>8160</X>
+					<Y>0</Y>
+				</Pos>
+			</Tile>
+			
+			<Tile>
 				<Id>1</Id>	// broad platform
 				<Pos>
 					<X>600</X>

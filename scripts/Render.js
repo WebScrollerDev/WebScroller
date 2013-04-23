@@ -775,8 +775,9 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size, model) {
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
 		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, -9.0]);
 	else {
-		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
-					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
+		/*var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
+					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));*/
+		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - ((playerPos.x)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
 		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, -9.0]);
 		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
 	}

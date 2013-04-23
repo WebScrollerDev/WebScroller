@@ -94,18 +94,18 @@
 		<BoundingBoxes>
 			<BoundingBox>
 				<Center>
-					<X>1024</X>
+					<X>4096</X>
 					<Y>5</Y>
 				</Center>
 				<Size>
-					<X>2048</X>
+					<X>8192</X>
 					<Y>5</Y>
 				</Size>
 				<Angle>0</Angle>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
-			<X>2048</X>
+			<X>8192</X>
 			<Y>32</Y>
 		</Size>
 	</Tile>
@@ -159,6 +159,28 @@
 		<Size>
 			<X>150</X>
 			<Y>50</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
+		<Id>11</Id>
+		<Url>resources/tiles/mg/wall.png</Url>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>16</X>
+					<Y>256</Y>
+				</Center>
+				<Size>
+					<X>32</X>
+					<Y>512</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
+		<Size>
+			<X>32</X>
+			<Y>512</Y>
 		</Size>
 	</Tile>
 </Tiles>

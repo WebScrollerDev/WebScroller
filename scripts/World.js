@@ -1,17 +1,17 @@
 World = function() {
 	this.worldSize = {
-		x: 2048,
-		y: 1024
+		x: 8192,
+		y: 4096
 	}
 	
 	this.bgSize = {
-		x: 1024, 
-		y: 512
+		x: this.worldSize.x/2, 
+		y: this.worldSize.y/2
 	}
 	
 	this.fgSize = {
-		x: 4096, 
-		y: 2048
+		x: this.worldSize.x*2, 
+		y: this.worldSize.y*2
 	}
 	this.tilesBg = new Array();
 	this.tilesMg = new Array();
@@ -48,11 +48,11 @@ World = function() {
 World.prototype = {	
 	
 	init: function() {
-		this.player = new EntityPlayer([((gl.viewportWidth)/2), 100, 0], [0, 0], [45, 64]);
+		this.player = new EntityPlayer([((gl.viewportWidth)/2), 200, 0], [0, 0], [45, 64]);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		
-		this.fireEmitters.push(new EmitterFire([950,70], 10000, 10, 32, [0.0,0.4], [0.0,0.0], 2000, 500));
+		//this.fireEmitters.push(new EmitterFire([950,70], 10000, 10, 32, [0.0,0.4], [0.0,0.0], 2000, 500));
 		this.flickeringLightsMg.push(new LightFlickering([950.0, 75.0, 1.0], [1.0, 0.0, 0.0], 0.01, 0.1, 0.1, 3.2));
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 		
