@@ -250,7 +250,7 @@ EntityPlayer.prototype.keyPress = function() {
 	var speed = 0.5;
 	
 	if(isKeyDown('W') && this.collides) {
-		this.velocity[1] += 12.0;//this.isJumping = true;
+		this.velocity[1] += 13.0;//this.isJumping = true;
 	}
 		
 	

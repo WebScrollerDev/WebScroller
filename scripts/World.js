@@ -1,5 +1,4 @@
 World = function() {
-	this.collisionsTex = new TextureData();
 	this.worldSize = {
 		x: 2048,
 		y: 1024
@@ -69,7 +68,7 @@ World.prototype = {
 		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
 		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
 		
-		this.gpuParticles.push(new GpuParticle([500,100], 32));
+		this.gpuParticles.push(new GpuParticle([300, 350], 32, "resources/waterborder.png"));
 		var tmpTile = new Tile("resources/tiles/mg/tile_ss.png");
 		tmpTile.setSize([100, 100]);
 		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [600, 200], 11, 11, 500, 500));

@@ -88,53 +88,61 @@ ParticleFire.prototype.getFade = function() {
 };
 
 //-------------------------FLUID------------------------//
-
-ParticleFluid = function(position, velocity, diameter, rotation, density){
-	ParticleFluid.baseConstructor.call(this, position, velocity, diameter, rotation);
-	
-	this.density = density;
-};
-	
-InheritenceManager.extend(ParticleFluid, ParticleBase);
-
-
-
-GpuParticle = function(position, particleAmount) {
+GpuParticle = function(position, particleAmount, borderDataImage) {
 	
 	this.startPos = {
 		x: position[0], 
 		y: position[1]
 	};
 	this.pos = [];
-	this.vel = [];
+	this.velocityDensity = [];
+	this.border = [];
 	this.vertices = [];
 	this.amount = particleAmount;
+	this.borderLoadStatus = false;
+	this.borderDataHandler = new TextureData();
+	this.borderDataHandler.loadImage(borderDataImage);
 	this.init();
 }
 
 GpuParticle.prototype = {
 	init: function() {
-		for(var x = 0; x < this.amount*2; x += 2) {
-			for(var y = 0; y < this.amount*2; y += 2) {
-				this.pos.push(this.startPos.x + x, this.startPos.y + y, 0);
-				this.vel.push(Math.random()*2 - 1, Math.random()*2 - 1, 0);
+		var space = 3.0;
+		for(var x = 0.0; x < this.amount; x++) {
+			for(var y = 0.0; y < this.amount; y++) {
+				this.pos.push(this.startPos.x + x * space, this.startPos.y + y * space, 0);
+				this.velocityDensity.push(0, 0, 1);
 			}
 		}
 		
 		var d = 1/this.amount;
-		for (var x = 0; x < 1; x += d) {
-			for (var y = 0; y < 1; y += d) {
+		for (var x = 0.0; x < 1.0; x += d) {
+			for (var y = 0.0; y < 1.0; y += d) {
 				this.vertices.push(x, y);
 			}
 		}
+		var _this = this; //Needed in setInterval, for specifying the correct this
+		this.checkIfDoneInterval = setInterval(function(){_this.doneLoading()}, 50);
 	},
-	 
+	
+	doneLoading: function() {
+		if(this.borderDataHandler.isLoaded()) {
+			clearInterval(this.checkIfDoneInterval);
+			this.border = this.borderDataHandler.getData();
+			this.borderLoadStatus = true;
+		}
+	},
+	
+	getBorderLoadStatus: function() {
+		return this.borderLoadStatus;
+	},
+	
 	getPos: function() {
 		return this.pos;
 	},
 	
-	getVel: function() {
-		return this.vel;
+	getVelDen: function() {
+		return this.velocityDensity;
 	},
 	
 	getVertices: function() {
@@ -143,6 +151,22 @@ GpuParticle.prototype = {
 	
 	getAmount: function() {
 		return this.amount;
+	}, 
+	
+	getBorderPos: function() {
+		return [this.startPos.x, this.startPos.y];
+	}, 
+	
+	getBorder: function() {
+		return this.border;
+	}, 
+	
+	getBorderSize: function() {
+		var size = {
+			x: this.border.width, 
+			y: this.border.height
+		}
+		return size;
 	}
 }
 
