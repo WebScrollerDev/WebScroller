@@ -168,6 +168,7 @@ EmitterSmoke.prototype.updateParticles = function() { //clearInterval(int) when 
 		else {
 			this.particles[i].decreaseLifetime(this.updateTime);
 			this.particles[i].updatePosition();
+			this.particles[i].increaseVelocityWithValue(world.windVelocity);
 		}				
 	}
 };
@@ -211,6 +212,7 @@ EmitterFire.prototype.updateParticles = function() { //clearInterval(int) when d
 		else {
 		this.particles[i].decreaseLifetime(this.updateTime);
 		this.particles[i].updatePosition();
+		this.particles[i].increaseVelocityWithValue(world.windVelocity);
 		}	
 	}
 };

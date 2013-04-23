@@ -17,8 +17,16 @@ ParticleBase.prototype = {
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
 	},
+	increasePositionWithValue: function(value) {
+		this.position.x += value.x;
+		this.position.y += value.y;
+	},
 	getVelocity: function() {
 		return this.velocity;
+	},
+	increaseVelocityWithValue: function(value) {
+		this.velocity.x += value.x;
+		this.velocity.y += value.y;
 	},
 	setVelocity: function(newVelocity) {
 		this.velocity = newVelocity;
