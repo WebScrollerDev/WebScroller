@@ -46,8 +46,8 @@ LightBase.prototype = {
 //-------------------------------------------------------------------------------------------------------------//
 //-----------------------FLICKERING LIGHT----------------------------------------------------------------------//
 //					      x,y,z  rgb	   float			float		  float >= 0		 float <= 1
-LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue) {
-	LightFlickering.baseConstructor.call(this, pos, color, intensityMaxValue);
+LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensity) {
+	LightFlickering.baseConstructor.call(this, pos, color, intensity[1]);
 	
 	this.flickerSpeed = flickerSpeed;
 	this.flickerSpeedSpan = flickerSpeedSpan;
@@ -58,8 +58,8 @@ LightFlickering = function(pos, color, flickerSpeed, flickerSpeedSpan, intensity
 		NONE: 2
 	};
 	this.intensityValues = {
-		MIN: intensityMinValue,
-		MAX: intensityMaxValue
+		MIN: intensity[0],
+		MAX: intensity[1]
 	};
 	
 	if(this.intensityValues.MAX > this.intensityValues.MIN)
@@ -152,8 +152,8 @@ LightFlickering.prototype.updateLightIntensity = function() {
 //-----------------------------------------------------------------------------------------------------------//
 //-----------------------MORPHING LIGHT----------------------------------------------------------------------//
 //					    x,y,z   []>1      float		    float			  float >= 0		 float <= 1		  float			float
-LightMorphing = function(pos, colors, flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue, morphSpeed, morphSpeedSpan) {
-	LightMorphing.baseConstructor.call(this, pos, colors[0], flickerSpeed, flickerSpeedSpan, intensityMinValue, intensityMaxValue);
+LightMorphing = function(pos, colors, flickerSpeed, flickerSpeedSpan, intensity, morphSpeed, morphSpeedSpan) {
+	LightMorphing.baseConstructor.call(this, pos, colors[0], flickerSpeed, flickerSpeedSpan, intensity);
 	
 	this.morphSpeed = morphSpeed;
 	this.morphSpeedSpan = morphSpeedSpan;

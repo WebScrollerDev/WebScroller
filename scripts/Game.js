@@ -48,15 +48,22 @@ function startGL() {
 	initGL(canvas);
 	cam.init();
 	world.init();
-	render.init();	
 	loadXml();
-
+		
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;
 	
 	canvas.onmousedown = mouseDown;
     document.onmouseup = mouseUp;
     document.onmousemove = mouseMove;
-    
+    var interVal = setInterval(function(){
+			if(doneLoading) {
+				clearInterval(interVal);
+				render.init();
+			}
+		}, 
+		10
+	);
+	
 	tick();
 }

@@ -1,12 +1,14 @@
-var tilesBg = new Array();
-var tilesMg = new Array();
-var tilesFg = new Array();
+var tmpTilesBg = new Array();
+var tmpTilesMg = new Array();
+var tmpTilesFg = new Array();
 
 var obbs = new Array();
+var lights = new Array();
 
 var bg = false;
 var mg = false;
 var fg = false;
+var light = false;
 var doneLoading = false;
 function loadXml() {
 	$.ajax({
@@ -29,11 +31,18 @@ function loadXml() {
     	dataType: "xml",
     	success: parseFgTiles
   	});
+  	
+  	$.ajax({
+    	type: "GET",
+    	url: "config/lights.xml",
+    	dataType: "xml",
+    	success: parseLights
+  	});
 }
 
 function loadWorldXml() {
 	
-	if(bg && mg && fg) {
+	if(bg && mg && fg && light) {
 		$.ajax({
 	    	type: "GET",
 	    	url: "config/worlds.xml",
@@ -54,7 +63,7 @@ function parseWorlds(xml) {
 					$(this).find("Pos").each(function() {
 						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
 					});
-					var tilePlaceable = new TilePlaceable(tilesBg[id], pos);
+					var tilePlaceable = new TilePlaceable(tmpTilesBg[id], pos);
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesBg(tilesPlaceable);
@@ -68,13 +77,31 @@ function parseWorlds(xml) {
 					$(this).find("Pos").each(function() {
 						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
 					});
-					var tilePlaceable;
+					var tilePlaceable = new TilePlaceable(tmpTilesMg[id], pos);;
 					if(obbs[id] != null) {
-						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
 						for(var i = 0; i < obbs[id].length; i++)
 							tilePlaceable.addBoundingBox(new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle));
-					} else
-						tilePlaceable = new TilePlaceable(tilesMg[id], pos);
+					}
+					$(this).find("Lights").each(function() {
+						$(this).find("Light").each(function() {
+							var id = parseInt($(this).find("LightId").text());
+							var light = lights[id];
+							var lightPos = [];
+							$(this).find("LightPos").each(function() {
+								lightPos[0] = parseInt($(this).find("LightX").text());
+								lightPos[1] = parseInt($(this).find("LightY").text());
+								lightPos[2] = 20;
+							});
+							pos[2] = 0.0;
+							if(light.type == "static") {
+								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+							}
+							if(light.type == "flickering") {
+								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color,light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+							}
+						});
+					});
+					
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesMg(tilesPlaceable);
@@ -88,7 +115,7 @@ function parseWorlds(xml) {
 					$(this).find("Pos").each(function() {
 						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
 					});
-					var tilePlaceable = new TilePlaceable(tilesFg[id], pos);
+					var tilePlaceable = new TilePlaceable(tmpTilesFg[id], pos);
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesFg(tilesPlaceable);
@@ -142,7 +169,7 @@ function parseMgTiles(xml)
 			
 			
 			//console.log("Adding tile to tiles");
-			tilesMg[id] = tile;
+			tmpTilesMg[id] = tile;
 		});
 	});
 	//world.setTiles(tiles);
@@ -165,7 +192,7 @@ function parseBgTiles(xml)
 			
 			
 			//console.log("Adding tile to tiles");
-			tilesBg[id] = tile;
+			tmpTilesBg[id] = tile;
 		});
 	});
 	//world.setTiles(tiles);
@@ -188,10 +215,62 @@ function parseFgTiles(xml)
 			
 			
 			//console.log("Adding tile to tiles");
-			tilesFg[id] = tile;
+			tmpTilesFg[id] = tile;
 		});
 	});
 	//world.setTiles(tiles);
 	fg = true;
+	loadWorldXml();
+}
+
+function parseLights(xml)
+{
+	//var tiles = new Array();
+	$(xml).find("Lights").each(function() {
+		$(this).find("StaticLight").each(function() {
+			var id, intensity;
+			var color = [];
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			intensity = parseFloat($(this).find("Intensity").text());
+			id = parseInt($(this).find("Id").text());
+			var tmpLight = {
+				type: "static",
+				color: color, 
+				intensity: intensity
+			}
+			lights[id] = tmpLight;
+		});
+		$(this).find("FlickeringLight").each(function() {
+			var id, flickerSpeed, flickerSpeedSpan;
+			var intensity = [];
+			var color = [];
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			$(this).find("Intensity").each(function() {
+				intensity[0] = parseFloat($(this).find("Min").text());
+				intensity[1] = parseFloat($(this).find("Max").text());
+			});
+			id = parseInt($(this).find("Id").text());
+			flickerSpeed = parseFloat($(this).find("FlickerSpeed").text());
+			flickerSpeedSpan = parseFloat($(this).find("FlickerSpeedSpan").text());
+			var tmpLight = {
+				type: "flickering",
+				color: color, 
+				intensity: intensity, 
+				flickerSpeed: flickerSpeed, 
+				flickerSpeedSpan: flickerSpeedSpan
+			}
+			lights[id] = tmpLight;
+		});
+	});
+	//world.setTiles(tiles);
+	light = true;
 	loadWorldXml();
 }

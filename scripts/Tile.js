@@ -49,9 +49,11 @@ TilePlaceable = function(tile, pos) {
 	this.pos = {
 		x: pos[0], 
 		y: pos[1]
-	};//vec2.fromValues(pos[0], pos[1]);
+	};
 	
 	this.bbs = new Array();
+	this.staticLights = new Array();
+	this.flickeringLights = new Array();
 };
 
 TilePlaceable.prototype = {
@@ -71,6 +73,22 @@ TilePlaceable.prototype = {
 	
 	getBBs: function() {
 		return this.bbs;
+	}, 
+	
+	addStaticLight: function(light) {
+		this.staticLights.push(light);
+	}, 
+	
+	addFlickeringLight: function(light) {
+		this.flickeringLights.push(light);
+	}, 
+	
+	getStaticLights: function() {
+		return this.staticLights;
+	}, 
+	
+	getFlickeringLights: function() {
+		return this.flickeringLights;
 	}
 };
 

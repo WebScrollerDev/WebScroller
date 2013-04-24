@@ -25,7 +25,7 @@ World = function() {
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
 	
-	this.staticLightsMg = new Array();
+	/*this.staticLightsMg = new Array();
 	this.flickeringLightsMg = new Array();
 	this.morphingLightsMg = new Array();
 	
@@ -35,7 +35,7 @@ World = function() {
 	
 	this.staticLightsFg = new Array();
 	this.flickeringLightsFg = new Array();
-	this.morphingLightsFg = new Array();
+	this.morphingLightsFg = new Array();*/
 	
 	this.gpuParticles = new Array();
 	
@@ -53,23 +53,22 @@ World.prototype = {
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		
 		//this.fireEmitters.push(new EmitterFire([950,70], 10000, 10, 32, [0.0,0.4], [0.0,0.0], 2000, 500));
-		this.flickeringLightsMg.push(new LightFlickering([950.0, 75.0, 1.0], [1.0, 0.0, 0.0], 0.01, 0.1, 0.1, 3.2));
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
 		
-		this.staticLightsBg.push(new LightBase([575.0, 315.0, 40.0], [0.0, 0.0, 1.0], 5.0));
+		/*this.staticLightsBg.push(new LightBase([575.0, 315.0, 40.0], [0.0, 0.0, 1.0], 5.0));
 		
 		
 		this.staticLightsMg.push(new LightBase([0.0, 0.0, 40.0], [1.0, 0.0, 0.0], 3.0));
 		
-		this.flickeringLightsMg.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLightsMg.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLightsMg.push(new LightFlickering([233.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.1, 1.2]));
+		this.flickeringLightsMg.push(new LightFlickering([135.0, 60.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.1, 1.2]));
 		
-		this.flickeringLightsMg.push(new LightFlickering([491.0, 250.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLightsMg.push(new LightFlickering([495.0, 150.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
-		this.flickeringLightsMg.push(new LightFlickering([522.0, 80.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.1, 1.2));
+		this.flickeringLightsMg.push(new LightFlickering([491.0, 250.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.1, 1.2]));
+		this.flickeringLightsMg.push(new LightFlickering([495.0, 150.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.1, 1.2]));
+		this.flickeringLightsMg.push(new LightFlickering([522.0, 80.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.1, 1.2]));
 		
-		this.flickeringLightsMg.push(new LightFlickering([1025.0, 130.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, 1.2, 1.3));
-		
+		this.flickeringLightsMg.push(new LightFlickering([1025.0, 130.0, 1.0], [1.0, 0.7, 0.0], 0.01, 0.01, [1.2, 1.3]));
+		this.flickeringLightsMg.push(new LightFlickering([950.0, 75.0, 1.0], [1.0, 0.0, 0.0], 0.01, 0.1, [0.1, 3.2]));*/
 		//this.morphingLights.push(new LightMorphing([495.0, 150.0, 1.0], [ [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]], 100, 0, 1, 1, 0.01, 0.01));
 		
 		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
