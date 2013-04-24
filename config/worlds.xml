@@ -6,6 +6,7 @@
 				<Pos>
 					<X>1000</X>
 					<Y>200</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -13,6 +14,7 @@
 				<Pos>
 					<X>1800</X>
 					<Y>80</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -20,6 +22,7 @@
 				<Pos>
 					<X>1600</X>
 					<Y>150</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -27,6 +30,7 @@
 				<Pos>
 					<X>1000</X>
 					<Y>300</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -34,6 +38,7 @@
 				<Pos>
 					<X>800</X>
 					<Y>350</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -41,6 +46,7 @@
 				<Pos>
 					<X>600</X>
 					<Y>400</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -48,6 +54,7 @@
 				<Pos>
 					<X>400</X>
 					<Y>32</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -56,6 +63,7 @@
 				<Pos>
 					<X>0</X>
 					<Y>0</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -64,6 +72,7 @@
 				<Pos>
 					<X>8160</X>
 					<Y>0</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -72,6 +81,7 @@
 				<Pos>
 					<X>600</X>
 					<Y>45</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -80,6 +90,7 @@
 				<Pos>
 					<X>30</X>
 					<Y>25</Y>
+					<Z>0</Z>
 				</Pos>
 				<Lights>
 					<Light>
@@ -87,6 +98,7 @@
 						<LightPos>
 							<LightX>200</LightX>
 							<LightY>10</LightY>
+							<LightZ>20</LightZ>
 						</LightPos>
 					</Light>
 					
@@ -95,6 +107,16 @@
 						<LightPos>
 							<LightX>100</LightX>
 							<LightY>10</LightY>
+							<LightZ>20</LightZ>
+						</LightPos>
+					</Light>
+					
+					<Light>
+						<LightId>3</LightId>
+						<LightPos>
+							<LightX>150</LightX>
+							<LightY>200</LightY>
+							<LightZ>20</LightZ>
 						</LightPos>
 					</Light>
 				</Lights>
@@ -105,6 +127,7 @@
 				<Pos>
 					<X>1000</X>
 					<Y>25</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -113,6 +136,7 @@
 				<Pos>
 					<X>1100</X>
 					<Y>25</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -121,6 +145,7 @@
 				<Pos>
 					<X>100</X>
 					<Y>0</Y>
+					<Z>1</Z>
 				</Pos>
 			</Tile>
 			
@@ -128,7 +153,8 @@
 				<Id>9</Id> // scaffold
 				<Pos>
 					<X>1230</X>
-					<Y>35</Y>
+					<Y>25</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 			
@@ -137,6 +163,7 @@
 				<Pos>
 					<X>0</X>
 					<Y>0</Y>
+					<Z>-0.1</Z>
 				</Pos>
 			</Tile>
 			
@@ -148,6 +175,7 @@
 				<Pos>
 					<X>100</X>
 					<Y>0</Y>
+					<Z>-9</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -155,6 +183,7 @@
 				<Pos>
 					<X>500</X>
 					<Y>0</Y>
+					<Z>-9</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -162,6 +191,7 @@
 				<Pos>
 					<X>700</X>
 					<Y>0</Y>
+					<Z>-9</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -169,6 +199,7 @@
 				<Pos>
 					<X>500</X>
 					<Y>240</Y>
+					<Z>-9</Z>
 				</Pos>
 			</Tile>
 		</TilesBg>
@@ -179,6 +210,7 @@
 				<Pos>
 					<X>0</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -186,6 +218,7 @@
 				<Pos>
 					<X>60</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -193,6 +226,7 @@
 				<Pos>
 					<X>600</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -200,6 +234,7 @@
 				<Pos>
 					<X>1000</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -207,6 +242,7 @@
 				<Pos>
 					<X>1200</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -214,13 +250,25 @@
 				<Pos>
 					<X>1500</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
+				<Lights>
+					<Light>
+						<LightId>0</LightId>
+						<LightPos>
+							<LightX>200</LightX>
+							<LightY>10</LightY>
+							<LightZ>20</LightZ>
+						</LightPos>
+					</Light>
+				</Lights>
 			</Tile>
 			<Tile>
 				<Id>0</Id>
 				<Pos>
 					<X>1550</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -228,6 +276,7 @@
 				<Pos>
 					<X>2000</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -235,6 +284,7 @@
 				<Pos>
 					<X>2500</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -242,6 +292,7 @@
 				<Pos>
 					<X>2900</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			<Tile>
@@ -249,6 +300,7 @@
 				<Pos>
 					<X>3600</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 			
@@ -257,6 +309,7 @@
 				<Pos>
 					<X>2000</X>
 					<Y>0</Y>
+					<Z>5</Z>
 				</Pos>
 			</Tile>
 		</TilesFg>

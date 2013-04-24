@@ -8,7 +8,7 @@ window.requestAnimFrame = (function() {
 var debug = false;
 var gl;
 var cam = new Camera();
-var render = new RenderManager();
+var render;
 var world = new World();
 
 function initGL(canvas) {
@@ -25,7 +25,7 @@ function initGL(canvas) {
 
 function tick() {
 	requestAnimFrame(tick);
-	if(doneLoading) {
+	if(initialized) {
 		world.update();
 		cam.update();
 		render.render();
@@ -37,10 +37,8 @@ function keyInput() {
 	if(isKeyDown('J')) {
 		debug = !debug;
 	}
-		
-		
 }
-
+var initialized = false;
 function startGL() {
 	var canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth - 20;
@@ -59,7 +57,9 @@ function startGL() {
     var interVal = setInterval(function(){
 			if(doneLoading) {
 				clearInterval(interVal);
+				render = new RenderManager();
 				render.init();
+				initialized = true;
 			}
 		}, 
 		10

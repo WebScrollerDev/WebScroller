@@ -48,18 +48,19 @@ TilePlaceable = function(tile, pos) {
 	
 	this.pos = {
 		x: pos[0], 
-		y: pos[1]
+		y: pos[1], 
+		z: pos[2]
 	};
 	
 	this.bbs = new Array();
 	this.staticLights = new Array();
 	this.flickeringLights = new Array();
+	this.morphingLights = new Array();
 };
 
 TilePlaceable.prototype = {
 	
 	addBoundingBox: function(bounding) {
-		console.log("Adding a boundingBox");
 		this.bbs.push(bounding);
 	},
 	
@@ -81,7 +82,11 @@ TilePlaceable.prototype = {
 	
 	addFlickeringLight: function(light) {
 		this.flickeringLights.push(light);
-	}, 
+	},
+	
+	addMorphingLight: function(light) {
+		this.morphingLights.push(light);
+	},
 	
 	getStaticLights: function() {
 		return this.staticLights;
@@ -89,6 +94,10 @@ TilePlaceable.prototype = {
 	
 	getFlickeringLights: function() {
 		return this.flickeringLights;
+	}, 
+	
+	getMorphingLights: function() {
+		return this.morphingLights;
 	}
 };
 

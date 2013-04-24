@@ -771,14 +771,14 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size, model) {
 	}
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [pos.x, pos.y, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, pos.z]);
 	else {
 		/*var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
 					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));*/
 		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - ((playerPos.x)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, pos.z]);
 		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
 	}
 	
@@ -823,13 +823,13 @@ RenderTile.prototype.renderTileAnimatedBg = function(pos, tex, size, currAnim, m
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [pos.x, pos.y, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, pos.z]);
 	else {
 		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
 					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, -9.0]);
+		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, pos.z]);
 	}
 	
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
@@ -866,11 +866,11 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size, rot, model) {
 		y: world.player.getPosition().y
 	}
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x, 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, pos.z]);
 	else {
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, pos.z]);
 	}
 	
 	if(playerPos.y < (gl.viewportHeight)/2)
@@ -922,11 +922,11 @@ RenderTile.prototype.renderTileAnimatedMg = function(pos, tex, size, currAnim, m
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x, 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth)), 0.0, pos.z]);
 	else {
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.0]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, pos.z]);
 	}
 	
 	if(playerPos.y < (gl.viewportHeight)/2)
@@ -974,13 +974,13 @@ RenderTile.prototype.renderTileFg = function(pos, tex, size, model) {
 	}
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [pos.x, 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.fgSize.x - (gl.viewportWidth)), 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.fgSize.x - (gl.viewportWidth)), 0.0, pos.z]);
 	else {
 		var trans = (((gl.viewportWidth)/2)*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
 					(playerPos.x*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, pos.z]);
 		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
 	}
 	
@@ -1036,13 +1036,13 @@ RenderTile.prototype.renderTileAnimatedFg = function(pos, tex, size, currAnim, m
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [pos.x, 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.fgSize.x - (gl.viewportWidth)), 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [pos.x -(world.fgSize.x - (gl.viewportWidth)), 0.0, pos.z]);
 	else {
 		var trans = (((gl.viewportWidth)/2)*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
 					(playerPos.x*((world.fgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, 2.0]);
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, pos.z]);
 		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
 	}
 	
@@ -1227,36 +1227,53 @@ RenderLight = function() {
 //-----------------------MG LIGHTS------------------------------//
 	this.staticLightsMg = new Array();
 	this.flickeringLightsMg = new Array();
-	//this.morphingLightsMg = new Array();
+	this.morphingLightsMg = new Array();
 	for(var i = 0; i < world.tilesMg.length; i++) {
 		for(var j = 0; j < world.tilesMg[i].getStaticLights().length; j++)
 			this.staticLightsMg.push(world.tilesMg[i].getStaticLights()[j]);
-			
 		for(var j = 0; j < world.tilesMg[i].getFlickeringLights().length; j++)
 			this.flickeringLightsMg.push(world.tilesMg[i].getFlickeringLights()[j]);
+		for(var j = 0; j < world.tilesMg[i].getMorphingLights().length; j++)
+			this.morphingLightsMg.push(world.tilesMg[i].getMorphingLights()[j]);
 	}
 	this.lightPosMg = [];
 	this.lightColorMg = [];
 	this.lightIntensityMg = [];
 
 //-----------------------BG LIGHTS------------------------------//
-	/*this.staticLightsBg = world.staticLightsBg;
-	this.flickeringLightsBg = world.flickeringLightsBg;
-	this.morphingLightsBg = world.morphingLightsBg;
+	this.staticLightsBg = new Array();
+	this.flickeringLightsBg = new Array();
+	this.morphingLightsBg = new Array();
+	for(var i = 0; i < world.tilesBg.length; i++) {
+		for(var j = 0; j < world.tilesBg[i].getStaticLights().length; j++)
+			this.staticLightsBg.push(world.tilesBg[i].getStaticLights()[j]);
+		for(var j = 0; j < world.tilesBg[i].getFlickeringLights().length; j++)
+			this.flickeringLightsBg.push(world.tilesBg[i].getFlickeringLights()[j]);
+		for(var j = 0; j < world.tilesBg[i].getMorphingLights().length; j++)
+			this.morphingLightsBg.push(world.tilesBg[i].getMorphingLights()[j]);
+	}
 	
 	this.lightPosBg = [];
 	this.lightColorBg = [];
 	this.lightIntensityBg = [];
 
 //-----------------------FG LIGHTS------------------------------//	
-	this.staticLightsFg = world.staticLightsFg;
-	this.flickeringLightsFg = world.flickeringLightsFg;
-	this.morphingLightsFg = world.morphingLightsFg;
+	this.staticLightsFg = new Array();
+	this.flickeringLightsFg = new Array();
+	this.morphingLightsFg = new Array();
+	for(var i = 0; i < world.tilesFg.length; i++) {
+		for(var j = 0; j < world.tilesFg[i].getStaticLights().length; j++)
+			this.staticLightsFg.push(world.tilesFg[i].getStaticLights()[j]);
+		for(var j = 0; j < world.tilesFg[i].getFlickeringLights().length; j++)
+			this.flickeringLightsFg.push(world.tilesFg[i].getFlickeringLights()[j]);
+		for(var j = 0; j < world.tilesFg[i].getMorphingLights().length; j++)
+			this.morphingLightsFg.push(world.tilesFg[i].getMorphingLights()[j]);
+	}
 	
 	this.lightPosFg = [];
 	this.lightColorFg = [];
 	this.lightIntensityFg = [];
-*/
+
 	this.initLights();
 }
 
@@ -1284,24 +1301,27 @@ RenderLight.prototype.initLights = function() {
 		this.lightIntensityMg = this.lightIntensityMg.concat(this.flickeringLightsMg[i].getIntensity());
 	}
 //------------------------MORPHING LIGHTS----------------------------//	
-	/*var totalNrMorphingLights = this.morphingLightsMg.length;
+	var totalNrMorphingLights = this.morphingLightsMg.length;
 	for(var i = 0; i < totalNrMorphingLights; i++) {
 		var position = [this.morphingLightsMg[i].getPosition().x, this.morphingLightsMg[i].getPosition().y, this.morphingLightsMg[i].getPosition().z];
 		var color = [this.morphingLightsMg[i].getColor().r, this.morphingLightsMg[i].getColor().g, this.morphingLightsMg[i].getColor().b];
 		this.lightPosMg = this.lightPosMg.concat(position);
 		this.lightColorMg = this.lightColorMg.concat(color);
 		this.lightIntensityMg = this.lightIntensityMg.concat(this.morphingLightsMg[i].getIntensity());
-	}*/
-	gl.useProgram(progTileMg);
-	gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);
-	gl.uniform3fv(progTileMg.lightColor, this.lightColorMg);
-	gl.uniform1fv(progTileMg.lightIntensity, this.lightIntensityMg);
+	}
+	this.totalMgLights = totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights;
+	if(this.totalMgLights > 0) {
+		gl.useProgram(progTileMg);
+		gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);
+		gl.uniform3fv(progTileMg.lightColor, this.lightColorMg);
+		gl.uniform1fv(progTileMg.lightIntensity, this.lightIntensityMg);
+	}
 
 //----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------BG LIGHTS--------------------------------------------------------//
 
 //-------------------------STATIC LIGHTS-----------------------------//
-	/*var totalNrStaticLights = this.staticLightsBg.length;	
+	var totalNrStaticLights = this.staticLightsBg.length;	
 	for(var i = 0; i < totalNrStaticLights; i++) {
 		var position = [this.staticLightsBg[i].getPosition().x, this.staticLightsBg[i].getPosition().y, this.staticLightsBg[i].getPosition().z];
 		var color = [this.staticLightsBg[i].getColor().r, this.staticLightsBg[i].getColor().g, this.staticLightsBg[i].getColor().b];
@@ -1327,12 +1347,13 @@ RenderLight.prototype.initLights = function() {
 		this.lightColorBg = this.lightColorBg.concat(color);
 		this.lightIntensityBg = this.lightIntensityBg.concat(this.morphingLightsBg[i].getIntensity());
 	}
-	
-	gl.useProgram(progTileBg);
-	gl.uniform3fv(progTileBg.lightPos, this.lightPosBg);
-	gl.uniform3fv(progTileBg.lightColor, this.lightColorBg);
-	gl.uniform1fv(progTileBg.lightIntensity, this.lightIntensityBg);
-	
+	this.totalBgLights = totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights;
+	if(this.totalBgLights > 0) {
+		gl.useProgram(progTileBg);
+		gl.uniform3fv(progTileBg.lightPos, this.lightPosBg);
+		gl.uniform3fv(progTileBg.lightColor, this.lightColorBg);
+		gl.uniform1fv(progTileBg.lightIntensity, this.lightIntensityBg);
+	}
 //----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------FG LIGHTS--------------------------------------------------------//
 
@@ -1363,25 +1384,31 @@ RenderLight.prototype.initLights = function() {
 		this.lightColorFg = this.lightColorFg.concat(color);
 		this.lightIntensityFg = this.lightIntensityFg.concat(this.morphingLightsFg[i].getIntensity());
 	}
-	
-	gl.useProgram(progTileFg);
-	gl.uniform3fv(progTileFg.lightPos, this.lightPosFg);
-	gl.uniform3fv(progTileFg.lightColor, this.lightColorFg);
-	gl.uniform1fv(progTileFg.lightIntensity, this.lightIntensityFg);*/
+	this.totalFgLights = totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights;
+	if(this.totalFgLights > 0) {
+		gl.useProgram(progTileFg);
+		gl.uniform3fv(progTileFg.lightPos, this.lightPosFg);
+		gl.uniform3fv(progTileFg.lightColor, this.lightColorFg);
+		gl.uniform1fv(progTileFg.lightIntensity, this.lightIntensityFg);
+	}
 }
 
 //--------------------LIGHT UPDATE---------------------//
 RenderLight.prototype.update = function() {
-	this.updateMg();
-	//this.updateBg();
-	//this.updateFg();
+	//console.log(this.totalMgLights + " " + this.totalBgLights + " " + this.totalFgLights);
+	if(this.totalMgLights > 0)
+		this.updateMg();
+	if(this.totalBgLights > 0)
+		this.updateBg();
+	if(this.totalFgLights > 0)
+		this.updateFg();
 }
 //------------------------------------MG LIGHTS UPDATE-----------------------------------------//
 RenderLight.prototype.updateMg = function() {
 	
 	var totalNrStaticLights = this.staticLightsMg.length;	
 	var totalNrFlickeringLights = this.flickeringLightsMg.length;
-	//var totalNrMorphingLights = this.morphingLightsMg.length;
+	var totalNrMorphingLights = this.morphingLightsMg.length;
 	
 	for(var i = 0; i < totalNrStaticLights; i++) {	// static //Every static light will be placed on the rope for now
 		//this.staticLightsMg[i].setPosition(world.rope.getPosition(10));
@@ -1394,13 +1421,13 @@ RenderLight.prototype.updateMg = function() {
 	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
 		this.lightIntensityMg[i] = this.flickeringLightsMg[i - totalNrStaticLights].getIntensity();
 	}
-	/*for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
+	for(var i = (totalNrStaticLights + totalNrFlickeringLights); i < (totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights); i++) {	// morphing
 		this.lightIntensityMg[i] = this.morphingLightsMg[i - (totalNrStaticLights + totalNrFlickeringLights)].getIntensity();
 		var tmpColor = this.morphingLightsMg[i - (totalNrStaticLights + totalNrFlickeringLights)].getColor();
 		this.lightColorMg[i*3] = tmpColor.r;
 		this.lightColorMg[i*3+1] = tmpColor.g;
 		this.lightColorMg[i*3+2] = tmpColor.b;
-	}*/
+	}
 	
 	gl.useProgram(progTileMg);
 	gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);
@@ -1415,6 +1442,13 @@ RenderLight.prototype.updateBg = function() {
 	var totalNrFlickeringLights = this.flickeringLightsBg.length;
 	var totalNrMorphingLights = this.morphingLightsBg.length;
 	
+	for(var i = 0; i < totalNrStaticLights; i++) {	// static //Every static light will be placed on the rope for now
+		//this.staticLightsMg[i].setPosition(world.rope.getPosition(10));
+		var tmpPos = this.staticLightsBg[i].getPosition();
+		this.lightPosBg[i*3] = tmpPos.x;
+		this.lightPosBg[i*3+1] = tmpPos.y;
+		this.lightPosBg[i*3+2] = tmpPos.z;
+	}
 	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
 		this.lightIntensityBg[i] = this.flickeringLightsBg[i - totalNrStaticLights].getIntensity();
 	}
@@ -1427,6 +1461,7 @@ RenderLight.prototype.updateBg = function() {
 	}
 	
 	gl.useProgram(progTileBg);
+	gl.uniform3fv(progTileBg.lightPos, this.lightPosBg);
 	gl.uniform3fv(progTileBg.lightColor, this.lightColorBg);
 	gl.uniform1fv(progTileBg.lightIntensity, this.lightIntensityBg);
 }
@@ -1437,7 +1472,13 @@ RenderLight.prototype.updateFg = function() {
 	var totalNrStaticLights = this.staticLightsFg.length;	
 	var totalNrFlickeringLights = this.flickeringLightsFg.length;
 	var totalNrMorphingLights = this.morphingLightsFg.length;
-	
+	for(var i = 0; i < totalNrStaticLights; i++) {	// static //Every static light will be placed on the rope for now
+		//this.staticLightsMg[i].setPosition(world.rope.getPosition(10));
+		var tmpPos = this.staticLightsFg[i].getPosition();
+		this.lightPosFg[i*3] = tmpPos.x;
+		this.lightPosFg[i*3+1] = tmpPos.y;
+		this.lightPosFg[i*3+2] = tmpPos.z;
+	}
 	for(var i = totalNrStaticLights; i < (totalNrStaticLights + totalNrFlickeringLights); i++) {	// flickering
 		this.lightIntensityFg[i] = this.flickeringLightsFg[i - totalNrStaticLights].getIntensity();
 	}
@@ -1450,6 +1491,7 @@ RenderLight.prototype.updateFg = function() {
 	}
 	
 	gl.useProgram(progTileFg);
+	gl.uniform3fv(progTileFg.lightPos, this.lightPosFg);
 	gl.uniform3fv(progTileFg.lightColor, this.lightColorFg);
 	gl.uniform1fv(progTileFg.lightIntensity, this.lightIntensityFg);
 }

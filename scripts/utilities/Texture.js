@@ -33,7 +33,6 @@ Texture.handleImage = function(gl, tex, image) {
 
 
 TextureData = function() { //Class for handling imagedata loading
-	console.log("created textureData");
 };
 
 TextureData.prototype = {

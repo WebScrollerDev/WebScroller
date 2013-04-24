@@ -61,9 +61,31 @@ function parseWorlds(xml) {
 					var id = parseInt($(this).find("Id").text());
 					var pos;
 					$(this).find("Pos").each(function() {
-						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
+						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 					});
 					var tilePlaceable = new TilePlaceable(tmpTilesBg[id], pos);
+					$(this).find("Lights").each(function() {
+						console.log("found bg light");
+						$(this).find("Light").each(function() {
+							var id = parseInt($(this).find("LightId").text());
+							var light = lights[id];
+							var lightPos = [];
+							$(this).find("LightPos").each(function() {
+								lightPos[0] = parseInt($(this).find("LightX").text());
+								lightPos[1] = parseInt($(this).find("LightY").text());
+								lightPos[2] = parseInt($(this).find("LightZ").text());
+							});
+							if(light.type == "static") {
+								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+							}
+							if(light.type == "flickering") {
+								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+							}
+							if(light.type == "morphing") {
+								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+							}
+						});
+					});
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesBg(tilesPlaceable);
@@ -75,7 +97,7 @@ function parseWorlds(xml) {
 					var id = parseInt($(this).find("Id").text());
 					var pos;
 					$(this).find("Pos").each(function() {
-						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
+						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 					});
 					var tilePlaceable = new TilePlaceable(tmpTilesMg[id], pos);;
 					if(obbs[id] != null) {
@@ -83,6 +105,7 @@ function parseWorlds(xml) {
 							tilePlaceable.addBoundingBox(new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle));
 					}
 					$(this).find("Lights").each(function() {
+						console.log("found mg light");
 						$(this).find("Light").each(function() {
 							var id = parseInt($(this).find("LightId").text());
 							var light = lights[id];
@@ -90,14 +113,16 @@ function parseWorlds(xml) {
 							$(this).find("LightPos").each(function() {
 								lightPos[0] = parseInt($(this).find("LightX").text());
 								lightPos[1] = parseInt($(this).find("LightY").text());
-								lightPos[2] = 20;
+								lightPos[2] = parseInt($(this).find("LightZ").text());;
 							});
-							pos[2] = 0.0;
 							if(light.type == "static") {
 								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
 							}
 							if(light.type == "flickering") {
-								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color,light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+							}
+							if(light.type == "morphing") {
+								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
 							}
 						});
 					});
@@ -113,9 +138,31 @@ function parseWorlds(xml) {
 					var id = parseInt($(this).find("Id").text());
 					var pos;
 					$(this).find("Pos").each(function() {
-						pos = [parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())];
+						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 					});
 					var tilePlaceable = new TilePlaceable(tmpTilesFg[id], pos);
+					$(this).find("Lights").each(function() {
+						console.log("found fg light");
+						$(this).find("Light").each(function() {
+							var id = parseInt($(this).find("LightId").text());
+							var light = lights[id];
+							var lightPos = [];
+							$(this).find("LightPos").each(function() {
+								lightPos[0] = parseInt($(this).find("LightX").text());
+								lightPos[1] = parseInt($(this).find("LightY").text());
+								lightPos[2] = parseInt($(this).find("LightZ").text());
+							});
+							if(light.type == "static") {
+								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+							}
+							if(light.type == "flickering") {
+								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+							}
+							if(light.type == "morphing") {
+								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+							}
+						});
+					});
 					tilesPlaceable.push(tilePlaceable);
 				});
 				world.setTilesFg(tilesPlaceable);
@@ -258,14 +305,55 @@ function parseLights(xml)
 				intensity[1] = parseFloat($(this).find("Max").text());
 			});
 			id = parseInt($(this).find("Id").text());
-			flickerSpeed = parseFloat($(this).find("FlickerSpeed").text());
-			flickerSpeedSpan = parseFloat($(this).find("FlickerSpeedSpan").text());
+			$(this).find("Flicker").each(function() {
+				flickerSpeed = parseFloat($(this).find("Speed").text());
+				flickerSpeedSpan = parseFloat($(this).find("SpeedSpan").text());
+			});
 			var tmpLight = {
 				type: "flickering",
 				color: color, 
 				intensity: intensity, 
 				flickerSpeed: flickerSpeed, 
 				flickerSpeedSpan: flickerSpeedSpan
+			}
+			lights[id] = tmpLight;
+		});
+		$(this).find("MorphingLight").each(function() {
+			var id, flickerSpeed, flickerSpeedSpan, morphSpeed, morphSpeedSpan;
+			var intensity = [];
+			var colors = new Array();
+			$(this).find("Colors").each(function() {
+				var color = [];
+				$(this).find("Color").each(function() {
+					color[0] = parseFloat($(this).find("R").text());
+					color[1] = parseFloat($(this).find("G").text());
+					color[2] = parseFloat($(this).find("B").text());
+					colors.push(color);
+					color = [];
+				});
+			});
+			
+			$(this).find("Intensity").each(function() {
+				intensity[0] = parseFloat($(this).find("Min").text());
+				intensity[1] = parseFloat($(this).find("Max").text());
+			});
+			id = parseInt($(this).find("Id").text());
+			$(this).find("Flicker").each(function() {
+				flickerSpeed = parseFloat($(this).find("Speed").text());
+				flickerSpeedSpan = parseFloat($(this).find("SpeedSpan").text());
+			});
+			$(this).find("Morph").each(function() {
+				morphSpeed = parseFloat($(this).find("Speed").text());
+				morphSpeedSpan = parseFloat($(this).find("SpeedSpan").text());
+			});
+			var tmpLight = {
+				type: "morphing",
+				colors: colors, 
+				intensity: intensity, 
+				flickerSpeed: flickerSpeed, 
+				flickerSpeedSpan: flickerSpeedSpan, 
+				morphSpeed: morphSpeed, 
+				morphSpeedSpan: morphSpeedSpan
 			}
 			lights[id] = tmpLight;
 		});
