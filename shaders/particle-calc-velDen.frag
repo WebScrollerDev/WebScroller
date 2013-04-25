@@ -14,7 +14,7 @@ void main(void) {
 	vec2 border = texture2D(borderSamp, tex).xy;
 	float density = texture2D(velDenSamp, tex).z;
 	
-	vec2 direction = vec2(0.);
+	vec2 direction = vec2(0.01);
 	density = 0.0;
 	for(float x = 0.; x < 1.; x+=(1./32.)) {
 		for(float y = 0.; y < 1.; y+=(1./32.)) {
@@ -27,6 +27,6 @@ void main(void) {
 		}
 	}
 	
-	velocity.xy += direction;
+	velocity += direction;
 	gl_FragColor = vec4(velocity, density, 1.0);
 }
