@@ -523,8 +523,9 @@ RenderParticle.prototype.render = function() {
 		}
 	}
 //-------------------------------GPU FLUID---------------------------------//
-	gl.depthMask(true); //see other particles through the particles
+	gl.depthMask(false); //see other particles through the particles
 	this.renderGpuParticle(world.gpuParticles[0].getAmount());
+	gl.depthMask(true);
 };
 
 RenderParticle.prototype.renderGpuParticle = function(amount) {

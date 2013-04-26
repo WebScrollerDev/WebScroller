@@ -282,8 +282,8 @@
 			<Tile>
 				<Id>13</Id>	// border
 				<Pos>
-					<X>300</X>
-					<Y>350</Y>
+					<X>2700</X>
+					<Y>40</Y>
 					<Z>-1</Z>
 				</Pos>
 			</Tile>
