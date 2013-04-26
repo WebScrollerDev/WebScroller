@@ -49,6 +49,98 @@
 					<Z>0</Z>
 				</Pos>
 			</Tile>
+			
+			<Tile>
+				<Id>12</Id> // house
+				<Pos>
+					<X>2000</X>
+					<Y>32</Y>
+					<Z>0</Z>
+				</Pos>
+				<Lights>
+					
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>61</LightX>
+							<LightY>31</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>			
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>99</LightX>
+							<LightY>27</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>	
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>143</LightX>
+							<LightY>27</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>				
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>182</LightX>
+							<LightY>32</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>	
+					
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>121</LightX>
+							<LightY>250</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					
+				</Lights>
+			</Tile>
+			
+			<Tile>
+				<Id>3</Id> // house
+				<Pos>
+					<X>2400</X>
+					<Y>32</Y>
+					<Z>0</Z>
+				</Pos>
+				<Lights>
+					
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>122</LightX>
+							<LightY>45</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>			
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>96</LightX>
+							<LightY>117</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>92</LightX>
+							<LightY>218</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					
+				</Lights>
+			</Tile>
+			
 			<Tile>
 				<Id>3</Id> // house
 				<Pos>
@@ -56,6 +148,34 @@
 					<Y>32</Y>
 					<Z>0</Z>
 				</Pos>
+				<Lights>
+					
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>122</LightX>
+							<LightY>45</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>			
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>96</LightX>
+							<LightY>117</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>92</LightX>
+							<LightY>218</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					
+				</Lights>
 			</Tile>
 			
 			<Tile>
@@ -93,32 +213,24 @@
 					<Z>0</Z>
 				</Pos>
 				<Lights>
-					<Light>
-						<LightId>0</LightId>
-						<LightPos>
-							<LightX>200</LightX>
-							<LightY>10</LightY>
-							<LightZ>20</LightZ>
-						</LightPos>
-					</Light>
 					
 					<Light>
 						<LightId>2</LightId>
 						<LightPos>
 							<LightX>100</LightX>
-							<LightY>10</LightY>
-							<LightZ>20</LightZ>
+							<LightY>30</LightY>
+							<LightZ>4</LightZ>
 						</LightPos>
 					</Light>
-					
 					<Light>
-						<LightId>3</LightId>
+						<LightId>2</LightId>
 						<LightPos>
-							<LightX>150</LightX>
-							<LightY>200</LightY>
-							<LightZ>20</LightZ>
+							<LightX>205</LightX>
+							<LightY>30</LightY>
+							<LightZ>4</LightZ>
 						</LightPos>
 					</Light>
+
 				</Lights>
 			</Tile>
 			
@@ -167,6 +279,14 @@
 				</Pos>
 			</Tile>
 			
+			<Tile>
+				<Id>13</Id>	// border
+				<Pos>
+					<X>300</X>
+					<Y>350</Y>
+					<Z>-1</Z>
+				</Pos>
+			</Tile>
 		</TilesMg>
 		
 		<TilesBg>

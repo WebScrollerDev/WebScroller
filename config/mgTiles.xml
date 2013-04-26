@@ -63,7 +63,7 @@
 	
 	<Tile>
 		<Id>4</Id>
-		<Url>resources/tiles/mg/house3.png</Url> // tree
+		<Url>resources/tiles/mg/house3.png</Url> // house
 		<Size>
 			<X>300</X>
 			<Y>300</Y>
@@ -181,6 +181,23 @@
 		<Size>
 			<X>32</X>
 			<Y>512</Y>
+		</Size>
+	</Tile>
+	
+	<Tile>
+		<Id>12</Id>
+		<Url>resources/tiles/mg/house4.png</Url> // house4
+		<Size>
+			<X>240</X>
+			<Y>380</Y>
+		</Size>
+	</Tile>
+	<Tile>
+		<Id>13</Id>
+		<Url>resources/waterborder.png</Url>
+		<Size>
+			<X>256</X>
+			<Y>256</Y>
 		</Size>
 	</Tile>
 </Tiles>

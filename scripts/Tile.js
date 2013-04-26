@@ -102,7 +102,8 @@ TilePlaceable.prototype = {
 };
 
 //-------------------------------------TILE ANIMATED-------------------------------//
-TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation, animationSpeed, updateStatusSpeed) {
+					//	tile  x,y,z		
+TileAnimated = function(tile, pos, totalNrAnimations, maxNrFramesPerAnimation, nrFramesPerAnimation, animationSpeed, updateStatusSpeed) {
 	TileAnimated.baseConstructor.call(this, tile, pos);
 	
 	this.tileStatus = {
@@ -110,9 +111,9 @@ TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation,
 		ANIMATION_ONE: 1
 	}
 	
-	this.maxAnim = [totalNrFramesPerAnimation, totalNrAnimations];
-	this.currAnim = [0, this.tileStatus.ANIMATION_IDLE];
-	
+	this.maxAnim = [maxNrFramesPerAnimation, totalNrAnimations];
+	this.currAnim = [0, this.tileStatus.ANIMATION_ONE];
+	this.nrFramesPerAnimation = nrFramesPerAnimation;
 	this.animationSpeed = animationSpeed;
 	this.updateStatusSpeed = updateStatusSpeed;
 
@@ -124,7 +125,7 @@ TileAnimated = function(tile, pos, totalNrAnimations, totalNrFramesPerAnimation,
 InheritenceManager.extend(TileAnimated, TilePlaceable); //TileAnimated inherites from TilePlaceable
 
 TileAnimated.prototype.animate = function() {
-	if( (this.currAnim[0] + 1) >= this.maxAnim[0])
+	if( (this.currAnim[0] + 1) >= this.nrFramesPerAnimation[this.currAnim[1]])
 		this.currAnim[0] = 0;
 	else
 		this.currAnim[0]++;
@@ -132,6 +133,7 @@ TileAnimated.prototype.animate = function() {
 
 TileAnimated.prototype.updateStatus = function() {
 	// logic for changing status, ex: if the player jumps on the tile then this.changeStatus(this.tilestatus.ANIMATION_ONE)
+	
 };
 
 TileAnimated.prototype.changeStatus = function(newState) {

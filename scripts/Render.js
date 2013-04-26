@@ -491,7 +491,7 @@ RenderParticle.prototype.initGpuParticleBorder = function(gpuParticle) {
 	gl.activeTexture(gl.TEXTURE5);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleBorder);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gpuParticle.getBorderSize().x, gpuParticle.getBorderSize().y, 0, gl.RGBA, gl.FLOAT, new Float32Array(gpuParticle.getBorder()));
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gpuParticle.getBorderSize().x, gpuParticle.getBorderSize().y, 0, gl.RGBA, gl.FLOAT, new Float32Array(gpuParticle.getBorder().data));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	

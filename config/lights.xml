@@ -28,11 +28,11 @@
 		</Color>
 		<Flicker>
 			<Speed>0.01</Speed>
-			<SpeedSpan>0.1</SpeedSpan>
+			<SpeedSpan>0.01</SpeedSpan>
 		</Flicker>
 		<Intensity>
 			<Min>1.1</Min>
-			<Max>3.0</Max>
+			<Max>1.2</Max>
 		</Intensity>
 	</FlickeringLight>
 	
@@ -63,4 +63,21 @@
 			<Max>1.0</Max>
 		</Intensity>
 	</MorphingLight>
+	
+	<FlickeringLight>
+		<Id>4</Id>
+		<Color>
+			<R>1.0</R>
+			<G>0.7</G>
+			<B>0.0</B>
+		</Color>
+		<Flicker>
+			<Speed>0.01</Speed>
+			<SpeedSpan>0.01</SpeedSpan>
+		</Flicker>
+		<Intensity>
+			<Min>0.55</Min>
+			<Max>0.6</Max>
+		</Intensity>
+	</FlickeringLight>
 </Lights>
