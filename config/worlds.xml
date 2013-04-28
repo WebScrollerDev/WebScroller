@@ -54,7 +54,7 @@
 				<Id>12</Id> // house
 				<Pos>
 					<X>2000</X>
-					<Y>32</Y>
+					<Y>22</Y>
 					<Z>0</Z>
 				</Pos>
 				<Lights>
@@ -108,7 +108,7 @@
 				<Id>3</Id> // house
 				<Pos>
 					<X>2400</X>
-					<Y>32</Y>
+					<Y>22</Y>
 					<Z>0</Z>
 				</Pos>
 				<Lights>

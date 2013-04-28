@@ -24,7 +24,7 @@ World = function() {
 	this.smokeEmitters = new Array();
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
-	
+
 	/*this.staticLightsMg = new Array();
 	this.flickeringLightsMg = new Array();
 	this.morphingLightsMg = new Array();
@@ -48,7 +48,7 @@ World = function() {
 World.prototype = {	
 	
 	init: function() {
-		this.player = new EntityPlayer([2700, 100, 0], [0, 0], [45, 64]);
+		this.player = new EntityPlayer([3710, 100, 0], [0, 0], [45, 64]);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
 		
@@ -74,11 +74,22 @@ World.prototype = {
 		this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
 		this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
 		
-		this.gpuParticles.push(new GpuParticle([2700, 40], 128, "resources/waterborder.png"));
+		this.gpuParticles.push(new GpuParticle([2700, 40], 32, "resources/waterborder.png"));
 		
 		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
 		tmpTile.setSize([100, 100]);
 		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [1610, 8,1], 2, 8, [1, 6], 50, 10));
+		
+		var tmpPointOne = {
+			x: 3700,
+			y: 100
+		}
+		var tmpPointTwo = {
+			x: 3900,
+			y: 100
+		}
+		this.shadowHandler = new ShadowHandler(1000, 10);
+		this.shadowHandler.addShadow(tmpPointOne, tmpPointTwo);
 	},
 	
 	setTilesBg: function(tiles) {
@@ -131,6 +142,9 @@ World.prototype = {
 		return this.tilesAnimatedFg;
 	},
 	
+	getShadowHandler: function() {
+		return this.shadowHandler;
+	},
 	
 	
 	update: function() {

@@ -1,4 +1,6 @@
-var progEntity, progWorld, progTileMg, progTileBg, progTileFg, progParticle, progParticleGpuPos, progParticleGpuVelDen, progParticleGpuShow, progLine;
+var progEntity, progWorld, progTileMg, progTileBg, progTileFg, 
+	progParticle, progParticleGpuPos, progParticleGpuVelDen, 
+	progParticleGpuShow, progLine, progShadow;
 
 function RenderManager() {
 	
@@ -31,6 +33,7 @@ RenderManager.prototype = {
 		progTileBg = utils.addShaderProg(gl, 'tileBg.vert', 'tileBg.frag');
 		progTileFg = utils.addShaderProg(gl, 'tileFg.vert', 'tileFg.frag');
 		progLine = utils.addShaderProg(gl, 'line.vert', 'line.frag');
+		progShadow = utils.addShaderProg(gl, 'shadow.vert', 'shadow.frag');
 		progParticleGpuPos = utils.addShaderProg(gl, 'particle-calc-pos.vert', 'particle-calc-pos.frag');
 		progParticleGpuVelDen = utils.addShaderProg(gl, 'particle-calc-velDen.vert', 'particle-calc-velDen.frag');
 		
@@ -42,6 +45,7 @@ RenderManager.prototype = {
 		this.renderTile = new RenderTile();		
 		this.renderBB = new RenderBoundingBox();
 		this.renderFabric = new RenderFabric();
+		this.renderShadow = new RenderShadow();
 		
 		gl.clearColor(1.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
@@ -157,6 +161,15 @@ RenderManager.prototype = {
 		progLine.proj = gl.getUniformLocation(progLine, "projMatrix");
 		progLine.modelView = gl.getUniformLocation(progLine, "modelViewMatrix");	
 		progLine.color = 	gl.getUniformLocation(progLine, "inColor");
+		
+//-----------------------------------SHADOW SHADER------------------------------------//
+		gl.useProgram(progShadow);
+		
+		progShadow.position = gl.getAttribLocation(progShadow, "inPosition");
+		gl.enableVertexAttribArray(progShadow.position);
+		progShadow.proj = gl.getUniformLocation(progShadow, "projMatrix");
+		progShadow.modelView = gl.getUniformLocation(progShadow, "modelViewMatrix");	
+		progShadow.color = 	gl.getUniformLocation(progShadow, "inColor");
 
 //---------------------------------PARTICLE SHADER-----------------------------------//	
 		gl.useProgram(progParticle);
@@ -208,6 +221,7 @@ RenderManager.prototype = {
 		this.renderBB.render();
 		this.renderParticle.render();
 		this.renderFabric.render();
+		this.renderShadow.render();
 	}
 }
 
@@ -366,6 +380,54 @@ RenderFabric.prototype.renderFabric = function(points, lineWidth, color) {
 	gl.lineWidth(lineWidth);
 	gl.drawArrays(gl.LINES, 0, nrLines);
 };
+
+//----------------------------------SHADOW------------------------------------//
+RenderShadow = function() {
+	RenderShadow.baseConstructor.call(this);
+};
+
+InheritenceManager.extend(RenderShadow, RenderBase);
+
+RenderShadow.prototype.render = function() {
+	
+	gl.useProgram(progShadow);
+	var modelView = mat4.create();
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	var model = world.getShadowHandler().getShadowsArray();
+	var posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
+	
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 1.1]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.1]);
+	else
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.1]);
+
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+	
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progShadow.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progShadow.modelView, false, modelView);
+	gl.uniform3f(progShadow.color, 0.0, 0.0, 0.0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progShadow.position, 3, gl.FLOAT, false, 0, 0);
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.length/3);
+};
+
 
 //----------------------------------PARTICLES------------------------------------//
 RenderParticle = function() {

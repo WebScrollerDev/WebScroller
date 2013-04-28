@@ -7,7 +7,7 @@ uniform vec2 borderPos;
 
 varying vec2 tex;
 const float gravity = 0.01;
-const float d = 1./128.;
+const float d = 1./32.;
 void main(void) {
 
 	vec2 position = texture2D(posSamp, tex).xy;
@@ -23,7 +23,7 @@ void main(void) {
 			vec2 otherVel = texture2D(velDenSamp, vec2(x, y)).xy;
 			vec2 delta = otherPos - position;
 			float diff = sqrt(pow(delta.x, 2.) + pow(delta.y, 2.));
-			if(diff < 20.)
+			if(diff < 10.)
 				density += 0.05;
 			if(diff < 5.0) {
 				if(delta.x < 0.)
@@ -58,7 +58,6 @@ void main(void) {
 		}
 	} else
 		velocity.y = 0.0;
-	//velocity = vec2(0.0, 0.0);
 
 	gl_FragColor = vec4(velocity, density, 1.0);
 }
