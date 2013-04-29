@@ -68,9 +68,8 @@ World.prototype = {
 		tmpTile.setSize([100, 100]);
 		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [1610, 8,1], 2, 8, [1, 6], 50, 10));
 		
-		this.shadowHandler = new ShadowHandler(100, 10);
-		this.shadowHandler.addShadow([3700, 100], [3900, 100]);
-		this.shadowHandler.addShadow([3700, 100], [3900, 100]);
+		this.shadowHandler = new ShadowHandler(gl.viewportWidth, 10);
+		this.shadowHandler.addShadowPair([3700, 100], [3900, 100], [3900, 80], [3700, 80]);
 	},
 	
 	setTilesBg: function(tiles) {
@@ -139,15 +138,12 @@ World.prototype = {
 		this.tilesMg[0].pos.y = newPos.y;
 		this.tilesMg[0].getBBs()[0].angle = this.rope.getAngle(10);
 		this.tilesMg[0].getBBs()[0].updatePosition(newPos);
-		this.shadowHandler.shadows[0].setAnchorPointOneX(this.tilesMg[0].getBBs()[0].corner[3][0]);
-		this.shadowHandler.shadows[0].setAnchorPointOneY(this.tilesMg[0].getBBs()[0].corner[3][1]);
-		this.shadowHandler.shadows[0].setAnchorPointTwoX(this.tilesMg[0].getBBs()[0].corner[2][0]);
-		this.shadowHandler.shadows[0].setAnchorPointTwoY(this.tilesMg[0].getBBs()[0].corner[2][1]);
 		
-		this.shadowHandler.shadows[1].setAnchorPointOneX(this.tilesMg[0].getBBs()[0].corner[2][0]);
-		this.shadowHandler.shadows[1].setAnchorPointOneY(this.tilesMg[0].getBBs()[0].corner[2][1]);
-		this.shadowHandler.shadows[1].setAnchorPointTwoX(this.tilesMg[0].getBBs()[0].corner[1][0]);
-		this.shadowHandler.shadows[1].setAnchorPointTwoY(this.tilesMg[0].getBBs()[0].corner[1][1]);
+		this.shadowHandler.shadows[0].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]], [this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]]);
+		this.shadowHandler.shadows[1].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]], [this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]]);
+		this.shadowHandler.shadows[2].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]], [this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]]);
+		this.shadowHandler.shadows[3].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]], [this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]]);
+		
 		this.player.temp();
 		
 		this.player.setColliding(false);
@@ -178,5 +174,9 @@ World.prototype = {
 
 	getFireEmitters: function() {
 		return this.fireEmitters;
+	}, 
+	
+	getShadowHandler: function() {
+		return this.shadowHandler;
 	}
 }

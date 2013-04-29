@@ -5,8 +5,8 @@ Shadow = function(pointOne, pointTwo) {	// OBS only one side cast shadows, allwa
 		y: pointOne[1]
 	}
 	this.anchorPointTwo = {
-		x: pointOne[0], 
-		y: pointOne[1]
+		x: pointTwo[0], 
+		y: pointTwo[1]
 	}
 	this.changingPointOne = {
 		x: pointOne[0], 
@@ -14,7 +14,7 @@ Shadow = function(pointOne, pointTwo) {	// OBS only one side cast shadows, allwa
 	};
 	this.changingPointTwo = {
 		x: pointTwo[0], 
-		y: pointOne[1]
+		y: pointTwo[1]
 	};
 	this.active = true;
 };
@@ -73,10 +73,12 @@ Shadow.prototype = {
 	},
 //------------------------------ANCHORPOINTS-------------------------//	
 	setAnchorPoints: function(pointOne, pointTwo) {
-		this.anchorPointOne = pointOne;
-		this.anchorPointTwo = pointTwo;
+		this.anchorPointOne.x = pointOne[0];
+		this.anchorPointOne.y = pointOne[1];
+		this.anchorPointTwo.x = pointTwo[0];
+		this.anchorPointTwo.y = pointTwo[1];
 	},
-	//---------------------SET ONE-----------------------//
+	/*//---------------------SET ONE-----------------------//
 	setAnchorPointOne: function(newPoint) {
 		this.anchorPointOne = newPoint;
 	},
@@ -95,7 +97,7 @@ Shadow.prototype = {
 	},
 	setAnchorPointTwoY: function(newY) {
 		this.anchorPointTwo.y = newY;	
-	},
+	},*/
 	//---------------------GET ONE-----------------------//
 	getAnchorPointOne: function() {
 		return this.anchorPointOne;

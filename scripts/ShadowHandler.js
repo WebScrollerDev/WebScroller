@@ -27,7 +27,18 @@ ShadowHandler.prototype = {
 				var y1 = Math.sin(angle1) * this.castLength;
 				var x2 = Math.cos(angle2) * this.castLength;
 				var y2 = Math.sin(angle2) * this.castLength;
+				var dx = anchorPointTwo.x - anchorPointOne.x;
+				var dy = anchorPointTwo.y - anchorPointOne.y;
+				var normal = vec2.normalize(vec2.create(), [-dy, dx]);
+				
+				var playerToMiddle = vec2.normalize(vec2.create(), [(anchorPointOne.x + dx/2) - playerCenter.x, (anchorPointOne.y + dy/2) - playerCenter.y]);
+				var angle3 = Math.acos(vec2.dot(playerToMiddle, normal));
 				//console.log("X1: " + x1 + " Y1: " + y1 + " X2: " + x2 + " Y2: " + y2);
+				
+				if(angle3 > 3.14/2)
+					this.shadows[i].setActive(false);
+				else
+					this.shadows[i].setActive(true);
 				
 				if(playerCenter.x > anchorPointOne.x)
 					this.shadows[i].setChangingPointOneX( (anchorPointOne.x - x1) );
@@ -53,10 +64,17 @@ ShadowHandler.prototype = {
 		//}
 	},
 	
-	addShadow: function(PointOne, PointTwo) {
-		this.shadows.push(new Shadow(PointOne, PointTwo));
+	addShadow: function(pointOne, pointTwo) {
+		this.shadows.push(new Shadow(pointOne, pointTwo));
 	},
 	
+	addShadowPair: function(pointOne, pointTwo, pointThree, pointFour) {
+		this.shadows.push(new Shadow(pointOne, pointTwo));
+		this.shadows.push(new Shadow(pointTwo, pointThree));
+		this.shadows.push(new Shadow(pointThree, pointFour));
+		this.shadows.push(new Shadow(pointFour, pointOne));
+	},
+
 	getShadowsArray: function() {
 		var shadowsCoordArray = [];
 		for(var i = 0; i < this.shadows.length; i++) {

@@ -101,11 +101,13 @@ function parseWorlds(xml) {
 					});
 					var tilePlaceable = new TilePlaceable(tmpTilesMg[id], pos);;
 					if(obbs[id] != null) {
-						for(var i = 0; i < obbs[id].length; i++)
-							tilePlaceable.addBoundingBox(new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle));
+						for(var i = 0; i < obbs[id].length; i++) {
+							var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
+							tilePlaceable.addBoundingBox(tmpObb);
+							world.shadowHandler.addShadowPair(tmpObb.corner[0], tmpObb.corner[1], tmpObb.corner[2], tmpObb.corner[3]);
+						}
 					}
 					$(this).find("Lights").each(function() {
-						console.log("found mg light");
 						$(this).find("Light").each(function() {
 							var id = parseInt($(this).find("LightId").text());
 							var light = lights[id];
@@ -142,7 +144,6 @@ function parseWorlds(xml) {
 					});
 					var tilePlaceable = new TilePlaceable(tmpTilesFg[id], pos);
 					$(this).find("Lights").each(function() {
-						console.log("found fg light");
 						$(this).find("Light").each(function() {
 							var id = parseInt($(this).find("LightId").text());
 							var light = lights[id];

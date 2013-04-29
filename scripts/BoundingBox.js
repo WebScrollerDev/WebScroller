@@ -21,7 +21,7 @@ OBB = function(offset, center, size, angle) {
 	this.axis = [];
 	this.origin = [];
 
-	this.updateCorners();	
+	this.updateCorners();
 }
 
 OBB.prototype = {
