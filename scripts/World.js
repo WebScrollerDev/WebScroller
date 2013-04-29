@@ -24,18 +24,6 @@ World = function() {
 	this.smokeEmitters = new Array();
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
-
-	/*this.staticLightsMg = new Array();
-	this.flickeringLightsMg = new Array();
-	this.morphingLightsMg = new Array();
-	
-	this.staticLightsBg = new Array();
-	this.flickeringLightsBg = new Array();
-	this.morphingLightsBg = new Array();
-	
-	this.staticLightsFg = new Array();
-	this.flickeringLightsFg = new Array();
-	this.morphingLightsFg = new Array();*/
 	
 	this.gpuParticles = new Array();
 	
@@ -48,9 +36,9 @@ World = function() {
 World.prototype = {	
 	
 	init: function() {
-		this.player = new EntityPlayer([3710, 100, 0], [0, 0], [45, 64]);
+		this.player = new EntityPlayer([1000, 100, 0], [0, 0], [45, 64]);
 		
-		this.smokeEmitters.push(new EmitterSmoke([532,330], 10000, 10, 8, [0.0,0.2], [0.1,0.0], 4000, 500));
+		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
 		
 		//this.fireEmitters.push(new EmitterFire([950,70], 10000, 10, 32, [0.0,0.4], [0.0,0.0], 2000, 500));
 		//this.fluidEmitters.push(new EmitterFluid([600,200], 10, 500, 32, [0.0,0.2], [0.1,0.0], 10));
@@ -80,16 +68,9 @@ World.prototype = {
 		tmpTile.setSize([100, 100]);
 		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [1610, 8,1], 2, 8, [1, 6], 50, 10));
 		
-		var tmpPointOne = {
-			x: 3700,
-			y: 100
-		}
-		var tmpPointTwo = {
-			x: 3900,
-			y: 100
-		}
-		this.shadowHandler = new ShadowHandler(1000, 10);
-		this.shadowHandler.addShadow(tmpPointOne, tmpPointTwo);
+		this.shadowHandler = new ShadowHandler(100, 10);
+		this.shadowHandler.addShadow([3700, 100], [3900, 100]);
+		this.shadowHandler.addShadow([3700, 100], [3900, 100]);
 	},
 	
 	setTilesBg: function(tiles) {
@@ -149,9 +130,24 @@ World.prototype = {
 	
 	update: function() {
 		
-		this.tilesMg[0].pos.x = this.rope.getPosition(10).x - this.tilesMg[0].getTile().size.x/2;
-		this.tilesMg[0].pos.y = this.rope.getPosition(10).y - this.tilesMg[0].getTile().size.y/2;
+		var newPos = {
+			x: (this.rope.getPosition(10).x - this.tilesMg[0].getTile().size.x/2),
+			y: (this.rope.getPosition(10).y - this.tilesMg[0].getTile().size.y/2)
+		}
 		
+		this.tilesMg[0].pos.x = newPos.x;
+		this.tilesMg[0].pos.y = newPos.y;
+		this.tilesMg[0].getBBs()[0].angle = this.rope.getAngle(10);
+		this.tilesMg[0].getBBs()[0].updatePosition(newPos);
+		this.shadowHandler.shadows[0].setAnchorPointOneX(this.tilesMg[0].getBBs()[0].corner[3][0]);
+		this.shadowHandler.shadows[0].setAnchorPointOneY(this.tilesMg[0].getBBs()[0].corner[3][1]);
+		this.shadowHandler.shadows[0].setAnchorPointTwoX(this.tilesMg[0].getBBs()[0].corner[2][0]);
+		this.shadowHandler.shadows[0].setAnchorPointTwoY(this.tilesMg[0].getBBs()[0].corner[2][1]);
+		
+		this.shadowHandler.shadows[1].setAnchorPointOneX(this.tilesMg[0].getBBs()[0].corner[2][0]);
+		this.shadowHandler.shadows[1].setAnchorPointOneY(this.tilesMg[0].getBBs()[0].corner[2][1]);
+		this.shadowHandler.shadows[1].setAnchorPointTwoX(this.tilesMg[0].getBBs()[0].corner[1][0]);
+		this.shadowHandler.shadows[1].setAnchorPointTwoY(this.tilesMg[0].getBBs()[0].corner[1][1]);
 		this.player.temp();
 		
 		this.player.setColliding(false);

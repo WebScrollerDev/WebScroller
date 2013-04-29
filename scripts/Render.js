@@ -216,7 +216,7 @@ RenderManager.prototype = {
 		gl.activeTexture(gl.TEXTURE0);
 		this.renderWorld.render();
 		this.renderEntity.render();
-		this.renderLight.update();
+		//this.renderLight.update();
 		this.renderTile.render();
 		this.renderBB.render();
 		this.renderParticle.render();
@@ -424,8 +424,8 @@ RenderShadow.prototype.render = function() {
 	gl.uniform3f(progShadow.color, 0.0, 0.0, 0.0);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-	gl.vertexAttribPointer(progShadow.position, 3, gl.FLOAT, false, 0, 0);
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.length/3);
+	gl.vertexAttribPointer(progShadow.position, 2, gl.FLOAT, false, 0, 0);
+	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
 };
 
 
@@ -696,7 +696,7 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotati
 	
 	mat4.rotate(modelView, modelView, rotation, [0,0,1]);
 
-	mat4.scale(modelView, modelView, [scale/(fade+0.4), scale/(fade+0.4), 0.0]); //shrink the particles
+	mat4.scale(modelView, modelView, [scale/(fade+0.2), scale/(fade+0.2), 0.0]); //shrink the particles
 	mat4.multiply(modelView, cam.getView(), modelView);
 
 	gl.uniformMatrix4fv(progParticle.proj, false, cam.getProj());

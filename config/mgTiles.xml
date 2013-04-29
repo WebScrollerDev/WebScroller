@@ -113,6 +113,19 @@
 	<Tile>
 		<Id>8</Id>
 		<Url>resources/tiles/mg/test.png</Url>
+		<BoundingBoxes>
+			<BoundingBox>
+				<Center>
+					<X>8</X>
+					<Y>16</Y>
+				</Center>
+				<Size>
+					<X>16</X>
+					<Y>32</Y>
+				</Size>
+				<Angle>0</Angle>
+			</BoundingBox>
+		</BoundingBoxes>
 		<Size>
 			<X>16</X>
 			<Y>32</Y>

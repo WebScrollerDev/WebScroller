@@ -9,11 +9,11 @@ ShadowHandler = function(castLength, updateInterval) {
 ShadowHandler.prototype = {
 	calculatePoints: function() {
 		var playerPos = world.player.getPosition();
-		if(playerPos != world.player.getPrevPosition()) {	// if the player has moved we update the shadows
+		//if(playerPos.x != world.player.getPrevPosition().x || playerPos.y != world.player.getPrevPosition().y) {	// if the player has moved we update the shadows
 			
 			var playerCenter = {
-				x: playerPos.x + world.player.getSize().x,
-				y: playerPos.y + world.player.getSize().y
+				x: playerPos.x + world.player.getSize().x/2,
+				y: playerPos.y + world.player.getSize().y/2
 			}
 			
 			for(var i = 0; i < this.shadows.length; i++) {
@@ -23,26 +23,26 @@ ShadowHandler.prototype = {
 				
 				var angle1 = Math.atan2( Math.abs(playerCenter.y - anchorPointOne.y) , Math.abs(playerCenter.x - anchorPointOne.x) );
 				var angle2 = Math.atan2( Math.abs(playerCenter.y - anchorPointTwo.y) , Math.abs(playerCenter.x - anchorPointTwo.x) );
-				
 				var x1 = Math.cos(angle1) * this.castLength;
 				var y1 = Math.sin(angle1) * this.castLength;
 				var x2 = Math.cos(angle2) * this.castLength;
-				var y2 = Math.cos(angle2) * this.castLength;
+				var y2 = Math.sin(angle2) * this.castLength;
+				//console.log("X1: " + x1 + " Y1: " + y1 + " X2: " + x2 + " Y2: " + y2);
 				
 				if(playerCenter.x > anchorPointOne.x)
 					this.shadows[i].setChangingPointOneX( (anchorPointOne.x - x1) );
 				else
 					this.shadows[i].setChangingPointOneX( (anchorPointOne.x + x1) );
 					
-				if(playerCenter.x > anchorPointTwo.x)
-					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x - x2) );
-				else
-					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x + x2) );
-					
 				if(playerCenter.y > anchorPointOne.y)
 					this.shadows[i].setChangingPointOneY( (anchorPointOne.y - y1) );
 				else
 					this.shadows[i].setChangingPointOneY( (anchorPointOne.y + y1) );
+					
+				if(playerCenter.x > anchorPointTwo.x)
+					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x - x2) );
+				else
+					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x + x2) );
 					
 				if(playerCenter.y > anchorPointTwo.y)
 					this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y - y2) );
@@ -50,7 +50,7 @@ ShadowHandler.prototype = {
 					this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y + y2) );
 			}
 			
-		}
+		//}
 	},
 	
 	addShadow: function(PointOne, PointTwo) {
@@ -66,10 +66,12 @@ ShadowHandler.prototype = {
 				var cCoordOne = this.shadows[i].getChangingPointOne();
 				var cCoordTwo = this.shadows[i].getChangingPointTwo();
 				// 6 coords for 2 triangles, ALeft -> CLeft -> ARight -> ARight -> CLeft -> CRight
-				shadowsCoordArray.push(aCoordOne.x, aCoordOne.y, 0.0, 
-									   cCoordOne.x, cCoordOne.y, 0.0,
-									   aCoordTwo.x, aCoordTwo.y, 0.0,
-									   cCoordTwo.x, cCoordTwo.y, 0.0);
+				shadowsCoordArray.push(aCoordOne.x, aCoordOne.y, 
+									   cCoordOne.x, cCoordOne.y,
+									   aCoordTwo.x, aCoordTwo.y,
+									   aCoordTwo.x, aCoordTwo.y,
+									   cCoordOne.x, cCoordOne.y,
+									   cCoordTwo.x, cCoordTwo.y);
 			}
 		}
 		return shadowsCoordArray;
