@@ -8,9 +8,10 @@ ShadowHandler = function(castLength, updateInterval) {
 
 ShadowHandler.prototype = {
 	calculatePoints: function() {
-		var playerPos = world.player.getPosition();
-		//if(playerPos.x != world.player.getPrevPosition().x || playerPos.y != world.player.getPrevPosition().y) {	// if the player has moved we update the shadows
-			
+		if(shadow) {
+			var playerPos = world.player.getPosition();
+			//if(playerPos.x != world.player.getPrevPosition().x || playerPos.y != world.player.getPrevPosition().y)	// if the player has moved we update the shadows
+				
 			var playerCenter = {
 				x: playerPos.x + world.player.getSize().x/2,
 				y: playerPos.y + world.player.getSize().y/2
@@ -59,8 +60,7 @@ ShadowHandler.prototype = {
 						this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y + y2) );
 				}
 			}
-			
-		//}
+		}
 	},
 	
 	addShadow: function(pointOne, pointTwo) {
@@ -76,6 +76,9 @@ ShadowHandler.prototype = {
 
 	getShadowsArray: function() {
 		var shadowsCoordArray = [];
+		if(!shadow)
+			return shadowsCoordArray;
+			
 		for(var i = 0; i < this.shadows.length; i++) {
 			if(this.shadows[i].getActive()) {
 				var aCoordOne = this.shadows[i].getAnchorPointOne();

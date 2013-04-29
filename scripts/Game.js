@@ -5,7 +5,9 @@ window.requestAnimFrame = (function() {
 	};
 })();
 
+var keyCooldown = 10;
 var debug = false;
+var shadow = false;
 var gl;
 var cam = new Camera();
 var render;
@@ -34,9 +36,18 @@ function tick() {
 }
 
 function keyInput() {
-	if(isKeyDown('J')) {
-		debug = !debug;
+	if(keyCooldown <= 0) {
+		if(isKeyDown('J')) {
+			debug = !debug;
+			keyCooldown = 10;
+		}
+		if(isKeyDown('K')) {
+			shadow = !shadow;
+			keyCooldown = 10;
+		}
 	}
+	else
+		keyCooldown--;
 }
 var initialized = false;
 function startGL() {
