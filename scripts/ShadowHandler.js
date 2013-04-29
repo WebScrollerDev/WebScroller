@@ -21,44 +21,43 @@ ShadowHandler.prototype = {
 				var anchorPointOne = this.shadows[i].getAnchorPointOne();
 				var anchorPointTwo = this.shadows[i].getAnchorPointTwo();
 				
-				var angle1 = Math.atan2( Math.abs(playerCenter.y - anchorPointOne.y) , Math.abs(playerCenter.x - anchorPointOne.x) );
-				var angle2 = Math.atan2( Math.abs(playerCenter.y - anchorPointTwo.y) , Math.abs(playerCenter.x - anchorPointTwo.x) );
-				var x1 = Math.cos(angle1) * this.castLength;
-				var y1 = Math.sin(angle1) * this.castLength;
-				var x2 = Math.cos(angle2) * this.castLength;
-				var y2 = Math.sin(angle2) * this.castLength;
 				var dx = anchorPointTwo.x - anchorPointOne.x;
 				var dy = anchorPointTwo.y - anchorPointOne.y;
 				var normal = vec2.normalize(vec2.create(), [-dy, dx]);
 				
 				var playerToMiddle = vec2.normalize(vec2.create(), [(anchorPointOne.x + dx/2) - playerCenter.x, (anchorPointOne.y + dy/2) - playerCenter.y]);
 				var angle3 = Math.acos(vec2.dot(playerToMiddle, normal));
-				//console.log("X1: " + x1 + " Y1: " + y1 + " X2: " + x2 + " Y2: " + y2);
-				
+
 				if(angle3 > 3.14/2)
 					this.shadows[i].setActive(false);
-				else
+				else {
 					this.shadows[i].setActive(true);
-				
-				if(playerCenter.x > anchorPointOne.x)
-					this.shadows[i].setChangingPointOneX( (anchorPointOne.x - x1) );
-				else
-					this.shadows[i].setChangingPointOneX( (anchorPointOne.x + x1) );
-					
-				if(playerCenter.y > anchorPointOne.y)
-					this.shadows[i].setChangingPointOneY( (anchorPointOne.y - y1) );
-				else
-					this.shadows[i].setChangingPointOneY( (anchorPointOne.y + y1) );
-					
-				if(playerCenter.x > anchorPointTwo.x)
-					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x - x2) );
-				else
-					this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x + x2) );
-					
-				if(playerCenter.y > anchorPointTwo.y)
-					this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y - y2) );
-				else
-					this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y + y2) );
+					var angle1 = Math.atan2( Math.abs(playerCenter.y - anchorPointOne.y) , Math.abs(playerCenter.x - anchorPointOne.x) );
+					var angle2 = Math.atan2( Math.abs(playerCenter.y - anchorPointTwo.y) , Math.abs(playerCenter.x - anchorPointTwo.x) );
+					var x1 = Math.cos(angle1) * this.castLength;
+					var y1 = Math.sin(angle1) * this.castLength;
+					var x2 = Math.cos(angle2) * this.castLength;
+					var y2 = Math.sin(angle2) * this.castLength;
+					if(playerCenter.x > anchorPointOne.x)
+						this.shadows[i].setChangingPointOneX( (anchorPointOne.x - x1) );
+					else
+						this.shadows[i].setChangingPointOneX( (anchorPointOne.x + x1) );
+						
+					if(playerCenter.y > anchorPointOne.y)
+						this.shadows[i].setChangingPointOneY( (anchorPointOne.y - y1) );
+					else
+						this.shadows[i].setChangingPointOneY( (anchorPointOne.y + y1) );
+						
+					if(playerCenter.x > anchorPointTwo.x)
+						this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x - x2) );
+					else
+						this.shadows[i].setChangingPointTwoX( (anchorPointTwo.x + x2) );
+						
+					if(playerCenter.y > anchorPointTwo.y)
+						this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y - y2) );
+					else
+						this.shadows[i].setChangingPointTwoY( (anchorPointTwo.y + y2) );
+				}
 			}
 			
 		//}

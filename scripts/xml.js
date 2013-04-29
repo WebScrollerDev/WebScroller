@@ -104,7 +104,7 @@ function parseWorlds(xml) {
 						for(var i = 0; i < obbs[id].length; i++) {
 							var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
 							tilePlaceable.addBoundingBox(tmpObb);
-							world.shadowHandler.addShadowPair(tmpObb.corner[0], tmpObb.corner[1], tmpObb.corner[2], tmpObb.corner[3]);
+							world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
 						}
 					}
 					$(this).find("Lights").each(function() {
