@@ -33,7 +33,7 @@ function loadTiles() {
 function loadBgTiles(xml) {
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
 			
@@ -59,43 +59,9 @@ function loadMgTiles(xml)
 	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
-			if($(this).find("BoundingType").text() == "box") {
-				var minX, maxX, minY, maxY;
-				$(this).find("BoundingBox").each(function() {
-					
-					$(this).find("Min").each(function() {
-						minX = parseInt($(this).find("X").text());
-						minY = parseInt($(this).find("Y").text());
-					});
-					
-					$(this).find("Max").each(function() {
-						maxX = parseInt($(this).find("X").text());
-						maxY = parseInt($(this).find("Y").text());
-					});
-				
-				});
-				
-				tile.addBoundingBox([minX, minY], [maxX, maxY]);
-			}
-			if($(this).find("BoundingType").text() == "circle") {
-				var radius, posX, posY;
-				$(this).find("BoundingCircle").each(function() {
-					
-					radius = parseInt($(this).find("Radius").text());
-					
-					$(this).find("Pos").each(function() {
-						posX = parseInt($(this).find("X").text());
-						posY = parseInt($(this).find("Y").text());
-					});
-				
-				});
-				
-				tile.addBoundingCircle(radius, [posX, posY]);
-			}
-			
 			$(this).find("Size").each(function() {
 				var size = {
 					x: parseInt($(this).find("X").text()), 
@@ -118,7 +84,7 @@ function loadMgTiles(xml)
 function loadFgTiles(xml) {
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
-			var tile = new Tile(gl, $(this).find("Url").text());
+			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
 			var sizeX, sizeY;
 			
