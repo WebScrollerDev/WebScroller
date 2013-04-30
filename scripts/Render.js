@@ -44,6 +44,7 @@ RenderManager.prototype = {
 		this.renderLight = new RenderLight();
 		this.renderTile = new RenderTile();		
 		this.renderBB = new RenderBoundingBox();
+		this.renderQT = new RenderQuadTree();
 		this.renderFabric = new RenderFabric();
 		this.renderShadow = new RenderShadow();
 		
@@ -219,6 +220,7 @@ RenderManager.prototype = {
 		//this.renderLight.update();
 		this.renderTile.render();
 		this.renderBB.render();
+		this.renderQT.render();
 		this.renderParticle.render();
 		this.renderFabric.render();
 		this.renderShadow.render();
@@ -1209,8 +1211,8 @@ RenderWorld.prototype.renderBg = function() {
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelBg.getNumVertices());
 };
-
-RenderBoundingBox = function() {	//Render Square Class
+//--------------------------------------------BB---------------------------------------//
+RenderBoundingBox = function() {
 	RenderBoundingBox.baseConstructor.call(this);
 }
 
@@ -1225,7 +1227,6 @@ RenderBoundingBox.prototype.render = function() {
 					this.renderBB(tilesMg[i].getBBs()[j]);
 			}
 		}
-		
 		this.renderBB(world.player.obb);
 	}
 	
@@ -1239,22 +1240,22 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
-	this.model = [];
+	var model = [];
 
 	var nrLines = 0;
 	
-	this.model = this.model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
-	this.model = this.model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	this.model = this.model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	this.model = this.model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	this.model = this.model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	this.model = this.model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	this.model = this.model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	this.model = this.model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+	model = model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+	model = model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	model = model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	model = model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	model = model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	model = model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	model = model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	model = model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
 
 	var posBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.model), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
 	
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
@@ -1285,6 +1286,65 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 	gl.drawArrays(gl.LINES, 0, 8);
 }
 
+//--------------------------------------------QT---------------------------------------//
+RenderQuadTree = function() {
+	RenderQuadTree.baseConstructor.call(this);
+	this.model = world.rootQuadTree.getSegs();
+}
+
+InheritenceManager.extend(RenderQuadTree, RenderBase);
+
+RenderQuadTree.prototype.render = function() {
+	if(debug) {
+			this.renderQT();	
+	}	
+};
+
+RenderQuadTree.prototype.renderQT= function() {
+	gl.useProgram(progLine);
+	
+	var modelView = mat4.create();
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	
+
+	var posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.model), gl.STATIC_DRAW);
+	
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, 0, 1.5]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [0.0 -(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.5]);
+	else {
+		mat4.translate(modelView, modelView, [0.0 -(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.5]);
+	}
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else {
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+	}
+	
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progLine.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progLine.modelView, false, modelView);
+	gl.uniform3fv(progLine.color, [0.0, 0.0, 1.0]);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progLine.position, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.drawArrays(gl.LINES, 0, this.model.length/3);
+}
+
+
+//-------------------------------------------RENDER LIGHT---------------------------------------//
 RenderLight = function() {
 	
 //-----------------------MG LIGHTS------------------------------//

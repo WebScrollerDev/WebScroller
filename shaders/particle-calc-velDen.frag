@@ -7,7 +7,7 @@ uniform vec2 borderPos;
 
 varying vec2 tex;
 const float gravity = 0.01;
-const float d = 1./32.;
+const float d = 1./64.;
 void main(void) {
 
 	vec2 position = texture2D(posSamp, tex).xy;
@@ -45,7 +45,7 @@ void main(void) {
 	velocity.y -= gravity;
 	if(density > 6.)
 		velocity *= vec2(1.0, 0.1);
-	vec2 tmp = ((position - borderPos) + velocity)/512.;
+	vec2 tmp = ((position - borderPos) + velocity)/1024.;
 	if(tmp.x < 1. && tmp.x > 0.) {
 		if(texture2D(borderSamp,vec2(tmp.x, 1.0 - tmp.y)).r == 0.) {
 			velocity.x = -velocity.x*0.01;

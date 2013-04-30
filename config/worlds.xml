@@ -60,11 +60,11 @@
 				<Lights>
 					
 					<Light>
-						<LightId>4</LightId>
+						<LightId>2</LightId>
 						<LightPos>
 							<LightX>61</LightX>
 							<LightY>31</LightY>
-							<LightZ>1</LightZ>
+							<LightZ>2</LightZ>
 						</LightPos>
 					</Light>			
 					<Light>
@@ -72,7 +72,7 @@
 						<LightPos>
 							<LightX>99</LightX>
 							<LightY>27</LightY>
-							<LightZ>1</LightZ>
+							<LightZ>2</LightZ>
 						</LightPos>
 					</Light>	
 					<Light>
@@ -80,24 +80,24 @@
 						<LightPos>
 							<LightX>143</LightX>
 							<LightY>27</LightY>
-							<LightZ>1</LightZ>
+							<LightZ>2</LightZ>
 						</LightPos>
 					</Light>				
 					<Light>
-						<LightId>4</LightId>
+						<LightId>2</LightId>
 						<LightPos>
 							<LightX>182</LightX>
 							<LightY>32</LightY>
-							<LightZ>1</LightZ>
+							<LightZ>2</LightZ>
 						</LightPos>
 					</Light>	
 					
 					<Light>
-						<LightId>4</LightId>
+						<LightId>2</LightId>
 						<LightPos>
 							<LightX>121</LightX>
 							<LightY>250</LightY>
-							<LightZ>1</LightZ>
+							<LightZ>2</LightZ>
 						</LightPos>
 					</Light>
 					

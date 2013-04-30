@@ -9,9 +9,9 @@ var keyCooldown = 10;
 var debug = false;
 var shadow = false;
 var gl;
-var cam = new Camera();
+var cam;
 var render;
-var world = new World();
+var world;
 
 function initGL(canvas) {
 	try {
@@ -55,8 +55,8 @@ function startGL() {
 	canvas.width = window.innerWidth - 20;
 	canvas.height = window.innerHeight - 50;
 	initGL(canvas);
-	cam.init();
-	world.init();
+	cam = new Camera();
+	world = new World();
 	loadXml();
 		
 	document.onkeydown = keyDown;
@@ -69,6 +69,8 @@ function startGL() {
 			if(doneLoading) {
 				clearInterval(interVal);
 				render = new RenderManager();
+				
+				world.initArrays();
 				render.init();
 				initialized = true;
 			}
