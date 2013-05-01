@@ -1,25 +1,70 @@
 Editor = function() {
 	this.windowType = {
 		main: 0, 
-		tile: 1
+		createWorld: 1, 
+		selectWorld: 2, 
+		tile: 3
 	}
 	
 	this.windows = [];
 	this.setupWindows();
 	
-	this.prevWindow = this.windows[this.windowType.main];
 	this.currWindow = this.windows[this.windowType.main];
 	
 }
 
 Editor.prototype = {
 	setupWindows: function() {
-		var mainMenu = new Window("resources/editor/mainMenu.png");
-		mainMenu.addButton(new GuiButton([100, 100], [50, 20], "KNAPP"));
+		
+		var this_ = this;
+		
+		var backButton = new GuiButton([100, 100], [128, 32], "Back To Menu", "resources/editor/button1.png");
+		backButton.onClick = function() {
+			this_.currWindow = this_.windows[this_.windowType.main];
+		}
+		
+		var mainMenu = new Window([0, 0], [gl.viewportWidth, gl.viewportHeight], "resources/editor/mainMenu.png");
+		var createWorldButton = new GuiButton([50, 400], [128, 32], "Create World", "resources/editor/button1.png");
+		createWorldButton.onClick = function() {
+			this_.currWindow = this_.windows[this_.windowType.createWorld];
+		}
+		mainMenu.addButton(createWorldButton);
+		var selectWorldButton = new GuiButton([50, 350], [128, 32], "Select World", "resources/editor/button1.png");
+		selectWorldButton.onClick = function() {
+			this_.currWindow = this_.windows[this_.windowType.selectWorld];
+		}
+		mainMenu.addButton(selectWorldButton);
+		var TileButton = new GuiButton([50, 300], [128, 32], "See Tiles", "resources/editor/button1.png");
+		TileButton.onClick = function() {
+			this_.currWindow = this_.windows[this_.windowType.tile];
+		}
+		mainMenu.addButton(TileButton);
+		
 		this.windows[this.windowType.main] = mainMenu;
+		
+		var createWorldMenu = new Window([0, 0], [gl.viewportWidth, gl.viewportHeight], "resources/editor/mainMenu.png");
+		createWorldMenu.addButton(backButton);
+		this.windows[this.windowType.createWorld] = createWorldMenu;
+		
+		var selectWorldMenu = new Window([0, 0], [gl.viewportWidth, gl.viewportHeight], "resources/editor/mainMenu.png");
+		selectWorldMenu.addButton(backButton);
+		this.windows[this.windowType.selectWorld] = selectWorldMenu;
+		
+		var tileMenu = new Window([0, 0], [gl.viewportWidth, gl.viewportHeight], "resources/editor/mainMenu.png");
+		tileMenu.addButton(backButton);
+		this.windows[this.windowType.tile] = tileMenu;
 	},
 	
 	getCurrentWindow: function() {
 		return this.currWindow;
+	}, 
+	
+	mouseUp: function(event) {
+		var buttons = this.currWindow.getButtons();
+		for(var i = 0; i < buttons.length; i++) {
+			if(buttons[i].isPointInside([event.clientX, gl.viewportHeight - event.clientY]))
+				if(buttons[i].onClick != null)
+					buttons[i].onClick();
+		}
 	}
 }

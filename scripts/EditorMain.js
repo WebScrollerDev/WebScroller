@@ -41,6 +41,10 @@ function keyInput() {
 		currTileState = TILESTATE.FOREGROUND;
 }
 
+function tmpMouseUp(event) {
+	editor.mouseUp(event);
+}
+
 function startEditor() {
 	//console.log("Started Editor");
 	var canvas = document.getElementById("canvas");
@@ -55,6 +59,10 @@ function startEditor() {
 	
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;
+	
+	document.onmousedown = mouseDown;
+    document.onmouseup = tmpMouseUp;
+    document.onmousemove = mouseMove;
 	
 	tick();
 }

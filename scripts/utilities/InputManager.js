@@ -25,6 +25,7 @@ function mouseDown(event) {
 }
 
 function mouseUp(event) {
+	console.log("mouse up");
 	mouseDown = false;
 }
 
