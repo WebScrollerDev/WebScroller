@@ -4,10 +4,12 @@ uniform sampler2D posSamp;
 uniform sampler2D velDenSamp;
 uniform sampler2D borderSamp;
 uniform vec2 borderPos;
+uniform vec2 inPosPlayer;
+uniform vec2 inVelPlayer;
 
 varying vec2 tex;
-const float gravity = 0.01;
-const float d = 1./64.;
+const float gravity = 0.005;
+const float d = 1./32.;
 void main(void) {
 
 	vec2 position = texture2D(posSamp, tex).xy;
@@ -22,7 +24,7 @@ void main(void) {
 			vec2 otherPos = texture2D(posSamp, vec2(x, y)).xy;
 			vec2 otherVel = texture2D(velDenSamp, vec2(x, y)).xy;
 			vec2 delta = otherPos - position;
-			float diff = sqrt(pow(delta.x, 2.) + pow(delta.y, 2.));
+			float diff = sqrt((delta.x*delta.x) + (delta.y*delta.y));
 			if(diff < 10.)
 				density += 0.05;
 			if(diff < 5.0) {
@@ -38,7 +40,11 @@ void main(void) {
 		}
 	}
 
-	
+	if( (inPosPlayer.x + 10.) > position.x && (inPosPlayer.x - 10.) < position.x &&
+	    (inPosPlayer.y + 10.) > position.y && (inPosPlayer.y - 10.) < position.y) {
+		
+		velocity += inVelPlayer * 0.1;
+	   }
 	//Calculate particle collisions
 
 	//Calculate border collisions

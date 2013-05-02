@@ -20,7 +20,7 @@ Entity.prototype = {
 	},
 	
 	getPosition: function() {
-		return this.position;
+		return jQuery.extend(true, {}, this.position);
 	},
 	
 	setPrevPosition: function(newPos) {
@@ -181,14 +181,14 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
-EntityPlayer.prototype.temp = function() {
+EntityPlayer.prototype.preCollision = function() {
 	this.velocity[1] -= 0.5; // gravity
 
 	this.keyPress();
 }
 
 EntityPlayer.prototype.getSize = function() {
-	return this.size;
+	return jQuery.extend(true, {}, this.size);
 }
 
 EntityPlayer.prototype.update = function() {
@@ -250,10 +250,13 @@ EntityPlayer.prototype.keyPress = function() {
 	var speed = 0.5;
 	
 	if(isKeyDown('W') && this.collides) {
-		this.velocity[1] += 13.0;//this.isJumping = true;
+		this.velocity[1] += 13.0;
+		this.isJumping = true;
 	}
 		
-	
+	if(isKeyDown('S')) {
+		this.velocity[1] -= speed;
+	}
 	if(isKeyDown('A') && isKeyDown('D'))
 		return;
 	
@@ -274,6 +277,10 @@ EntityPlayer.prototype.keyPress = function() {
 			this.velocity[0] = 0.0;
 	}
 };
+
+EntityPlayer.prototype.getObb = function() {
+	return jQuery.extend(true, {}, this.obb);
+}
 //-------------------enemy--------------------//
 
 EntityEnemy = function(pos) {

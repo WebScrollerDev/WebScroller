@@ -118,7 +118,7 @@ GpuParticle.prototype = {
 		var space = 3.0;
 		for(var x = 0.0; x < this.amount; x++) {
 			for(var y = 0.0; y < this.amount; y++) {
-				this.pos.push(450 + this.startPos.x + x * space, 700 + this.startPos.y + y * space, 0);
+				this.pos.push(150 + this.startPos.x + x * space, 700 + this.startPos.y + y * space, 0);
 				this.velocityDensity.push(0, 0, 1);
 			}
 		}

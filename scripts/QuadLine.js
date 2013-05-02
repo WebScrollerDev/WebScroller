@@ -17,6 +17,21 @@ QuadLine.prototype = {
 		return this.b;
 	},
 	
+	getAngle: function(l2) {
+		
+		var thisLine = this.b.minus(this.a);
+		var thisLineAsArray = [thisLine.x, thisLine.y];
+		var otherLine = l2.b.minus(l2.a);
+		var otherLineAsArray = [otherLine.x, otherLine.y];
+		return Math.acos(vec2.dot(vec2.normalize(otherLineAsArray, otherLineAsArray), vec2.normalize(thisLineAsArray, thisLineAsArray)));
+	},
+	
+	getAngleToNormal: function(l2) {
+		var thisNormal = vec2.normalize(vec2.create(), [-(this.b.y-this.a.y),(this.b.x - this.a.x)]);
+		return Math.acos(vec2.dot(thisNormal, [0.0, 1.0]));
+		
+	},
+	
 	getIntersection: function(other) {
 		var nx, ny, dn;
 		var x4_x3 = other.b.x - other.a.x;

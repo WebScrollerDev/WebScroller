@@ -32,8 +32,9 @@ QuadTree.prototype = {
 	},
 
 	getIntersection: function(seg) {
-		if (!this.QuadRect.overlapsWithQuadLine(seg))
+		if (!this.quadRect.overlapsWithQuadLine(seg)) {
 			return null;
+		}
 	
 		for (var i = 0; i < this.segs.length; i++) {
 			var s = this.segs[i];
@@ -51,6 +52,14 @@ QuadTree.prototype = {
 		}
 	
 		return null;
+	},
+	
+	getIntersectionQuadBox: function(lines) {
+		var tmpArray = [];
+		for(var i = 0; i < lines.length; i++) {
+			tmpArray.push(this.getInterSection(lines[i]));
+		}
+		return tmpArray;
 	},
 
 	subdivide: function() {

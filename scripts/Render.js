@@ -199,7 +199,7 @@ RenderManager.prototype = {
 		
 //-------------------------------VELOCITY/DENSITY PARTICLE SHADER-------------------------------//
 		
-		gl.useProgram(progParticleGpuVelDen);
+		gl.useProgram(progParticleGpuVelDen);		
 		progParticleGpuVelDen.pos = gl.getAttribLocation(progParticleGpuVelDen, "inPos");
 		gl.enableVertexAttribArray(progParticleGpuVelDen.pos);
 		progParticleGpuVelDen.tex = gl.getAttribLocation(progParticleGpuVelDen, "inTex");
@@ -208,6 +208,8 @@ RenderManager.prototype = {
 		progParticleGpuVelDen.velDenLoc = gl.getUniformLocation(progParticleGpuVelDen, "velDenSamp");
 		progParticleGpuVelDen.borderLoc = gl.getUniformLocation(progParticleGpuVelDen, "borderSamp");
 		progParticleGpuVelDen.borderPosLoc = gl.getUniformLocation(progParticleGpuVelDen, "borderPos");
+		progParticleGpuVelDen.posPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inPosPlayer");
+		progParticleGpuVelDen.velPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inVelPlayer");
 		
 	},
 	
@@ -601,7 +603,19 @@ RenderParticle.prototype.renderGpuParticle = function(amount) {
 	gl.vertexAttribPointer(progParticleGpuPos.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
 	gl.vertexAttribPointer(progParticleGpuPos.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
 	
+  	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+  	var playerVel = {
+  		x: world.player.getVelocity()[0],
+  		y: world.player.getVelocity()[1]
+  	}
+	var playerSize = world.player.getSize();
 	gl.useProgram(progParticleGpuVelDen);
+	
+	gl.uniform2f(progParticleGpuVelDen.posPlayer, playerPos.x + playerSize.x/2, playerPos.y + playerSize.y/2);
+	gl.uniform2f(progParticleGpuVelDen.velPlayer, playerVel.x, playerVel.y);
 	gl.vertexAttribPointer(progParticleGpuVelDen.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
 	gl.vertexAttribPointer(progParticleGpuVelDen.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
 		
@@ -644,11 +658,7 @@ RenderParticle.prototype.renderGpuParticle = function(amount) {
   	var modelView = mat4.create();
   	mat4.lookAt(modelView, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
   	//mat4.translate(modelView, modelView, [gl.viewportWidth/2, gl.viewportHeight/2, 0.5]);
-  	var playerPos = {
-		x: world.player.getPosition().x, 
-		y: world.player.getPosition().y
-	}
-  	
+
 	if(playerPos.x < (gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))

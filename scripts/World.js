@@ -141,7 +141,7 @@ World.prototype = {
 		this.shadowHandler.shadows[2].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]], [this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]]);
 		this.shadowHandler.shadows[3].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]], [this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]]);
 		
-		this.player.temp();
+		this.player.preCollision();
 		
 		this.player.setColliding(false);
 		
