@@ -143,6 +143,70 @@ Entity.prototype = {
 		}
 	}, 
 	
+	collidedWith2: function(obb) {
+		var normal_firstBB = this.obb.getNormals();
+		var normal_secondBB = obb.getNormals();
+		
+		//Result of P, Q
+		var result_P1 = world.getMinMax(this.obb, normal_firstBB[0]);
+		var result_P2 = world.getMinMax(obb, normal_firstBB[0]);
+		
+		var result_Q1 = world.getMinMax(this.obb, normal_firstBB[1]);
+		var result_Q2 = world.getMinMax(obb, normal_firstBB[1]);
+		
+		//results of R, S
+		var result_R1 = world.getMinMax(this.obb, normal_secondBB[0]);
+		var result_R2 = world.getMinMax(obb, normal_secondBB[0]);
+		
+		var result_S1 = world.getMinMax(this.obb, normal_secondBB[1]);
+		var result_S2 = world.getMinMax(obb, normal_secondBB[1]);
+		
+		//Player velocity along P/Q/R/S axis
+		var velocity_p = vec2.dot(this.velocity, normal_firstBB[0]);
+		var velocity_q = vec2.dot(this.velocity, normal_firstBB[1]);
+		var velocity_r = vec2.dot(this.velocity, normal_secondBB[0]);
+		var velocity_s = vec2.dot(this.velocity, normal_secondBB[1]);
+		
+		/*var p = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
+		var q = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;
+		var r = result_R1.min_proj + velocity_r < result_R2.max_proj && result_R1.max_proj + velocity_r > result_R2.min_proj;
+		var s = result_S1.min_proj + velocity_s < result_S2.max_proj && result_S1.max_proj + velocity_s > result_S2.min_proj;
+		if(r) {
+			this.collides = true;
+
+			if(vec2.dot(normal_secondBB[3], [0, 1]) != 0)
+				this.velocity = normal_secondBB[3];
+			else
+				this.velocity[1] = 0;
+		}*/
+		
+		
+		//var p = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
+		//var q = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;
+		var below = result_R1.min_proj + velocity_r < result_R2.max_proj;
+		var belowNoVel = result_R1.min_proj < result_R2.max_proj;
+		var above = result_R1.max_proj + velocity_r > result_R2.min_proj;
+		var aboveNoVel = result_R1.max_proj > result_R2.min_proj;
+		
+		var right = result_S1.max_proj + velocity_s > result_S2.min_proj;
+		var rightNoVel = result_S1.max_proj > result_S2.min_proj;
+		var left = result_S1.min_proj + velocity_s < result_S2.max_proj;
+		var leftNoVel = result_S1.min_proj < result_S2.max_proj;
+		
+		if(below) {
+			this.collides = true;
+
+			if(vec2.dot(normal_secondBB[3], [0, 1]) != 0)
+				this.velocity = normal_secondBB[3];
+			else {
+				this.velocity[1] = 0;
+			}
+		}
+		
+		//console.log("below: " + below + " above: " + above + " left: " + left + " right: " + right);
+			
+	}, 
+	
 	setColliding: function(collides) {
 		this.collides = collides;
 	}
@@ -182,7 +246,8 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.preCollision = function() {
-	this.velocity[1] -= 0.5; // gravity
+	if(!this.collides)
+		this.velocity[1] -= 0.5; // gravity
 
 	this.keyPress();
 }
@@ -192,6 +257,7 @@ EntityPlayer.prototype.getSize = function() {
 }
 
 EntityPlayer.prototype.update = function() {
+	
 	this.counter++;
 	if(this.currFrame >= this.maxFramePerAnimation[this.status])
 		this.currFrame = 0;

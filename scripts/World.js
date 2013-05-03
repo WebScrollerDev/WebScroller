@@ -26,11 +26,11 @@ World = function() {
 	this.fireEmitters = new Array();
 	
 	this.gpuParticles = new Array();
-	this.player = new EntityPlayer([1000, 100, 0], [0, 0], [45, 64]);
+	this.player = new EntityPlayer([1337, 300, 0], [0, 0], [45, 64]);
 	this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
 	this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
 	this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
-	this.gpuParticles.push(new GpuParticle([2700, 40], 64, "resources/waterborder.png"));
+	this.gpuParticles.push(new GpuParticle([2700, 40], 32, "resources/waterborder.png"));
 	this.shadowHandler = new ShadowHandler(gl.viewportWidth, 10);
 	this.windVelocity = {
 		x: 0.001,
@@ -149,17 +149,87 @@ World.prototype = {
 		for(var i = 0; i < tiles.length; i++) {
 			if(tiles[i].getBBs() != null) {
 				for(var j = 0; j < tiles[i].getBBs().length; j++) {
-					if(this.player.intersects2(tiles[i].getBBs()[j])) {
-						var tmpBB = new BoundingBox([tiles[i].getBBs()[j].corner[0][0], tiles[i].getBBs()[j].corner[0][1]], [tiles[i].getBBs()[j].corner[2][0], tiles[i].getBBs()[j].corner[2][1]]);
-						this.player.collidedWith(tmpBB);
-					}
+						if(this.intersects(this.player.getObb(), this.tilesMg[i].getBBs()[j])) {
+							//console.log("colliding");
+							this.player.setColliding(true);
+							//var tmpBB = new BoundingBox([tiles[i].getBBs()[j].corner[0][0], tiles[i].getBBs()[j].corner[0][1]], [tiles[i].getBBs()[j].corner[2][0], tiles[i].getBBs()[j].corner[2][1]]);
+							world.player.obb.updateAngle(this.tilesMg[i].getBBs()[j].angle);
+				
+							this.player.collidedWith2(this.tilesMg[i].getBBs()[j]);
+						}
 				}
 			}
 		}
-		
 		this.player.update();
 		
+	},
+	
+	intersects: function(firstBB, secondBB) {
+		var normal_firstBB = firstBB.getNormals();
+		var normal_secondBB = secondBB.getNormals();
+		
+		//Result of P, Q
+		var result_P1 = this.getMinMax(firstBB, normal_firstBB[0]);
+		var result_P2 = this.getMinMax(secondBB, normal_firstBB[0]);
+		
+		var result_Q1 = this.getMinMax(firstBB, normal_firstBB[1]);
+		var result_Q2 = this.getMinMax(secondBB, normal_firstBB[1]);
+		
+		//results of R, S
+		var result_R1 = this.getMinMax(firstBB, normal_secondBB[0]);
+		var result_R2 = this.getMinMax(secondBB, normal_secondBB[0]);
+		
+		var result_S1 = this.getMinMax(firstBB, normal_secondBB[1]);
+		var result_S2 = this.getMinMax(secondBB, normal_secondBB[1]);
+		
+		var velocity_p = vec2.dot(this.player.velocity, normal_firstBB[0]);
+		var velocity_q = vec2.dot(this.player.velocity, normal_firstBB[1]);
+		var velocity_r = vec2.dot(this.player.velocity, normal_secondBB[0]);
+		var velocity_s = vec2.dot(this.player.velocity, normal_secondBB[1]);
+		
+		var collidingP = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
+		var collidingQ = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;
+		var collidingR = result_R1.min_proj + velocity_r < result_R2.max_proj && result_R1.max_proj + velocity_r > result_R2.min_proj;
+		var collidingS = result_S1.min_proj + velocity_s < result_S2.max_proj && result_S1.max_proj + velocity_s > result_S2.min_proj;
+		
+		/*var separate_P = result_P1.max_proj < result_P2.min_proj || result_P2.max_proj < result_P1.min_proj;
+		var separate_Q = result_Q1.max_proj < result_Q2.min_proj || result_Q2.max_proj < result_Q1.min_proj;
+		var separate_R = result_R1.max_proj < result_R2.min_proj || result_R2.max_proj < result_R1.min_proj;
+		var separate_S = result_S1.max_proj < result_S2.min_proj || result_S2.max_proj < result_S1.min_proj;
+		
+		var isSeparated = separate_P || separate_Q || separate_R || separate_S;*/
+		var isColliding = collidingP && collidingQ && collidingR && collidingS;
+		return isColliding;
 	}, 
+	
+	getMinMax: function(bb, axis) {
+		var min_proj_box = vec2.dot(bb.corner[0], axis);
+		var min_dot_box = 0;
+		var max_proj_box = vec2.dot(bb.corner[0], axis);
+		var max_dot_box = 0;
+		
+		for (var i = 1; i < bb.corner.length; i++) 
+		{
+			var curr_proj = vec2.dot(bb.corner[i], axis);
+			//select the maximum projection on axis to corresponding box corners
+			if (min_proj_box > curr_proj) {
+				min_proj_box = curr_proj;
+				min_dot_box = i;
+			}
+			//select the minimum projection on axis to corresponding box corners
+			if (curr_proj > max_proj_box) {
+				max_proj_box = curr_proj;
+				max_dot_box = i;
+			}
+		}
+		
+		return { 
+			min_proj: min_proj_box,
+			max_proj: max_proj_box,
+			min_index: min_dot_box,
+			max_index: max_dot_box
+		}
+	},
 	
 	getSmokeEmitters: function() {
 		return this.smokeEmitters;

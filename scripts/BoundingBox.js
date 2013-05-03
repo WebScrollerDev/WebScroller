@@ -35,6 +35,12 @@ OBB.prototype = {
 		this.updateCorners();
 	}, 
 	
+	updateAngle: function(angle) {
+		this.angle = angle;
+		
+		this.updateCorners();
+	}, 
+	
 	updateCorners: function() {
 		var X = vec2.fromValues(Math.cos(this.angle) * (this.size.x / 2), Math.sin(this.angle) * (this.size.x / 2));
 		var Y = vec2.fromValues(-Math.sin(this.angle) * (this.size.y / 2), Math.cos(this.angle) * (this.size.y / 2));
@@ -100,6 +106,23 @@ OBB.prototype = {
 		
 		this.computeAxes();
 		
+	},
+	
+	getNormals: function() {
+		var normals = [];
+		var dx32 = this.corner[2][0] - this.corner[3][0];
+		var dy32 = this.corner[2][1] - this.corner[3][1];
+		var dx21 = this.corner[1][0] - this.corner[2][0];
+		var dy21 = this.corner[1][1] - this.corner[2][1];
+		var dx10 = this.corner[0][0] - this.corner[1][0];
+		var dy10 = this.corner[0][1] - this.corner[1][1];
+		var dx03 = this.corner[3][0] - this.corner[0][0];
+		var dy03 = this.corner[3][1] - this.corner[0][1];
+ 		normals[0] = vec2.normalize(vec2.create(), [-dy32, dx32]);
+ 		normals[1] = vec2.normalize(vec2.create(), [-dy21, dx21]);
+ 		normals[2] = vec2.normalize(vec2.create(), [-dy10, dx10]);
+ 		normals[3] = vec2.normalize(vec2.create(), [-dy03, dx03]);
+		return normals;
 	}, 
 	
 	overlaps: function(other) {

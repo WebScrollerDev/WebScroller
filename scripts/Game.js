@@ -6,7 +6,7 @@ window.requestAnimFrame = (function() {
 })();
 
 var keyCooldown = 10;
-var debug = false;
+var debug = true;
 var shadow = false;
 var gl;
 var cam;
