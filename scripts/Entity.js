@@ -28,7 +28,7 @@ Entity.prototype = {
 	},
 	
 	getPrevPosition: function() {
-		return this.prevPosition;
+		return jQuery.extend(true, {}, this.prevPosition);
 	},
 	
 	setVelocity: function(newVelocity) {

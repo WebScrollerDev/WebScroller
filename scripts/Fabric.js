@@ -207,7 +207,7 @@ Point.prototype = {
 		
 		
 	
-		this.add_force(world.windVelocity.x*100000, gravity);
+		this.add_force(0, gravity);
 	
 		delta *= delta;
 		var nx = this.x + ((this.x - this.px) * .99) + ((this.vx / 2) * delta);

@@ -54,7 +54,7 @@ QuadTree.prototype = {
 		return null;
 	},
 	
-	getIntersectionQuadBox: function(lines) {
+	getIntersectionMultipleLines: function(lines) {
 		var tmpArray = [];
 		for(var i = 0; i < lines.length; i++) {
 			tmpArray.push(this.getInterSection(lines[i]));

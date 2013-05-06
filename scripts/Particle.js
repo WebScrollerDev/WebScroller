@@ -95,6 +95,37 @@ ParticleFire.prototype.getFade = function() {
 	return (this.timeToLive/this.maxTimeToLive);
 };
 
+//-------------------------RAINDROP------------------------// USING QUADTREE
+
+ParticleRainDrop = function(position, velocity, timeToLive) {
+	this.position = new QuadPoint([position.x, position.y]);	// position as a QuadPoint
+	this.velocity = new QuadPoint([velocity.x, velocity.y]);	// position as a QuadPoint
+	this.timeToLive = timeToLive;
+	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
+};
+
+ParticleRainDrop.prototype.getPosition = function() {
+	return this.position.getPos();
+};
+ParticleRainDrop.prototype.updatePosition = function() {
+	
+	var prevPos = this.position.clone();
+	this.position.add(this.velocity);
+	this.velocity.addY(-0.01);
+	
+	var intersect = world.rootQuadTree.getIntersection(new QuadLine(prevPos, this.position));
+	if (intersect != null) {
+		this.position = prevPos;
+		this.velocity = intersect.reflect(this.velocity).times(0.2);
+	}
+};
+ParticleRainDrop.prototype.getLifetime = function() {
+	return this.timeToLive;
+};
+ParticleRainDrop.prototype.decreaseLifetime = function(decrement) {
+	this.timeToLive -= decrement;
+};
+
 //-------------------------FLUID------------------------//
 GpuParticle = function(position, particleAmount, borderDataImage) {
 	

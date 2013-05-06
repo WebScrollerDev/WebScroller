@@ -25,6 +25,8 @@ World = function() {
 	this.fluidEmitters = new Array();
 	this.fireEmitters = new Array();
 	
+	this.rainEmitters = new Array();
+	
 	this.gpuParticles = new Array();
 	this.player = new EntityPlayer([1337, 300, 0], [0, 0], [45, 64]);
 	this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
@@ -43,6 +45,7 @@ World.prototype = {
 	initArrays: function() {
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
+		this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
 		
 		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
 		tmpTile.setSize([100, 100]);
@@ -241,7 +244,11 @@ World.prototype = {
 
 	getFireEmitters: function() {
 		return this.fireEmitters;
-	}, 
+	},
+	
+	getRainEmitters: function() {
+		return this.rainEmitters;
+	},
 	
 	getShadowHandler: function() {
 		return this.shadowHandler;

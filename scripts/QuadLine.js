@@ -17,6 +17,19 @@ QuadLine.prototype = {
 		return this.b;
 	},
 	
+	setPointA: function(a) {
+		this.a = a;
+	},
+	
+	setPointB: function(b) {
+		this.b = b;
+	},
+	
+	setPointAB: function(a, b) {
+		this.a = a;
+		this.b = b;
+	},
+	
 	getAngle: function(l2) {
 		
 		var thisLine = this.b.minus(this.a);

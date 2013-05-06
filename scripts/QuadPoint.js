@@ -15,6 +15,24 @@ QuadPoint.prototype = {
 	
 		return this;
 	},
+	
+	addX: function(x) {
+		this.x += x;
+	},
+	
+	addY: function(y) {
+		this.y += y;
+	},
+	
+	setPos: function(pos) {
+		this.x = pos[0];
+		this.y = pos[1];
+	},
+	
+	getPos: function() {
+		return { x: this.x,
+				 y: this.y	};
+	},
 
 	plus: function(other) {
 		return this.clone().add(other);
@@ -66,7 +84,8 @@ QuadPoint.prototype = {
 	normal: function() {
 		return this.clone().normalize();
 	},
-
+	/*
+//------------------------------------------------------------------------------------------//
 	rotate: function(angle) {
 		return new QuadPoint([this.x * Math.cos(angle) - this.y * Math.sin(angle),
 				this.x * Math.sin(angle) + this.y * Math.cos(angle)]);
@@ -85,7 +104,7 @@ QuadPoint.prototype = {
 		this.y = Math.sin(ang) * rad;
 	
 		return this;
-	}
+	}*/
 
 };
 

@@ -217,58 +217,73 @@ EmitterFire.prototype.updateParticles = function() { //clearInterval(int) when d
 	}
 };
 
-//-------------------------FLUID------------------------//
-			          //  x,y         int             ms             float            x,y               +- x,y			     float
-EmitterFluid = function(position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan, particleDensity) {
-
-
-	EmitterSmoke.baseConstructor.call(this, position, maxParticles, spawnInterval, particleDiameter, particleVelocity, particleVelocitySpan);
-
-	this.particleDensity = particleDensity;
-	this.particleGrid = new Array(100,100);
+//-------------------------RAIN------------------------// USING QUADTREE
+			          //   int             ms              x,y               +- x,y	
+EmitterRain = function(maxParticles, spawnInterval, particleVelocity, particleVelocitySpan) {
+	this.maxParticles = maxParticles;
+	this.spawnInterval = spawnInterval;
+	this.particleVelocity = particleVelocity;
+	this.particleVelocitySpan = particleVelocitySpan;
+	this.updateTime = 10;
+	
+	this.particles = new Array(); //the particles for this emitter
+	
+	this.spawnSpanWidth = gl.viewportWidth/2 + 500;
+	this.spawnSpanHeight = gl.viewportHeight + 100;
+	
+	var _this = this; //Needed in setInterval, for specifying the correct this
+	this.setSpawnInterval = setInterval(function(){_this.spawnParticle()}, _this.spawnInterval);
+	this.setUpdateInterval = setInterval(function(){_this.updateParticles()}, _this.updateTime);
 };
 
-InheritenceManager.extend(EmitterFluid, EmitterBase);
-
-EmitterFluid.prototype.spawnParticle = function() { //clearInterval(int) when done	
+EmitterRain.prototype.spawnParticle = function() { //clearInterval(int) when done	
 	if(this.particles.length < this.maxParticles) {
+		
+		var spawnCenter = world.player.getPosition();
+		//console.log(spawnCenter);
 		var tmpPos = {
-			x: this.position.x, 
-			y: this.position.y
+			x: spawnCenter.x + (Math.random()*2*this.spawnSpanWidth - this.spawnSpanWidth), 
+			y: spawnCenter.y + this.spawnSpanHeight
 		}
 		var tmpVelocity = {
-			x: this.particleVelocity.x + (Math.random() * this.particleVelocitySpan.x*2) - this.particleVelocitySpan.x, 
-			y: this.particleVelocity.y + (Math.random() * this.particleVelocitySpan.y*2) - this.particleVelocitySpan.y
+			x: this.particleVelocity[0] + (Math.random() * this.particleVelocitySpan[0]*2) - this.particleVelocitySpan[0] + world.windVelocity.x, 
+			y: this.particleVelocity[1] + (Math.random() * this.particleVelocitySpan[1]*2) - this.particleVelocitySpan[1] + world.windVelocity.y
 		}
-		var tmpDiameter = this.particleDiameter;
-		var tmpRotation = 0;
-		var tmpDensity = this.particleDensity;
-		this.particles.push(new ParticleFluid(tmpPos, tmpVelocity, tmpDiameter, tmpRotation, tmpDensity));
+		var tmpTTL = 2000;
+		
+		this.particles.push(new ParticleRainDrop(tmpPos, tmpVelocity, tmpTTL));
 	}			
 };
 	
-EmitterFluid.prototype.updateParticles = function() { //clearInterval(int) when done
+EmitterRain.prototype.updateParticles = function() { //clearInterval(int) when done
 	for(var i = 0; i < this.particles.length; i++) {
 		
-		var currParticle = this.particles[i];
-		currParticle.updatePosition();
-		var currX = currParticle.getPosition().x + currParticle.getDiameter()/2; //the middle of the particle
-		var currY = currParticle.getPosition().y + currParticle.getDiameter()/2;
+		this.particles[i].updatePosition();
 		
-		for(var j = i+1; j < this.particles.length; j++) {
-				var otherParticle = this.particles[j];
-				var otherX = otherParticle.getPosition().x + otherParticle.getDiameter()/2; //the middle of the particle
-				var otherY = otherParticle.getPosition().y + otherParticle.getDiameter()/2;
-				
-				if( ((currParticle.getDiameter()/2) + (otherParticle.getDiameter()/2)) > Math.sqrt(Math.pow((currX-otherX),2)+Math.pow((currY-otherY),2))) {
-					//console.log("COLLISION");
-					var currVelocity = currParticle.getVelocity();
-					currParticle.setVelocity(otherParticle.getVelocity());
-					otherParticle.setVelocity(currVelocity);
-				}
+		if(this.particles[i].getLifetime() < 0 || this.particles[i].getPosition().x < 0 || this.particles[i].getPosition().x > world.worldSize.x
+											   || this.particles[i].getPosition().y < 0 || this.particles[i].getPosition().y > world.worldSize.y ) { //time for the particle to die?
+			this.particles.splice(i,1);
+			i--;
 		}
-		
-	
+		else {
+		this.particles[i].decreaseLifetime(this.updateTime);
+		this.particles[i].updatePosition();
+		}		
 	}
+};
+
+EmitterRain.prototype.getParticles = function() {
+	return this.particles;
+};
+
+EmitterRain.prototype.getParticlesAsArray = function() {	
+	var posArray = [];
+	for(var i = 0; i < this.particles.length; i++) {
+		var tmpPos = this.particles[i].getPosition();
+		//console.log(tmpPos);
+		posArray.push(tmpPos.x, tmpPos.y);
+	}
+
+	return posArray;
 };
 
