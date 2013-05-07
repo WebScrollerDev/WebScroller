@@ -155,9 +155,9 @@
 				</Center>
 				<Size>
 					<X>205</X>
-					<Y>20</Y>
+					<Y>10</Y>
 				</Size>
-				<Angle>135</Angle>
+				<Angle>45</Angle>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>

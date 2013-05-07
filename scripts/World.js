@@ -28,7 +28,7 @@ World = function() {
 	this.rainEmitters = new Array();
 	
 	this.gpuParticles = new Array();
-	this.player = new EntityPlayer([1337, 300, 0], [0, 0], [45, 64]);
+	this.player = new EntityPlayer([1337, 500, 0], [0, 0], [45, 64]);
 	this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
 	this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
 	this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
@@ -44,15 +44,15 @@ World.prototype = {
 	
 	initArrays: function() {
 		
+		this.rope.attachTile(this.tilesMg[0], 5);
+		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
-		this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
+		//this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
 		
 		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
 		tmpTile.setSize([100, 100]);
 		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [1610, 8,1], 2, 8, [1, 6], 50, 10));
 		
-		
-		this.shadowHandler.addShadowPair([3700, 100], [3900, 100], [3900, 80], [3700, 80]);
 		var i = 0;
 		for(var i = 1; i < this.tilesMg.length; i++) {
 			var tmpBBArray = this.tilesMg[i].getBBs();
@@ -129,16 +129,6 @@ World.prototype = {
 	
 	update: function() {
 		
-		var newPos = {
-			x: (this.rope.getPosition(10).x - this.tilesMg[0].getTile().size.x/2),
-			y: (this.rope.getPosition(10).y - this.tilesMg[0].getTile().size.y/2)
-		}
-		
-		this.tilesMg[0].pos.x = newPos.x;
-		this.tilesMg[0].pos.y = newPos.y;
-		this.tilesMg[0].getBBs()[0].angle = this.rope.getAngle(10);
-		this.tilesMg[0].getBBs()[0].updatePosition(newPos);
-		
 		this.shadowHandler.shadows[0].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]], [this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]]);
 		this.shadowHandler.shadows[1].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]], [this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]]);
 		this.shadowHandler.shadows[2].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]], [this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]]);
@@ -152,14 +142,10 @@ World.prototype = {
 		for(var i = 0; i < tiles.length; i++) {
 			if(tiles[i].getBBs() != null) {
 				for(var j = 0; j < tiles[i].getBBs().length; j++) {
-						if(this.intersects(this.player.getObb(), this.tilesMg[i].getBBs()[j])) {
-							//console.log("colliding");
-							this.player.setColliding(true);
-							//var tmpBB = new BoundingBox([tiles[i].getBBs()[j].corner[0][0], tiles[i].getBBs()[j].corner[0][1]], [tiles[i].getBBs()[j].corner[2][0], tiles[i].getBBs()[j].corner[2][1]]);
-							world.player.obb.updateAngle(this.tilesMg[i].getBBs()[j].angle);
-				
-							this.player.collidedWith2(this.tilesMg[i].getBBs()[j]);
-						}
+					if(this.intersects(this.player.getObb(), this.tilesMg[i].getBBs()[j])) {
+						world.player.obb.updateAngle(this.tilesMg[i].getBBs()[j].angle);
+						this.player.collidedWith2(this.tilesMg[i].getBBs()[j]);
+					}
 				}
 			}
 		}
@@ -195,12 +181,6 @@ World.prototype = {
 		var collidingR = result_R1.min_proj + velocity_r < result_R2.max_proj && result_R1.max_proj + velocity_r > result_R2.min_proj;
 		var collidingS = result_S1.min_proj + velocity_s < result_S2.max_proj && result_S1.max_proj + velocity_s > result_S2.min_proj;
 		
-		/*var separate_P = result_P1.max_proj < result_P2.min_proj || result_P2.max_proj < result_P1.min_proj;
-		var separate_Q = result_Q1.max_proj < result_Q2.min_proj || result_Q2.max_proj < result_Q1.min_proj;
-		var separate_R = result_R1.max_proj < result_R2.min_proj || result_R2.max_proj < result_R1.min_proj;
-		var separate_S = result_S1.max_proj < result_S2.min_proj || result_S2.max_proj < result_S1.min_proj;
-		
-		var isSeparated = separate_P || separate_Q || separate_R || separate_S;*/
 		var isColliding = collidingP && collidingQ && collidingR && collidingS;
 		return isColliding;
 	}, 

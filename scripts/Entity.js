@@ -11,6 +11,7 @@ Entity = function(pos, bbMin, bbMax) {
 	this.rotation = 0.0;
 	this.boundingBox = new BoundingBox(bbMin, bbMax);
 	this.collides = false;
+	this.maxVel = 5.0;
 }
 
 Entity.prototype = {
@@ -144,9 +145,10 @@ Entity.prototype = {
 	}, 
 	
 	collidedWith2: function(obb) {
+		
 		var normal_firstBB = this.obb.getNormals();
 		var normal_secondBB = obb.getNormals();
-		
+		//console.log(normal_secondBB[3]);
 		//Result of P, Q
 		var result_P1 = world.getMinMax(this.obb, normal_firstBB[0]);
 		var result_P2 = world.getMinMax(obb, normal_firstBB[0]);
@@ -167,43 +169,90 @@ Entity.prototype = {
 		var velocity_r = vec2.dot(this.velocity, normal_secondBB[0]);
 		var velocity_s = vec2.dot(this.velocity, normal_secondBB[1]);
 		
-		/*var p = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
-		var q = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;
-		var r = result_R1.min_proj + velocity_r < result_R2.max_proj && result_R1.max_proj + velocity_r > result_R2.min_proj;
-		var s = result_S1.min_proj + velocity_s < result_S2.max_proj && result_S1.max_proj + velocity_s > result_S2.min_proj;
-		if(r) {
-			this.collides = true;
+		//velocity_r = 0;
+		//console.log(velocity_r);
+		//var minLessMin = result_R1.min_proj + velocity_r < result_R2.min_proj;
+		var minLessMax = result_R1.min_proj + velocity_r < result_R2.max_proj;
+		/*var maxLessMin = result_R1.max_proj + velocity_r < result_R2.min_proj;
+		var maxLessMax = result_R1.max_proj + velocity_r < result_R2.max_proj;
+		
+		var minMoreMin = result_R1.min_proj + velocity_r > result_R2.min_proj;
+		var minMoreMax = result_R1.min_proj + velocity_r > result_R2.max_proj;
+		var maxMoreMin = result_R1.max_proj + velocity_r > result_R2.min_proj;
+		var maxMoreMax = result_R1.max_proj + velocity_r > result_R2.max_proj;*/
+		
+		var minLessMinNoVel = result_R1.min_proj < result_R2.min_proj;
+		var minLessMaxNoVel = result_R1.min_proj < result_R2.max_proj;
+		var maxLessMinNoVel = result_R1.max_proj < result_R2.min_proj;
+		var maxLessMaxNoVel = result_R1.max_proj < result_R2.max_proj;
+		
+		var minMoreMinNoVel = result_R1.min_proj > result_R2.min_proj;
+		var minMoreMaxNoVel = result_R1.min_proj > result_R2.max_proj;
+		var maxMoreMinNoVel = result_R1.max_proj > result_R2.min_proj;
+		var maxMoreMaxNoVel = result_R1.max_proj > result_R2.max_proj;
+		
+		var insideTop = (result_S1.max_proj + velocity_s > result_S2.min_proj) && (result_S1.min_proj + velocity_s < result_S2.max_proj);
+		var insideTopNoVel = (result_S1.max_proj > result_S2.min_proj) && (result_S1.min_proj < result_S2.max_proj);
+		
+		var under = result_R1.max_proj < result_R2.min_proj;
+		//var above = result_R1.min_proj > result_R2.max_proj;
 
-			if(vec2.dot(normal_secondBB[3], [0, 1]) != 0)
-				this.velocity = normal_secondBB[3];
-			else
-				this.velocity[1] = 0;
-		}*/
+		if(minLessMax) {
+			if(under) {
+				var tmp = vec2.clone(normal_secondBB[2]);
+				tmp = vec2.mul(vec2.create(), tmp, [0.2, 0.2]);
+				this.velocity = vec2.mul(vec2.create(), this.velocity, tmp);
+			} else{
+				this.collides = true;
+				var dot = vec2.dot(normal_secondBB[0], [1, 0]);
+				if(dot != 0) { //Leaning
+					var speed = vec2.clone(normal_secondBB[1]);
+					speed[0] *= dot*this.maxVel*1.3;
+					speed[1] *= dot*this.maxVel*1.3;
+					this.velocity = speed;
+				} else { //No leaning
+					if(insideTopNoVel)
+						this.velocity[1] = 0;
+				}
+			}
+				
+		}
+		var bottom = (minLessMaxNoVel && minMoreMinNoVel);
+		var top = (maxLessMaxNoVel && maxMoreMinNoVel);
+		var none = (maxMoreMaxNoVel && minLessMinNoVel);
 		
 		
-		//var p = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
-		//var q = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;
-		var below = result_R1.min_proj + velocity_r < result_R2.max_proj;
-		var belowNoVel = result_R1.min_proj < result_R2.max_proj;
-		var above = result_R1.max_proj + velocity_r > result_R2.min_proj;
-		var aboveNoVel = result_R1.max_proj > result_R2.min_proj;
+		var rightOfObject = result_S1.min_proj > result_S2.max_proj;
+		var leftOfObject = result_S1.max_proj < result_S2.min_proj;
 		
-		var right = result_S1.max_proj + velocity_s > result_S2.min_proj;
-		var rightNoVel = result_S1.max_proj > result_S2.min_proj;
-		var left = result_S1.min_proj + velocity_s < result_S2.max_proj;
-		var leftNoVel = result_S1.min_proj < result_S2.max_proj;
-		
-		if(below) {
-			this.collides = true;
-
-			if(vec2.dot(normal_secondBB[3], [0, 1]) != 0)
-				this.velocity = normal_secondBB[3];
-			else {
-				this.velocity[1] = 0;
+		if(none || bottom || top) {
+			
+			var rightSlide = Math.acos(vec2.dot(normal_secondBB[1], [0, 1])) < 3.14/2;
+			var leftSlide = Math.acos(vec2.dot(normal_secondBB[3], [0, 1])) < 3.14/2;
+			
+			//console.log("rightOfObject: " + rightOfObject + " leftOfObject: " + leftOfObject + " rightSlide: " + rightSlide + " leftSlide: " + leftSlide);
+			if(rightSlide) {
+				if(rightOfObject) {
+					this.velocity = vec2.mul(vec2.create(), this.velocity, normal_secondBB[0]);
+				}
+				else {
+					this.collides = false;
+					this.velocity[0] = 0;
+				}
+			}
+			else if(leftSlide) {
+				if(leftOfObject) {
+					this.velocity = vec2.mul(vec2.create(), this.velocity, normal_secondBB[2]);
+				}
+				else {
+					this.velocity[0] = 0;
+					this.collides = false;
+				}
+			} else {
+				this.velocity[0] = 0;
+				this.collides = false;
 			}
 		}
-		
-		//console.log("below: " + below + " above: " + above + " left: " + left + " right: " + right);
 			
 	}, 
 	
@@ -246,8 +295,8 @@ EntityPlayer = function(pos, bbMin, bbMax) {
 InheritenceManager.extend(EntityPlayer, Entity); //entityplayer inherites from entity
 
 EntityPlayer.prototype.preCollision = function() {
-	if(!this.collides)
-		this.velocity[1] -= 0.5; // gravity
+	//if(!this.collides)
+	this.velocity[1] -= 0.5; // gravity
 
 	this.keyPress();
 }
@@ -307,8 +356,6 @@ EntityPlayer.prototype.getStatus = function() {
 
 EntityPlayer.prototype.keyPress = function() {
 	
-	var maxVel = 5.0;
-	
 	var velRange = 0.051;
 	
 	var friction = 0.05;
@@ -327,11 +374,11 @@ EntityPlayer.prototype.keyPress = function() {
 		return;
 	
 	if(isKeyDown('A')) {
-		if(this.velocity[0] > -maxVel)
+		if(this.velocity[0] > -this.maxVel)
 			this.velocity[0] -= speed;
 	}
 	else if(isKeyDown('D')) {
-		if(this.velocity[0] < maxVel)
+		if(this.velocity[0] < this.maxVel)
 			this.velocity[0] += speed;
 	}
 	else {

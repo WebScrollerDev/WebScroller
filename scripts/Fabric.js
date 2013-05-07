@@ -90,6 +90,7 @@ Rope = function(startPos, endPos, numJoints, lastPinned, color) {
 	this.points = [];
 	
 	this.color = color;
+	this.tiles = [];
 	
 	var distTotal = vec2.distance(startPos, endPos);
 	
@@ -148,7 +149,29 @@ Rope.prototype = {
 		}
 	
 		i = this.points.length;
-		while(i--) this.points[i].update(.016);
+		while(i--) {
+			this.points[i].update(.016);
+			if(this.tiles[i] != null) {
+				var tmpTile = this.tiles[i];
+				var newPos = {
+					x: (this.points[i].x - tmpTile.getTile().size.x/2),
+					y: (this.points[i].y - tmpTile.getTile().size.y/2)
+				}
+				var newPos2 = {
+					x: this.points[i].x,
+					y: this.points[i].y
+				}
+				tmpTile.pos.x = newPos.x;
+				tmpTile.pos.y = newPos.y;
+				tmpTile.setAngle(this.getAngle(i));
+				for(var j = 0; j < tmpTile.getBBs().length; j++) {
+					tmpTile.getBBs()[j].angle = this.getAngle(i);
+					
+					tmpTile.getBBs()[j].updatePosition(newPos);
+					//tmpTile.getBBs()[j].updatePosAngle(newPos, this.getAngle(i));
+				}
+			}
+		}
 	}, 
 	
 	getPosition: function(i) {
@@ -172,6 +195,10 @@ Rope.prototype = {
 		//console.log("cos: " + angleCos + " sin: " + angleSin + " tan: " + angleTan + " tan2: " + angleTan2)
 		
 		return -angleTan2;
+	}, 
+	
+	attachTile: function(tile, i) {
+		this.tiles[i] = tile;
 	}
 	
 };

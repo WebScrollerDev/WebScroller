@@ -56,6 +56,7 @@ TilePlaceable = function(tile, pos) {
 	this.staticLights = new Array();
 	this.flickeringLights = new Array();
 	this.morphingLights = new Array();
+	this.angle = 0;
 };
 
 TilePlaceable.prototype = {
@@ -98,6 +99,14 @@ TilePlaceable.prototype = {
 	
 	getMorphingLights: function() {
 		return this.morphingLights;
+	}, 
+	
+	setAngle: function(angle) {
+		this.angle = angle;
+	}, 
+	
+	getAngle: function() {
+		return this.angle;
 	}
 };
 

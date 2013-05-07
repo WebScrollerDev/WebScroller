@@ -881,10 +881,7 @@ RenderTile.prototype.render = function() {
 	gl.useProgram(progTileMg);
 	for(var i = 0; i < tilesMg.length; i++)
 	{
-		if(i == 0)
-			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), world.rope.getAngle(10), this.modelTile);
-		else
-			this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), 0.0, this.modelTile);	
+		this.renderTileMg(tilesMg[i].getPosition(), tilesMg[i].getTile().getTex(), tilesMg[i].getTile().getSize(), tilesMg[i].getAngle(), this.modelTile);	
 	}
 //---------------------------------------------ANIMATED MG-----------------------------------------//
 	var tilesAnimMg = world.getTilesAnimatedMg();
@@ -1027,7 +1024,12 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size, rot, model) {
 	else {
 		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
+	
+	
+	mat4.translate(modelView, modelView, [size.x/2, size.y/2, 0.0]);
 	mat4.rotateZ(modelView, modelView, rot);
+	mat4.translate(modelView, modelView, [-size.x/2, -size.y/2, 0.0]);
+
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
