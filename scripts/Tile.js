@@ -57,6 +57,7 @@ TilePlaceable = function(tile, pos) {
 	this.flickeringLights = new Array();
 	this.morphingLights = new Array();
 	this.angle = 0;
+	this.moving = false;
 };
 
 TilePlaceable.prototype = {
@@ -75,6 +76,14 @@ TilePlaceable.prototype = {
 	
 	getBBs: function() {
 		return this.bbs;
+	}, 
+	
+	setMoving: function() {
+		this.moving = true;
+	}, 
+	
+	isMoving: function() {
+		return this.moving;
 	}, 
 	
 	addStaticLight: function(light) {
@@ -112,7 +121,7 @@ TilePlaceable.prototype = {
 
 //-------------------------------------TILE ANIMATED-------------------------------//
 					//	tile  x,y,z		
-TileAnimated = function(tile, pos, totalNrAnimations, maxNrFramesPerAnimation, nrFramesPerAnimation, animationSpeed, updateStatusSpeed) {
+TileAnimated = function(tile, pos, totalNrAnimations, maxNrFramesPerAnimation, nrFramesPerAnimation, animationSpeed) {
 	TileAnimated.baseConstructor.call(this, tile, pos);
 	
 	this.tileStatus = {
@@ -121,28 +130,40 @@ TileAnimated = function(tile, pos, totalNrAnimations, maxNrFramesPerAnimation, n
 	}
 	
 	this.maxAnim = [maxNrFramesPerAnimation, totalNrAnimations];
-	this.currAnim = [0, this.tileStatus.ANIMATION_ONE];
+	this.currAnim = [0, this.tileStatus.ANIMATION_IDLE];
 	this.nrFramesPerAnimation = nrFramesPerAnimation;
 	this.animationSpeed = animationSpeed;
-	this.updateStatusSpeed = updateStatusSpeed;
-
+	this.tbs = new Array();
+	
 	var _this = this; //Needed in setInterval, for specifying the correct this
 	this.animationInterval = setInterval(function(){_this.animate()}, _this.animationSpeed);
-	this.updateStatusInterval = setInterval(function(){_this.updateStatus()}, _this.updateStatusSpeed)
 };
 
 InheritenceManager.extend(TileAnimated, TilePlaceable); //TileAnimated inherites from TilePlaceable
 
 TileAnimated.prototype.animate = function() {
-	if( (this.currAnim[0] + 1) >= this.nrFramesPerAnimation[this.currAnim[1]])
-		this.currAnim[0] = 0;
-	else
-		this.currAnim[0]++;
+	
+	if(this.currAnim[1] != 0) {	// if not idle
+		if( (this.currAnim[0] + 1) >= this.nrFramesPerAnimation[this.currAnim[1]]) {
+			this.changeStatus(0);	// set the animation to idle
+		}
+		else
+			this.currAnim[0]++;
+	}
+	else {	// if idle
+		if( (this.currAnim[0] + 1) >= this.nrFramesPerAnimation[this.currAnim[1]])
+			this.currAnim[0] = 0;	// loop the animation
+		else
+			this.currAnim[0]++;
+	}
 };
 
-TileAnimated.prototype.updateStatus = function() {
-	// logic for changing status, ex: if the player jumps on the tile then this.changeStatus(this.tilestatus.ANIMATION_ONE)
-	
+TileAnimated.prototype.addTriggerBox = function(trigger) {
+	this.tbs.push(trigger);
+};
+
+TileAnimated.prototype.getTriggerBox = function() {
+	return this.tbs;
 };
 
 TileAnimated.prototype.changeStatus = function(newState) {

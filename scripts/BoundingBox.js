@@ -129,3 +129,19 @@ OBB.prototype = {
 		return this.overlaps1Way(other) && other.overlaps1Way(this);
 	}
 }
+
+//----------------------------------------TRIGGER BOX-------------------------------------------//
+TriggerBox = function(offset, center, size, angle, owner, actionFunction) {
+	TriggerBox.baseConstructor.call(this, offset, center, size, angle);
+	this.owner = owner;
+	this.actionFunction = actionFunction;
+};
+
+InheritenceManager.extend(TriggerBox, OBB);
+
+TriggerBox.prototype.callFunction = function() {
+	this.actionFunction();
+}
+
+
+

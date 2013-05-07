@@ -36,6 +36,14 @@ Entity.prototype = {
 		this.velocity = newVelocity;
 	},
 	
+	setVelocityX: function(newX) {
+		this.velocity[0] = newX;
+	},
+
+	setVelocityY: function(newY) {
+		this.velocity[1] = newY;
+	},
+	
 	getVelocity: function() {
 		return this.velocity;
 	},
@@ -48,103 +56,7 @@ Entity.prototype = {
 		return this.rotation;
 	}, 
 	
-	intersects2: function(bb) {
-		
-		var tmpBB = new OBB([this.position.x + this.velocity[0], this.position.y + this.velocity[1]], [this.obb.centerLocal.x, this.obb.centerLocal.y], [this.obb.size.x, this.obb.size.y], this.obb.angle);
-		return tmpBB.overlaps(bb);
-	}, 
-	
-	intersects: function(otherBB, otherPos) {
-		
-		var thisMin = {
-			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.min.x, 
-			y: (this.position.y + this.velocity[1] + 0.5) + this.boundingBox.min.y
-		}
-		
-		var thisMax = {
-			x: (this.position.x + this.velocity[0]) - this.size.x/2 + this.boundingBox.max.x, 
-			y: (this.position.y + this.velocity[1] + 0.5) + this.boundingBox.max.y
-		}
-		
-		var otherMin = {
-			x: otherPos.x + otherBB.min.x, 
-			y: otherPos.y + otherBB.min.y
-		}
-		
-		var otherMax = {
-			x: otherPos.x + otherBB.max.x, 
-			y: otherPos.y + otherBB.max.y
-		}
-		
-		if(thisMin.x > otherMax.x) return false;
-		if(thisMin.y > otherMax.y) return false;
-		
-		if(thisMax.x < otherMin.x) return false;
-		if(thisMax.y < otherMin.y) return false;
-		
-		
-		return true;
-	}, 
-	
-	collidedWith: function(otherBB) {
-		var thisMinX = {
-			x: (this.position.x + this.velocity[0]) + this.boundingBox.min.x, 
-			y: this.position.y + this.boundingBox.min.y
-		}
-		
-		var thisMaxX = {
-			x: (this.position.x + this.velocity[0]) + this.boundingBox.max.x, 
-			y: this.position.y + this.boundingBox.max.y
-		}
-		
-		var thisMinY = {
-			x: this.position.x + this.boundingBox.min.x, 
-			y: (this.position.y + this.velocity[1]) + this.boundingBox.min.y
-		}
-		
-		var thisMaxY = {
-			x: this.position.x + this.boundingBox.max.x, 
-			y: (this.position.y + this.velocity[1]) + this.boundingBox.max.y
-		}
-		
-		var otherMin = {
-			x: otherBB.min.x, 
-			y: otherBB.min.y
-		}
-		
-		var otherMax = {
-			x: otherBB.max.x, 
-			y: otherBB.max.y
-		}
-		
-		var below = thisMinY.y < otherMax.y;
-		var belowNoVel = thisMinX.y < otherMax.y;
-		var right = thisMaxX.x > otherMin.x;
-		var rightNoVel = thisMaxY.x > otherMin.x;
-		var left = thisMinX.x < otherMax.x;
-		var leftNoVel = thisMinY.x < otherMax.x;
-		var above = thisMaxY.y > otherMin.y;
-		var aboveNoVel = thisMaxX.y > otherMin.y;
-		
-		
-		
-		
-		if((rightNoVel || leftNoVel)  && belowNoVel) {
-			if(!below)
-				this.collides = false;
-			if(aboveNoVel)
-				this.velocity[0] = 0.0;
-		}
-		
-		
-		if(below && rightNoVel && leftNoVel) {
-			if(aboveNoVel)
-				this.collides = true;
-			this.velocity[1] = 0.0;
-		}
-	}, 
-	
-	collidedWith2: function(obb) {
+	collidedWith: function(obb) {
 		
 		var normal_firstBB = this.obb.getNormals();
 		var normal_secondBB = obb.getNormals();

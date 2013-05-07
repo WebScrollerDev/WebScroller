@@ -249,7 +249,7 @@ EmitterRain.prototype.spawnParticle = function() { //clearInterval(int) when don
 			x: this.particleVelocity[0] + (Math.random() * this.particleVelocitySpan[0]*2) - this.particleVelocitySpan[0] + world.windVelocity.x, 
 			y: this.particleVelocity[1] + (Math.random() * this.particleVelocitySpan[1]*2) - this.particleVelocitySpan[1] + world.windVelocity.y
 		}
-		var tmpTTL = 2000;
+		var tmpTTL = Math.random() * 400;
 		
 		this.particles.push(new ParticleRainDrop(tmpPos, tmpVelocity, tmpTTL));
 	}			
@@ -266,8 +266,9 @@ EmitterRain.prototype.updateParticles = function() { //clearInterval(int) when d
 			i--;
 		}
 		else {
-		this.particles[i].decreaseLifetime(this.updateTime);
-		this.particles[i].updatePosition();
+			if(this.particles[i].getDeathMark())
+				this.particles[i].decreaseLifetime(this.updateTime);
+			this.particles[i].updatePosition();
 		}		
 	}
 };

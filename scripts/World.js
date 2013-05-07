@@ -47,12 +47,17 @@ World.prototype = {
 		this.rope.attachTile(this.tilesMg[0], 5);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
-		//this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
+		this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
 		
 		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
-		tmpTile.setSize([100, 100]);
-		this.tilesAnimatedMg.push(new TileAnimated(tmpTile, [1610, 8,1], 2, 8, [1, 6], 50, 10));
-		
+		tmpTile.setSize([100, 100]);	
+		var animatedTile = new TileAnimated(tmpTile, [2295, 8,1], 2, 8, [1, 6], 50);
+		var tmpPos = animatedTile.getPosition();
+		animatedTile.addBoundingBox(new OBB([tmpPos.x, tmpPos.y], [50, 50], [50, 30], 0));
+		animatedTile.addTriggerBox(new TriggerBox([tmpPos.x, tmpPos.y], [50, 50], [30, 50], 0, animatedTile, function() { world.player.setVelocityY(30); 
+																											this.owner.changeStatus(1);			}));
+		this.tilesMg[0].setMoving();
+		this.tilesAnimatedMg.push(animatedTile);
 		var i = 0;
 		for(var i = 1; i < this.tilesMg.length; i++) {
 			var tmpBBArray = this.tilesMg[i].getBBs();
@@ -142,9 +147,28 @@ World.prototype = {
 		for(var i = 0; i < tiles.length; i++) {
 			if(tiles[i].getBBs() != null) {
 				for(var j = 0; j < tiles[i].getBBs().length; j++) {
-					if(this.intersects(this.player.getObb(), this.tilesMg[i].getBBs()[j])) {
-						world.player.obb.updateAngle(this.tilesMg[i].getBBs()[j].angle);
-						this.player.collidedWith2(this.tilesMg[i].getBBs()[j]);
+					if(this.intersects(this.player.getObb(), tiles[i].getBBs()[j])) {
+						world.player.obb.updateAngle(tiles[i].getBBs()[j].angle);
+						this.player.collidedWith(tiles[i].getBBs()[j]);
+					}
+				}
+			}
+		}
+		
+		var animTiles = this.tilesAnimatedMg;
+		for(var i = 0; i < animTiles.length; i++) {
+			if(animTiles[i].getTriggerBox() != null) {
+				
+				for(var j = 0; j < animTiles[i].getTriggerBox().length; j++) {
+					if(this.intersects(this.player.getObb(), animTiles[i].getTriggerBox()[j])) {
+						animTiles[i].getTriggerBox()[j].callFunction();
+					}
+				}
+				
+				for(var k = 0; k < animTiles[i].getBBs().length; k++) {
+					if(this.intersects(this.player.getObb(), animTiles[i].getBBs()[k])) {
+						world.player.obb.updateAngle(animTiles[i].getBBs()[k].angle);
+						this.player.collidedWith(animTiles[i].getBBs()[k]);
 					}
 				}
 			}

@@ -1024,12 +1024,9 @@ RenderTile.prototype.renderTileMg = function(pos, tex, size, rot, model) {
 	else {
 		mat4.translate(modelView, modelView, [0.0, pos.y -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 	}
-	
-	
 	mat4.translate(modelView, modelView, [size.x/2, size.y/2, 0.0]);
 	mat4.rotateZ(modelView, modelView, rot);
 	mat4.translate(modelView, modelView, [-size.x/2, -size.y/2, 0.0]);
-
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
 	//Used to center the player on the canvas
 	//mat4.translate(modelView, modelView, [-(world.player.size.x*0.5)/world.player.size.x, 0.0, 0.0]);
@@ -1298,25 +1295,146 @@ RenderWorld.prototype.renderBg = function() {
 //--------------------------------------------BB---------------------------------------//
 RenderBoundingBox = function() {
 	RenderBoundingBox.baseConstructor.call(this);
+	this.modelBB = [];
+	this.modelTB = [];
+	//---------------------------------STATIC BBs REGULAR------------------------//
+	var tilesMg = world.getTilesMg();
+	for(var i = 0; i < tilesMg.length; i++) {
+		if(tilesMg[i].getBBs() != null) {
+			for(var j = 0; j < tilesMg[i].getBBs().length; j++) {
+				var bb = tilesMg[i].getBBs()[j];
+				if(!tilesMg[i].isMoving()) {
+					this.modelBB = this.modelBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+				}
+			}
+		}
+	}
+	//---------------------------------STATIC BBs & TBs ANIMATED-----------------//
+	var animTiles = world.getTilesAnimatedMg();
+	for(var i = 0; i < animTiles.length; i++) {
+		if(animTiles[i].getBBs() != null) {
+			for(var j = 0; j < animTiles[i].getBBs().length; j++) {
+				var bb = animTiles[i].getBBs()[j];
+				if(!animTiles[i].isMoving()) {
+					this.modelBB = this.modelBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+					this.modelBB = this.modelBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+				}
+			}
+		}
+		if(animTiles[i].getTriggerBox() != null) {
+			for(var j = 0; j < animTiles[i].getTriggerBox().length; j++) {
+				var tb = animTiles[i].getTriggerBox()[j];
+				if(!animTiles[i].isMoving()) {
+					this.modelTB = this.modelTB.concat([tb.corner[0][0], tb.corner[0][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[1][0], tb.corner[1][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[1][0], tb.corner[1][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[2][0], tb.corner[2][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[2][0], tb.corner[2][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[3][0], tb.corner[3][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[3][0], tb.corner[3][1], 0]);
+					this.modelTB = this.modelTB.concat([tb.corner[0][0], tb.corner[0][1], 0]);
+				}
+			}
+		}
+	}
+	
 }
 
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
 
 RenderBoundingBox.prototype.render = function() {
 	if(debug) {
+		this.modelMovingBB = [];
+		this.modelMovingTB = [];
 		var tilesMg = world.getTilesMg();
-		for(var i = 0; i < tilesMg.length; i++) {
+		for(var i = 0; i < tilesMg.length; i++) {	// static tiles BB
 			if(tilesMg[i].getBBs() != null) {
-				for(var j = 0; j < tilesMg[i].getBBs().length; j++)
-					this.renderBB(tilesMg[i].getBBs()[j]);
+				for(var j = 0; j < tilesMg[i].getBBs().length; j++) {
+					var bb = tilesMg[i].getBBs()[j];
+					if(tilesMg[i].isMoving()) {
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+					}
+				}
 			}
 		}
-		this.renderBB(world.player.obb);
+		
+		var animTiles = world.getTilesAnimatedMg();
+		for(var i = 0; i < animTiles.length; i++) {	// anim tiles BB & TB
+			if(animTiles[i].getBBs() != null) {
+				for(var j = 0; j < animTiles[i].getBBs().length; j++) {
+					var bb = animTiles[i].getBBs()[j];
+					if(tilesMg[i].isMoving()) {
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+						this.modelMovingBB = this.modelMovingBB.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+					}
+				}
+			}
+			if(animTiles[i].getTriggerBox() != null) {
+				for(var j = 0; j < animTiles[i].getTriggerBox().length; j++) {
+					var tb = animTiles[i].getTriggerBox()[j];
+					if(animTiles[i].isMoving()) {
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[0][0], tb.corner[0][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[1][0], tb.corner[1][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[1][0], tb.corner[1][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[2][0], tb.corner[2][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[2][0], tb.corner[2][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[3][0], tb.corner[3][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[3][0], tb.corner[3][1], 0]);
+						this.modelMovingTB = this.modelMovingTB.concat([tb.corner[0][0], tb.corner[0][1], 0]);
+					}
+				}
+			}
+		}
+			
+		
+			
+		this.modelPlayer = [];
+		var bb = world.player.obb;
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelPlayer = this.modelPlayer.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+
+		this.renderBB(this.modelTB, [0.0, 1.0, 0.0]);
+		this.renderBB(this.modelBB, [1.0, 0.0, 0.0]);
+		this.renderBB(this.modelMovingBB, [1.0, 0.0, 0.0]);
+		this.renderBB(this.modelMovingTB, [0.0, 1.0, 0.0]);
+		this.renderBB(this.modelPlayer, [1.0, 0.0, 0.0]);
 	}
 	
 };
 
-RenderBoundingBox.prototype.renderBB = function(bb) {
+RenderBoundingBox.prototype.renderBB = function(model, color) {
 	gl.useProgram(progLine);
 	
 	var modelView = mat4.create();
@@ -1324,18 +1442,6 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 		x: world.player.getPosition().x, 
 		y: world.player.getPosition().y
 	}
-	var model = [];
-
-	var nrLines = 0;
-	
-	model = model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
-	model = model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	model = model.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	model = model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	model = model.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	model = model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	model = model.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	model = model.concat([bb.corner[0][0], bb.corner[0][1], 0]);
 
 	var posBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
@@ -1362,12 +1468,12 @@ RenderBoundingBox.prototype.renderBB = function(bb) {
 
 	gl.uniformMatrix4fv(progLine.proj, false, cam.getProj());
 	gl.uniformMatrix4fv(progLine.modelView, false, modelView);
-	gl.uniform3fv(progLine.color, [1.0, 0.0, 0.0]);
+	gl.uniform3fv(progLine.color, color);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.vertexAttribPointer(progLine.position, 3, gl.FLOAT, false, 0, 0);
 	
-	gl.drawArrays(gl.LINES, 0, 8);
+	gl.drawArrays(gl.LINES, 0, model.length/3);
 }
 
 //--------------------------------------------QT---------------------------------------//

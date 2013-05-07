@@ -100,6 +100,7 @@ ParticleFire.prototype.getFade = function() {
 ParticleRainDrop = function(position, velocity, timeToLive) {
 	this.position = new QuadPoint([position.x, position.y]);	// position as a QuadPoint
 	this.velocity = new QuadPoint([velocity.x, velocity.y]);	// position as a QuadPoint
+	this.deathMark = false;
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var
 };
@@ -116,8 +117,12 @@ ParticleRainDrop.prototype.updatePosition = function() {
 	var intersect = world.rootQuadTree.getIntersection(new QuadLine(prevPos, this.position));
 	if (intersect != null) {
 		this.position = prevPos;
+		this.deathMark = true;
 		this.velocity = intersect.reflect(this.velocity).times(0.2);
 	}
+};
+ParticleRainDrop.prototype.getDeathMark = function() {
+	return this.deathMark;
 };
 ParticleRainDrop.prototype.getLifetime = function() {
 	return this.timeToLive;
