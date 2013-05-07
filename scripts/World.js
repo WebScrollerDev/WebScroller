@@ -47,7 +47,7 @@ World.prototype = {
 		this.rope.attachTile(this.tilesMg[0], 5);
 		
 		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
-		this.rainEmitters.push(new EmitterRain(1000, 50, [0.,-0.9],[0.,0.]));
+		//this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
 		
 		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
 		tmpTile.setSize([100, 100]);	
@@ -71,8 +71,6 @@ World.prototype = {
 				tmpQLines.push(new QuadLine(new QuadPoint(tmpBB.corner[0]), new QuadPoint(tmpBB.corner[3])));
 				
 				this.rootQuadTree.addSegments(tmpQLines);
-				
-				
 			}
 		}
 	},
