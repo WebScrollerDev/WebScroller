@@ -1,14 +1,21 @@
-var tmpTilesBg = new Array();
-var tmpTilesMg = new Array();
-var tmpTilesFg = new Array();
-
-var obbs = new Array();
-var lights = new Array();
+var tmpTilesBg = [];
+var tmpTilesMg = [];
+var tmpAnimatedTilesMg = [];
+var tmpTilesFg = [];
+var obbs = [];
+var tbs = [];
+var lights = [];
+var tmpRopes = [];
+var tmpCloths = [];
+var tmpParticles = [];
 
 var bg = false;
 var mg = false;
 var fg = false;
 var light = false;
+var fabricsBool = false;
+var particleBool = false;
+
 var doneLoading = false;
 function loadXml() {
 	$.ajax({
@@ -38,11 +45,23 @@ function loadXml() {
     	dataType: "xml",
     	success: parseLights
   	});
+  	$.ajax({
+    	type: "GET",
+    	url: "config/fabrics.xml",
+    	dataType: "xml",
+    	success: parseFabrics
+  	});
+  	$.ajax({
+    	type: "GET",
+    	url: "config/particles.xml",
+    	dataType: "xml",
+    	success: parseParticles
+  	});
 }
 
 function loadWorldXml() {
 	
-	if(bg && mg && fg && light) {
+	if(bg && mg && fg && light && fabricsBool && particleBool) {
 		$.ajax({
 	    	type: "GET",
 	    	url: "config/worlds.xml",
@@ -56,7 +75,7 @@ function parseWorlds(xml) {
 	$(xml).find("Worlds").each(function() {
 		$(this).find("World").each(function() {
 			$(this).find("TilesBg").each(function() {
-				var tilesPlaceable = new Array();
+				var tilesPlaceable = [];
 				$(this).find("Tile").each(function() {
 					var id = parseInt($(this).find("Id").text());
 					var pos;
@@ -92,19 +111,38 @@ function parseWorlds(xml) {
 			});
 			
 			$(this).find("TilesMg").each(function() {
-				var tilesPlaceable = new Array();
+				var tilesPlaceable = [];
+				var tilesAnimated = [];
+				var smokeEmitters = [];
 				$(this).find("Tile").each(function() {
+					var tileAnimated;
 					var id = parseInt($(this).find("Id").text());
 					var pos;
+					var currentTile;
+					var normalTile = false;
 					$(this).find("Pos").each(function() {
 						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 					});
-					var tilePlaceable = new TilePlaceable(tmpTilesMg[id], pos);;
+					//console.log(tmpAnimatedTilesMg);
+					
+					if(tmpTilesMg[id] != null) {
+						currentTile = new TilePlaceable(tmpTilesMg[id], pos);
+						normalTile = true;
+					}
+					else if(tmpAnimatedTilesMg[id] != null) {
+						currentTile = new TileAnimated(tmpAnimatedTilesMg[id].tile, pos, tmpAnimatedTilesMg[id].totalNrAnimations, tmpAnimatedTilesMg[id].maxNrFramesPerAnimation, tmpAnimatedTilesMg[id].nrFramesPerAnimation, tmpAnimatedTilesMg[id].animationSpeed);
+					}
+					//console.log(currentTile);
 					if(obbs[id] != null) {
 						for(var i = 0; i < obbs[id].length; i++) {
 							var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
-							tilePlaceable.addBoundingBox(tmpObb);
+							currentTile.addBoundingBox(tmpObb);
 							world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
+						}
+					}
+					if(tbs[id] != null) {
+						for(var i = 0; i < tbs[id].length; i++) {
+							currentTile.addTriggerBox(new TriggerBox(pos, tbs[id][i].center, tbs[id][i].size, tbs[id][i].angle, currentTile, tbs[id][i].triggerFunc));
 						}
 					}
 					$(this).find("Lights").each(function() {
@@ -118,24 +156,45 @@ function parseWorlds(xml) {
 								lightPos[2] = parseInt($(this).find("LightZ").text());;
 							});
 							if(light.type == "static") {
-								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+								currentTile.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
 							}
 							if(light.type == "flickering") {
-								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+								currentTile.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
 							}
 							if(light.type == "morphing") {
-								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+								currentTile.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
 							}
 						});
 					});
 					
-					tilesPlaceable.push(tilePlaceable);
+					$(this).find("Particles").each(function() {
+						$(this).find("Particle").each(function() {
+							var id = parseInt($(this).find("ParticleId").text());
+							var particle = tmpParticles[id];
+							var particlePos = [];
+							$(this).find("ParticlePos").each(function() {
+								particlePos[0] = parseInt($(this).find("ParticleX").text());
+								particlePos[1] = parseInt($(this).find("ParticleY").text());
+								particlePos[2] = parseInt($(this).find("ParticleZ").text());
+							});
+							if(particle.type == "smoke") {
+								smokeEmitters.push(new EmitterSmoke(vec3.add(vec3.create(), pos, particlePos), tmpParticles[id].maxParticles, tmpParticles[id].spawnInterval, tmpParticles[id].diameter, tmpParticles[id].velocity, tmpParticles[id].velocitySpan, tmpParticles[id].lifeTime, tmpParticles[id].lifeTimeSpan));
+							}
+						});
+					});
+					if(normalTile)
+						tilesPlaceable.push(currentTile);
+					else
+						tilesAnimated.push(currentTile);
 				});
+				
+				world.setTilesAnimatedMg(tilesAnimated);
 				world.setTilesMg(tilesPlaceable);
+				world.setSmokeEmitters(smokeEmitters);
 			});
 			
 			$(this).find("TilesFg").each(function() {
-				var tilesPlaceable = new Array();
+				var tilesPlaceable = [];
 				$(this).find("Tile").each(function() {
 					var id = parseInt($(this).find("Id").text());
 					var pos;
@@ -168,6 +227,45 @@ function parseWorlds(xml) {
 				});
 				world.setTilesFg(tilesPlaceable);
 			});
+			
+			$(this).find("Ropes").each(function() {
+				var ropes = [];
+				$(this).find("Rope").each(function() {
+					var id, startPos, endPos, rope;
+					
+					id = parseInt($(this).find("Id").text());
+					$(this).find("StartPos").each(function() {
+						startPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+					});
+					$(this).find("EndPos").each(function() {
+						endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+					});
+					rope = new Rope(startPos, endPos, tmpRopes[id].numJoints, tmpRopes[id].lastPinned, tmpRopes[id].color);
+					
+					$(this).find("AttachedTile").each(function() {
+						var tileId = parseInt($(this).find("TileId").text());
+						var joint = parseInt($(this).find("Joint").text());
+						rope.attachTile(world.getTilesMg()[tileId], joint);
+						//endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+					});
+					ropes.push(rope);
+				});
+				world.setRopes(ropes);
+			});
+			
+			$(this).find("Cloths").each(function() {
+				var cloths = [];
+				$(this).find("Cloth").each(function() {
+					var id, pos;
+					
+					id = parseInt($(this).find("Id").text());
+					$(this).find("Pos").each(function() {
+						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+					});
+					cloths.push(new Cloth(pos, tmpCloths[id].size, tmpCloths[id].spacing, tmpCloths[id].color));
+				});
+				world.setCloths(cloths);
+			});
 		});
 	});
 	doneLoading = true;
@@ -175,30 +273,28 @@ function parseWorlds(xml) {
 
 function parseMgTiles(xml)
 {
-	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
 			var tile = new Tile($(this).find("Url").text());
 			var id = parseInt($(this).find("Id").text());
-			var sizeX, sizeY;
 			if($(this).find("BoundingBoxes")) {
 				//var minX, maxX, minY, maxY;
-				var tmpBbs = new Array();
+				var tmpBbs = [];
 				$(this).find("BoundingBox").each(function() {
 					var bbCenter = [];
 					var bbSize = [];
 					var bbAngle;
-					$(this).find("Size").each(function() {
-						bbSize[0] = parseInt($(this).find("X").text());
-						bbSize[1] = parseInt($(this).find("Y").text());
+					$(this).find("BBSize").each(function() {
+						bbSize[0] = parseInt($(this).find("BBX").text());
+						bbSize[1] = parseInt($(this).find("BBY").text());
 					});
 					
-					$(this).find("Center").each(function() {
-						bbCenter[0] = parseInt($(this).find("X").text());
-						bbCenter[1] = parseInt($(this).find("Y").text());
+					$(this).find("BBCenter").each(function() {
+						bbCenter[0] = parseInt($(this).find("BBX").text());
+						bbCenter[1] = parseInt($(this).find("BBY").text());
 					});
 					
-					bbAngle = (parseInt($(this).find("Angle").text())*3.14)/180;
+					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
 					var obbTmp = {
 						center: bbCenter, 
 						size: bbSize, 
@@ -206,9 +302,7 @@ function parseMgTiles(xml)
 					}
 					tmpBbs.push(obbTmp);
 				});
-				
 				obbs[id] = tmpBbs;
-				//tile.addBoundingBox(new OBB(bbCenter, bbSize, bbAngle));
 			}
 			
 			$(this).find("Size").each(function() {
@@ -219,15 +313,100 @@ function parseMgTiles(xml)
 			//console.log("Adding tile to tiles");
 			tmpTilesMg[id] = tile;
 		});
+		
+		$(this).find("AnimatedTile").each(function() {
+			var tile = new Tile($(this).find("Url").text());
+			
+			var id, totalNrAnimations, maxNrFramesPerAnimation, animationSpeed;
+			var nrFramesPerAnimation = [], tmpNrFramesPerAnimation = [];
+			
+			id = parseInt($(this).find("Id").text());
+			totalNrAnimations = parseInt($(this).find("TotalNrAnimations").text());
+			maxNrFramesPerAnimation = parseInt($(this).find("MaxNrFramesPerAnimation").text());
+			animationSpeed = parseInt($(this).find("AnimationSpeed").text());
+			tmpNrFramesPerAnimation = $(this).find("NrFramesPerAnimation").text().split(",");
+			for(var i = 0; i < tmpNrFramesPerAnimation.length; i++) {
+				nrFramesPerAnimation.push(parseInt(tmpNrFramesPerAnimation[i]));
+			}
+			
+			if($(this).find("BoundingBoxes")) {
+				//var minX, maxX, minY, maxY;
+				var tmpBbs = [];
+				$(this).find("BoundingBox").each(function() {
+					var bbCenter = [];
+					var bbSize = [];
+					var bbAngle;
+					$(this).find("BBSize").each(function() {
+						bbSize[0] = parseInt($(this).find("BBX").text());
+						bbSize[1] = parseInt($(this).find("BBY").text());
+					});
+					
+					$(this).find("BBCenter").each(function() {
+						bbCenter[0] = parseInt($(this).find("BBX").text());
+						bbCenter[1] = parseInt($(this).find("BBY").text());
+					});
+					
+					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
+					var obbTmp = {
+						center: bbCenter, 
+						size: bbSize, 
+						angle: bbAngle
+					}
+					tmpBbs.push(obbTmp);
+				});
+				obbs[id] = tmpBbs;
+			}
+			if($(this).find("TriggerBoxes")) {
+				//var minX, maxX, minY, maxY;
+				var tmpTbs = [];
+				$(this).find("TriggerBox").each(function() {
+					var bbCenter = [];
+					var bbSize = [];
+					var bbAngle, triggerFunc;
+					$(this).find("TBSize").each(function() {
+						bbSize[0] = parseInt($(this).find("TBX").text());
+						bbSize[1] = parseInt($(this).find("TBY").text());
+					});
+					
+					$(this).find("TBCenter").each(function() {
+						bbCenter[0] = parseInt($(this).find("TBX").text());
+						bbCenter[1] = parseInt($(this).find("TBY").text());
+					});
+					
+					bbAngle = (parseInt($(this).find("TBAngle").text())*3.14)/180;
+					triggerFunc = $(this).find("TriggerFunc").text();
+					var tbTmp = {
+						center: bbCenter, 
+						size: bbSize, 
+						angle: bbAngle, 
+						triggerFunc: triggerFunc
+					}
+					tmpTbs.push(tbTmp);
+				});
+				tbs[id] = tmpTbs;
+			}
+			
+			$(this).find("Size").each(function() {
+				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
+			});
+			
+			//console.log("Adding tile to tiles");
+			tmpAnimatedTilesMg[id] = {
+				tile: tile, 
+				totalNrAnimations: totalNrAnimations, 
+				maxNrFramesPerAnimation: maxNrFramesPerAnimation, 
+				nrFramesPerAnimation: nrFramesPerAnimation,
+				animationSpeed: animationSpeed
+			};
+			//console.log(tmpAnimatedTilesMg);
+		});
 	});
-	//world.setTiles(tiles);
 	mg = true;
 	loadWorldXml();
 }
 
 function parseBgTiles(xml)
 {
-	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
 			var tile = new Tile($(this).find("Url").text());
@@ -237,20 +416,16 @@ function parseBgTiles(xml)
 			$(this).find("Size").each(function() {
 				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
 			});
-			
-			
-			//console.log("Adding tile to tiles");
+
 			tmpTilesBg[id] = tile;
 		});
 	});
-	//world.setTiles(tiles);
 	bg = true;
 	loadWorldXml();
 }
 
 function parseFgTiles(xml)
 {
-	//var tiles = new Array();
 	$(xml).find("Tiles").each(function() {
 		$(this).find("Tile").each(function() {
 			var tile = new Tile($(this).find("Url").text());
@@ -260,20 +435,16 @@ function parseFgTiles(xml)
 			$(this).find("Size").each(function() {
 				tile.setSize([parseInt($(this).find("X").text()), parseInt($(this).find("Y").text())]);
 			});
-			
-			
-			//console.log("Adding tile to tiles");
+
 			tmpTilesFg[id] = tile;
 		});
 	});
-	//world.setTiles(tiles);
 	fg = true;
 	loadWorldXml();
 }
 
 function parseLights(xml)
 {
-	//var tiles = new Array();
 	$(xml).find("Lights").each(function() {
 		$(this).find("StaticLight").each(function() {
 			var id, intensity;
@@ -322,7 +493,7 @@ function parseLights(xml)
 		$(this).find("MorphingLight").each(function() {
 			var id, flickerSpeed, flickerSpeedSpan, morphSpeed, morphSpeedSpan;
 			var intensity = [];
-			var colors = new Array();
+			var colors = [];
 			$(this).find("Colors").each(function() {
 				var color = [];
 				$(this).find("Color").each(function() {
@@ -359,7 +530,93 @@ function parseLights(xml)
 			lights[id] = tmpLight;
 		});
 	});
-	//world.setTiles(tiles);
+	
 	light = true;
+	loadWorldXml();
+}
+
+function parseFabrics(xml)
+{
+	$(xml).find("Fabrics").each(function() {
+		$(this).find("Rope").each(function() {
+			var id, numJoints, lastPinned;
+			var color = [];
+			
+			id = parseInt($(this).find("Id").text());
+			numJoints = parseInt($(this).find("NumJoints").text());
+			lastPinned = $(this).find("LastPinned").text() == "true" ? true : false;
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			tmpRopes[id] = {
+				numJoints: numJoints,
+				lastPinned: lastPinned, 
+				color: color
+			};
+		});
+		$(this).find("Cloth").each(function() {
+			var id, spacing;
+			var color = [], size = [];
+			
+			id = parseInt($(this).find("Id").text());
+			$(this).find("Size").each(function() {
+				size[0] = parseFloat($(this).find("X").text());
+				size[1] = parseFloat($(this).find("Y").text());
+			});
+			spacing = parseInt($(this).find("Spacing").text());
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			tmpCloths[id] = {
+				size: size,
+				spacing: spacing, 
+				color: color
+			};
+		});
+	});
+
+	fabricsBool = true;
+	loadWorldXml();
+}
+
+function parseParticles(xml)
+{
+	$(xml).find("Particles").each(function() {
+		$(this).find("Smoke").each(function() {
+			var id, maxParticles, spawnInterval, diameter, lifeTime, lifeTimeSpan;
+			var velocity = [], velocitySpan = [];
+			
+			id = parseInt($(this).find("Id").text());
+			maxParticles = parseInt($(this).find("MaxParticles").text());
+			spawnInterval = parseInt($(this).find("SpawnInterval").text());
+			diameter = parseInt($(this).find("Diameter").text());
+			lifeTime = parseInt($(this).find("LifeTime").text());
+			lifeTimeSpan = parseInt($(this).find("LifeTimeSpan").text());
+			$(this).find("Velocity").each(function() {
+				velocity[0] = parseFloat($(this).find("X").text());
+				velocity[1] = parseFloat($(this).find("Y").text());
+			});
+			$(this).find("VelocitySpan").each(function() {
+				velocitySpan[0] = parseFloat($(this).find("X").text());
+				velocitySpan[1] = parseFloat($(this).find("Y").text());
+			});
+			tmpParticles[id] = {
+				type: "smoke", 
+				maxParticles: maxParticles,
+				spawnInterval: spawnInterval, 
+				diameter: diameter, 
+				velocity: velocity, 
+				velocitySpan: velocitySpan, 
+				lifeTime: lifeTime, 
+				lifeTimeSpan: lifeTimeSpan
+			};
+		});
+	});
+
+	particleBool = true;
 	loadWorldXml();
 }

@@ -13,25 +13,25 @@ World = function() {
 		x: this.worldSize.x*2, 
 		y: this.worldSize.y*2
 	}
-	this.tilesBg = new Array();
-	this.tilesMg = new Array();
-	this.tilesFg = new Array();
+	this.tilesBg = [];
+	this.tilesMg = [];
+	this.tilesFg = [];
 	
-	this.tilesAnimatedBg = new Array();
-	this.tilesAnimatedMg = new Array();
-	this.tilesAnimatedFg = new Array();
+	this.tilesAnimatedBg = [];
+	this.tilesAnimatedMg = [];
+	this.tilesAnimatedFg = [];
 	
-	this.smokeEmitters = new Array();
-	this.fluidEmitters = new Array();
-	this.fireEmitters = new Array();
+	this.smokeEmitters = [];
+	this.fluidEmitters = [];
+	this.fireEmitters = [];
 	
-	this.rainEmitters = new Array();
+	this.rainEmitters = [];
 	
-	this.gpuParticles = new Array();
+	this.gpuParticles = [];
 	this.player = new EntityPlayer([1337, 500, 0], [0, 0], [45, 64]);
 	this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
-	this.cloth = new Cloth([700, 230], [10, 10], 14, [0.0, 0.7, 0.0]);
-	this.rope = new Rope([1150, 300], [1100, 100], 10, false, [0.7, 0.7, 0.7]);
+	this.cloths = [];
+	this.ropes = [];
 	this.gpuParticles.push(new GpuParticle([2700, 40], 32, "resources/waterborder.png"));
 	this.shadowHandler = new ShadowHandler(gl.viewportWidth, 10);
 	this.windVelocity = {
@@ -44,20 +44,9 @@ World.prototype = {
 	
 	initArrays: function() {
 		
-		this.rope.attachTile(this.tilesMg[0], 5);
-		
-		this.smokeEmitters.push(new EmitterSmoke([532,330], 1000, 100, 8, [0.0,0.1], [0.1,0.0], 4000, 500));
-		//this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
-		
-		var tmpTile = new Tile("resources/tiles/mg/fungi_ss.png");
-		tmpTile.setSize([100, 100]);	
-		var animatedTile = new TileAnimated(tmpTile, [2295, 8,1], 2, 8, [1, 6], 50);
-		var tmpPos = animatedTile.getPosition();
-		animatedTile.addBoundingBox(new OBB([tmpPos.x, tmpPos.y], [50, 50], [50, 30], 0));
-		animatedTile.addTriggerBox(new TriggerBox([tmpPos.x, tmpPos.y], [50, 50], [30, 50], 0, animatedTile, function() { world.player.setVelocityY(30); 
-																											this.owner.changeStatus(1);			}));
+		this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
+
 		this.tilesMg[0].setMoving();
-		this.tilesAnimatedMg.push(animatedTile);
 		var i = 0;
 		for(var i = 1; i < this.tilesMg.length; i++) {
 			var tmpBBArray = this.tilesMg[i].getBBs();
@@ -99,8 +88,6 @@ World.prototype = {
 		return this.tilesFg;
 	},
 	
-	
-	
 	setTilesAnimatedBg: function(tiles) {
 		this.tilesAnimatedBg = tiles;
 	},
@@ -131,11 +118,6 @@ World.prototype = {
 	
 	
 	update: function() {
-		
-		this.shadowHandler.shadows[0].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]], [this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]]);
-		this.shadowHandler.shadows[1].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[2][0], this.tilesMg[0].getBBs()[0].corner[2][1]], [this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]]);
-		this.shadowHandler.shadows[2].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[1][0], this.tilesMg[0].getBBs()[0].corner[1][1]], [this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]]);
-		this.shadowHandler.shadows[3].setAnchorPoints([this.tilesMg[0].getBBs()[0].corner[0][0], this.tilesMg[0].getBBs()[0].corner[0][1]], [this.tilesMg[0].getBBs()[0].corner[3][0], this.tilesMg[0].getBBs()[0].corner[3][1]]);
 		
 		this.player.preCollision();
 		
@@ -254,5 +236,17 @@ World.prototype = {
 	
 	getShadowHandler: function() {
 		return this.shadowHandler;
+	}, 
+	
+	setRopes: function(ropes) {
+		this.ropes = ropes;
+	}, 
+	
+	setCloths: function(cloths) {
+		this.cloths = cloths;
+	}, 
+	
+	setSmokeEmitters: function(smokeEmitters) {
+		this.smokeEmitters = smokeEmitters;
 	}
 }

@@ -21,7 +21,11 @@ Entity.prototype = {
 	},
 	
 	getPosition: function() {
-		return jQuery.extend(true, {}, this.position);
+		return {
+			x: this.position.x, 
+			y: this.position.y
+		}
+		//return jQuery.extend(true, {}, this.position);
 	},
 	
 	setPrevPosition: function(newPos) {
@@ -29,7 +33,11 @@ Entity.prototype = {
 	},
 	
 	getPrevPosition: function() {
-		return jQuery.extend(true, {}, this.prevPosition);
+		return {
+			x: this.prevPosition.x, 
+			y: this.prevPosition.y
+		}
+		//return jQuery.extend(true, {}, this.prevPosition);
 	},
 	
 	setVelocity: function(newVelocity) {
@@ -214,7 +222,11 @@ EntityPlayer.prototype.preCollision = function() {
 }
 
 EntityPlayer.prototype.getSize = function() {
-	return jQuery.extend(true, {}, this.size);
+	return {
+			x: this.size.x, 
+			y: this.size.y
+		}
+	//return jQuery.extend(true, {}, this.size);
 }
 
 EntityPlayer.prototype.update = function() {
@@ -304,7 +316,8 @@ EntityPlayer.prototype.keyPress = function() {
 };
 
 EntityPlayer.prototype.getObb = function() {
-	return jQuery.extend(true, {}, this.obb);
+	return this.obb;
+	//return jQuery.extend(true, {}, this.obb);
 }
 //-------------------enemy--------------------//
 

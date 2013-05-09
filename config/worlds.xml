@@ -139,13 +139,14 @@
 					</Light>
 					
 				</Lights>
+				
 			</Tile>
 			
 			<Tile>
 				<Id>3</Id> // house
 				<Pos>
 					<X>400</X>
-					<Y>32</Y>
+					<Y>22</Y>
 					<Z>0</Z>
 				</Pos>
 				<Lights>
@@ -176,6 +177,16 @@
 					</Light>
 					
 				</Lights>
+				<Particles>
+					<Particle>
+						<ParticleId>0</ParticleId>
+						<ParticlePos>
+							<ParticleX>130</ParticleX>
+							<ParticleY>290</ParticleY>
+							<ParticleZ>0</ParticleZ>
+						</ParticlePos>
+					</Particle>
+				</Particles>
 			</Tile>
 			
 			<Tile>
@@ -285,6 +296,15 @@
 					<X>2700</X>
 					<Y>40</Y>
 					<Z>-1</Z>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>14</Id>	// Fungi
+				<Pos>
+					<X>2295</X>
+					<Y>8</Y>
+					<Z>1</Z>
 				</Pos>
 			</Tile>
 		</TilesMg>
@@ -433,5 +453,33 @@
 				</Pos>
 			</Tile>
 		</TilesFg>
+		
+		<Ropes>
+			<Rope>
+				<Id>0</Id>
+				<StartPos>
+					<X>1150</X>
+					<Y>300</Y>
+				</StartPos>
+				<EndPos>
+					<X>1100</X>
+					<Y>100</Y>
+				</EndPos>
+				<AttachedTile>
+					<TileId>0</TileId>
+					<Joint>8</Joint>
+				</AttachedTile>
+			</Rope>
+		</Ropes>
+		
+		<Cloths>
+			<Cloth>
+				<Id>0</Id>
+				<Pos>
+					<X>700</X>
+					<Y>230</Y>
+				</Pos>
+			</Cloth>
+		</Cloths>
 	</World>
 </Worlds>

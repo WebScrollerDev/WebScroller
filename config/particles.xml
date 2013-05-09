@@ -1,0 +1,18 @@
+<Particles>
+	<Smoke>
+		<Id>0</Id>
+		<MaxParticles>1000</MaxParticles>
+		<SpawnInterval>100</SpawnInterval>
+		<Diameter>8</Diameter>
+		<Velocity>
+			<X>0.0</X>
+			<Y>0.1</Y>
+		</Velocity>
+		<VelocitySpan>
+			<X>0.1</X>
+			<Y>0.0</Y>
+		</VelocitySpan>
+		<LifeTime>4000</LifeTime>
+		<LifeTimeSpan>500</LifeTimeSpan>
+	</Smoke>
+</Particles>

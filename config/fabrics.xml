@@ -1,0 +1,25 @@
+<Fabrics>
+	<Cloth>
+		<Id>0</Id>
+		<Size>
+			<X>10</X>
+			<Y>10</Y>
+		</Size>
+		<Spacing>14</Spacing>
+		<Color>
+			<R>0.0</R>
+			<G>0.7</G>
+			<B>0.0</B>
+		</Color>
+	</Cloth>
+	<Rope>
+		<Id>0</Id>
+		<NumJoints>10</NumJoints>
+		<LastPinned>false</LastPinned>
+		<Color>
+			<R>0.7</R>
+			<G>0.7</G>
+			<B>0.7</B>
+		</Color>
+	</Rope>
+</Fabrics>

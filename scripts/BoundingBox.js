@@ -140,7 +140,8 @@ TriggerBox = function(offset, center, size, angle, owner, actionFunction) {
 InheritenceManager.extend(TriggerBox, OBB);
 
 TriggerBox.prototype.callFunction = function() {
-	this.actionFunction();
+	var fn = window[this.actionFunction];
+	fn(this.owner);
 }
 
 

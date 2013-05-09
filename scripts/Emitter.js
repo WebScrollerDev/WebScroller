@@ -5,7 +5,8 @@ EmitterBase = function(position, maxParticles, spawnInterval, particleDiameter, 
 	
 	this.position = {
 		x: position[0], 
-		y: position[1]
+		y: position[1], 
+		z: position[2]
 	}
 	
 	this.particles = new Array(); //the particles for this emitter
@@ -146,7 +147,8 @@ EmitterSmoke.prototype.spawnParticle = function() { //clearInterval(int) when do
 	if(this.particles.length < this.maxParticles) {
 		var tmpPos = {
 			x: this.position.x, 
-			y: this.position.y
+			y: this.position.y, 
+			z: this.position.z
 		}
 		var tmpVelocity = {
 			x: this.particleVelocity.x + (Math.random() * this.particleVelocitySpan.x*2) - this.particleVelocitySpan.x, 
@@ -189,7 +191,8 @@ EmitterFire.prototype.spawnParticle = function() { //clearInterval(int) when don
 	if(this.particles.length < this.maxParticles) {
 		var tmpPos = {
 			x: this.position.x, 
-			y: this.position.y
+			y: this.position.y,
+			z: this.position.z
 		}
 		var tmpVelocity = {
 			x: this.particleVelocity.x + (Math.random() * this.particleVelocitySpan.x*2) - this.particleVelocitySpan.x, 

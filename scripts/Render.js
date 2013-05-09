@@ -343,8 +343,10 @@ RenderFabric = function() {
 InheritenceManager.extend(RenderFabric, RenderBase);
 
 RenderFabric.prototype.render = function() {
-	this.renderFabric(world.rope.getPoints(), 10.0, world.rope.getColor());
-	this.renderFabric(world.cloth.getPoints(), 1.0, world.cloth.getColor());
+	for(var i = 0; i < world.ropes.length; i++)
+		this.renderFabric(world.ropes[i].getPoints(), 10.0, world.ropes[i].getColor());
+	for(var i = 0; i < world.cloths.length; i++)
+		this.renderFabric(world.cloths[i].getPoints(), 10.0, world.cloths[i].getColor());
 };
 
 RenderFabric.prototype.renderFabric = function(points, lineWidth, color) {
@@ -663,7 +665,8 @@ RenderParticle.prototype.render = function() {
 	}
 //-------------------------------GPU FLUID---------------------------------//
 	gl.depthMask(false); //see other particles through the particles
-	this.renderGpuParticle(world.gpuParticles[0].getAmount());
+	//this.renderGpuParticle(world.gpuParticles[0].getAmount());
+	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	gl.depthMask(true);
 };
 
@@ -765,11 +768,11 @@ RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotati
 	}
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x-(scale/2), 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x-(scale/2), 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth))-(scale/2), 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(world.worldSize.x - (gl.viewportWidth))-(scale/2), 0.0, pos.z]);
 	else
-		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2))-(scale/2), 0.0, 0.5]);
+		mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2))-(scale/2), 0.0, pos.z]);
 
 
 	if(playerPos.y < (gl.viewportHeight)/2)
