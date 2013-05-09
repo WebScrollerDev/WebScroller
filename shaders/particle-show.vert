@@ -7,5 +7,5 @@ varying vec2 tex;
 void main(void) {
 	tex = inPoints;
 	gl_Position = projMatrix * modelViewMatrix * texture2D(posSamp, inPoints);
-	gl_PointSize = 8.;
+	gl_PointSize = 10.;
 }
