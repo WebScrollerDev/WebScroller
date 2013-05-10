@@ -150,9 +150,12 @@ RenderWindow.prototype.render = function() {
 	var currWindow = editor.getCurrentWindow();
 	this.renderWindow(currWindow);
 	gl.useProgram(progButton);
+	
 	for(var i = 0; i < currWindow.getButtons().length; i++) {
-		this.renderButton(currWindow, currWindow.getButtons()[i]);
-		this.renderButtonText(currWindow, currWindow.getButtons()[i]);
+		if(!currWindow.getButtons()[i].isHidden()) {
+			this.renderButton(currWindow, currWindow.getButtons()[i]);
+			this.renderText(currWindow, currWindow.getButtons()[i].getTextWidget());
+		}
 	}
 }
 
@@ -204,16 +207,16 @@ RenderWindow.prototype.renderButton = function(guiWindow, guiButton) {
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelWindow.getNumVertices());
 }
 
-RenderWindow.prototype.renderButtonText = function(guiWindow, guiButton) {
+RenderWindow.prototype.renderText = function(guiWindow, guiText) {
 	var modelView = mat4.create();
-	mat4.translate(modelView, modelView, [guiWindow.getPos().x + guiButton.getPos().x, guiWindow.getPos().y + guiButton.getPos().y, 1.1]);
-	mat4.scale(modelView, modelView, [guiButton.getSize().x, guiButton.getSize().y, 0.0]);
+	mat4.translate(modelView, modelView, [guiWindow.getPos().x + guiText.getPos().x, guiWindow.getPos().y + guiText.getPos().y, 1.1]);
+	mat4.scale(modelView, modelView, [guiText.getSize().x, guiText.getSize().y, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 	
 	gl.uniformMatrix4fv(progButton.proj, false, cam.getProj());
 	gl.uniformMatrix4fv(progButton.modelView, false, modelView);
 	
-	gl.bindTexture(gl.TEXTURE_2D, guiButton.getTextTex());
+	gl.bindTexture(gl.TEXTURE_2D, guiText.getTextTex());
     gl.uniform1i(progButton.textTex, 0);
     
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelWindow.posBuffer);

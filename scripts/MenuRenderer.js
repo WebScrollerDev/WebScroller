@@ -48,8 +48,29 @@ MenuRenderer.prototype = {
 	}
 }
 
+RenderBase = function() { //the base type of renderer
+	
+}
+
+RenderBase.prototype = {
+	
+	initBuffers: function(model) { //generate the model
+		
+		model.posBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.posBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getVertexArray()), gl.STATIC_DRAW);
+		
+		model.texBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.texBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getTexCoordArray()), gl.STATIC_DRAW);
+		
+		model.normalBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.getNormalArray()), gl.STATIC_DRAW);
+	}
+}
+
 RenderWindow = function() {
-	console.log("hej");
 	RenderWindow.baseConstructor.call(this);
 	
 	this.modelWindow = new ModelSquare();
@@ -63,10 +84,16 @@ RenderWindow.prototype.render = function() {
 	var currWindow = mainMenu.getCurrentWindow();
 	this.renderWindow(currWindow);
 	gl.useProgram(progButton);
+	
 	for(var i = 0; i < currWindow.getButtons().length; i++) {
-		this.renderButton(currWindow, currWindow.getButtons()[i]);
-		this.renderButtonText(currWindow, currWindow.getButtons()[i]);
+		if(!currWindow.getButtons()[i].isHidden()) {
+			this.renderButton(currWindow, currWindow.getButtons()[i]);
+			this.renderText(currWindow, currWindow.getButtons()[i].getTextWidget());
+		}
 	}
+	
+	for(var i = 0; i < currWindow.getTextWidgets().length; i++)
+		this.renderText(currWindow, currWindow.getTextWidgets()[i]);
 }
 
 RenderWindow.prototype.renderWindow = function(window) {
@@ -117,16 +144,16 @@ RenderWindow.prototype.renderButton = function(guiWindow, guiButton) {
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelWindow.getNumVertices());
 }
 
-RenderWindow.prototype.renderButtonText = function(guiWindow, guiButton) {
+RenderWindow.prototype.renderText = function(guiWindow, guiText) {
 	var modelView = mat4.create();
-	mat4.translate(modelView, modelView, [guiWindow.getPos().x + guiButton.getPos().x, guiWindow.getPos().y + guiButton.getPos().y, 1.1]);
-	mat4.scale(modelView, modelView, [guiButton.getSize().x, guiButton.getSize().y, 0.0]);
+	mat4.translate(modelView, modelView, [guiWindow.getPos().x + guiText.getPos().x, guiWindow.getPos().y + guiText.getPos().y, 1.1]);
+	mat4.scale(modelView, modelView, [150, guiText.getSize().y, 0.0]);
 	mat4.multiply(modelView, cam.getView(), modelView);
 	
 	gl.uniformMatrix4fv(progButton.proj, false, cam.getProj());
 	gl.uniformMatrix4fv(progButton.modelView, false, modelView);
 	
-	gl.bindTexture(gl.TEXTURE_2D, guiButton.getTextTex());
+	gl.bindTexture(gl.TEXTURE_2D, guiText.getTextTex());
     gl.uniform1i(progButton.textTex, 0);
     
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.modelWindow.posBuffer);
@@ -140,4 +167,3 @@ RenderWindow.prototype.renderButtonText = function(guiWindow, guiButton) {
 	
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.modelWindow.getNumVertices());
 }
-

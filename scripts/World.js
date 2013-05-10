@@ -43,7 +43,7 @@ World.prototype = {
 		}
 		
 		
-		this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
+		//this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
 		this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
 		//this.tilesMg[0].setMoving();
 		var i = 0;
@@ -262,5 +262,9 @@ World.prototype = {
 	
 	getBgPath: function(bgPath) {
 		return this.bgPath;
+	}, 
+	
+	addRain: function(rain) {
+		this.rainEmitters.push(rain);
 	}
 }

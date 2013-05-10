@@ -10,6 +10,18 @@
 			<SpawnX>500</SpawnX>
 			<SpawnY>1000</SpawnY>
 		</PlayerSpawn>
+		<Rain>
+			<Amount>100</Amount>
+			<SpawnInterval>50</SpawnInterval>
+			<ParticleVelocity>
+				<VelX>0.0</VelX>
+				<VelY>-0.9</VelY>
+			</ParticleVelocity>
+			<ParticleVelocitySpan>
+				<VelSpanX>0.0</VelSpanX>
+				<VelSpanY>0.0</VelSpanY>
+			</ParticleVelocitySpan>
+		</Rain>
 		<TilesMg>
 			<Tile>
 				<Id>8</Id>
@@ -503,6 +515,18 @@
 			<SpawnX>300</SpawnX>
 			<SpawnY>100</SpawnY>
 		</PlayerSpawn>
+		<Rain>
+			<Amount>1000</Amount>
+			<SpawnInterval>2</SpawnInterval>
+			<ParticleVelocity>
+				<VelX>0.0</VelX>
+				<VelY>-0.9</VelY>
+			</ParticleVelocity>
+			<ParticleVelocitySpan>
+				<VelSpanX>0.0</VelSpanX>
+				<VelSpanY>0.0</VelSpanY>
+			</ParticleVelocitySpan>
+		</Rain>
 		<TilesMg>
 			<Tile>
 				<Id>7</Id> // huge platform

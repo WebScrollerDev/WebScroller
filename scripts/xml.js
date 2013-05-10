@@ -77,7 +77,6 @@ function loadWorldXml() {
 function parseWorlds(xml) {
 	$(xml).find("Worlds").each(function() {
 		$(this).find("World").each(function() {
-			
 			var worldId, bgPath;
 			var worldSize = [], playerSpawn = [];
 			
@@ -95,7 +94,25 @@ function parseWorlds(xml) {
 					playerSpawn[1] = parseInt($(this).find("SpawnY").text());
 				});
 				world.player.setPosition(playerSpawn);
-				
+				if(rainOn) {
+					$(this).find("Rain").each(function() {
+						var amount, spawnInterval;
+						var particleVelocity = [], particleVelocitySpan = [];
+						
+						amount = parseInt($(this).find("Amount").text());
+						spawnInterval = parseInt($(this).find("SpawnInterval").text());
+						$(this).find("ParticleVelocity").each(function() {
+							particleVelocity[0] = parseFloat($(this).find("VelX").text());
+							particleVelocity[1] = parseFloat($(this).find("VelY").text());
+						});
+						$(this).find("ParticleVelocitySpan").each(function() {
+							particleVelocitySpan[0] = parseFloat($(this).find("VelSpanX").text());
+							particleVelocitySpan[1] = parseFloat($(this).find("VelSpanY").text());
+						});
+						
+						world.addRain(new EmitterRain(amount*rainMult, spawnInterval/rainMult, particleVelocity, particleVelocitySpan));
+					});
+				}
 				$(this).find("TilesBg").each(function() {
 					var tilesPlaceable = [];
 					$(this).find("Tile").each(function() {

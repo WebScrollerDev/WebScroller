@@ -2,6 +2,7 @@ Window = function(pos, size, image) {
 	this.tex = gl.createTexture();
 	Texture.loadImage(gl, image, this.tex);
 	this.buttons = [];
+	this.textWidgets = [];
 	this.pos = {
 		x: pos[0], 
 		y: pos[1]
@@ -13,23 +14,34 @@ Window = function(pos, size, image) {
 	}
 }
 
-Window.prototype.addButton = function(button) {
-	button.setParentWindow(this);
-	this.buttons.push(button);
-}
+Window.prototype = {
+	addButton: function(button) {
+		button.setParentWindow(this);
+		this.buttons.push(button);
+	}, 
+	
+	getButtons: function() {
+		return this.buttons;
+	}, 
+	
+	addTextWidget: function(textWidget) {
+		textWidget.setParentWindow(this);
+		this.textWidgets.push(textWidget);
+	}, 
+	
+	getTextWidgets: function() {
+		return this.textWidgets;
+	}, 
 
-Window.prototype.getButtons = function() {
-	return this.buttons;
-}
+	getPos: function() {
+		return this.pos;
+	}, 
 
-Window.prototype.getPos = function() {
-	return this.pos;
-}
-
-Window.prototype.getSize = function() {
-	return this.size;
-}
-
-Window.prototype.getTex = function() {
-	return this.tex;
+	getSize: function() {
+		return this.size;
+	}, 
+	
+	getTex: function() {
+		return this.tex;
+	}
 }
