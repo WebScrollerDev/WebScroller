@@ -1,6 +1,6 @@
 var progEntity, progWorld, progTileMg, progTileBg, progTileFg, 
 	progParticle, progParticleGpuPos, progParticleGpuVelDen, 
-	progParticleGpuShow, progLine, progShadow, progRain;
+	progParticleGpuShow, progLine, progShadow, progRain, progPoint;
 
 function RenderManager() {
 	
@@ -37,6 +37,7 @@ RenderManager.prototype = {
 		progParticleGpuPos = utils.addShaderProg(gl, 'particle-calc-pos.vert', 'particle-calc-pos.frag');
 		progParticleGpuVelDen = utils.addShaderProg(gl, 'particle-calc-velDen.vert', 'particle-calc-velDen.frag');
 		progRain = utils.addShaderProg(gl, 'rain.vert', 'rain.frag');
+		progPoint = utils.addShaderProg(gl, 'point.vert', 'point.frag');
 		
 		this.initShaders();
 		this.renderEntity = new RenderEntity();
@@ -49,6 +50,7 @@ RenderManager.prototype = {
 		this.renderFabric = new RenderFabric();
 		this.renderShadow = new RenderShadow();
 		this.renderRain = new RenderRain();
+		this.renderPoint = new RenderPoint();
 		
 		gl.clearColor(1.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
@@ -183,6 +185,15 @@ RenderManager.prototype = {
 		progRain.modelView = gl.getUniformLocation(progRain, "modelViewMatrix");	
 		progRain.color = gl.getUniformLocation(progRain, "inColor");
 		
+//-----------------------------------POINT SHADER------------------------------------//
+		gl.useProgram(progPoint);
+		
+		progPoint.position = gl.getAttribLocation(progPoint, "inPosition");
+		gl.enableVertexAttribArray(progPoint.position);
+		progPoint.proj = gl.getUniformLocation(progPoint, "projMatrix");
+		progPoint.modelView = gl.getUniformLocation(progPoint, "modelViewMatrix");	
+		progPoint.color = gl.getUniformLocation(progPoint, "inColor");
+		
 //---------------------------------PARTICLE SHADER-----------------------------------//	
 		gl.useProgram(progParticle);
 		
@@ -207,6 +218,8 @@ RenderManager.prototype = {
 		gl.enableVertexAttribArray(progParticleGpuPos.tex);
 		progParticleGpuPos.posLoc = gl.getUniformLocation(progParticleGpuPos, "posSamp");
 		progParticleGpuPos.velDenLoc = gl.getUniformLocation(progParticleGpuPos, "velDenSamp");
+		progParticleGpuPos.inWarpToLoc = gl.getUniformLocation(progParticleGpuPos, "inWarpTo");
+		progParticleGpuPos.inWarpFromLoc = gl.getUniformLocation(progParticleGpuPos, "inWarpFrom");
 		
 //-------------------------------VELOCITY/DENSITY PARTICLE SHADER-------------------------------//
 		
@@ -221,6 +234,7 @@ RenderManager.prototype = {
 		progParticleGpuVelDen.borderPosLoc = gl.getUniformLocation(progParticleGpuVelDen, "borderPos");
 		progParticleGpuVelDen.posPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inPosPlayer");
 		progParticleGpuVelDen.velPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inVelPlayer");
+		progParticleGpuVelDen.inWarpToLoc = gl.getUniformLocation(progParticleGpuVelDen, "inWarpTo");
 		
 	},
 	
@@ -232,8 +246,13 @@ RenderManager.prototype = {
 		this.renderEntity.render();
 		this.renderLight.update();
 		this.renderTile.render();
-		this.renderBB.render();
-		this.renderQT.render();
+		//-------------DEBUG-------------//
+		if(debug) {
+			this.renderBB.render();
+			this.renderQT.render();
+			this.renderPoint.render();
+		}
+		//-------------------------------//
 		this.renderParticle.render();
 		this.renderFabric.render();
 		this.renderShadow.render();
@@ -449,8 +468,8 @@ RenderShadow.prototype.render = function() {
 //----------------------------------RAIN------------------------------------//
 RenderRain = function() {
 	RenderRain.baseConstructor.call(this);
-	this.modelRain = new ModelSquare();
-	this.initBuffers(this.modelRain);
+	this.modelRain = [];//new ModelSquare();
+//	this.initBuffers(this.modelRain);
 };
 
 InheritenceManager.extend(RenderRain, RenderBase);
@@ -504,6 +523,61 @@ RenderRain.prototype.renderRainDrop = function(array) {
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.vertexAttribPointer(progRain.position, 2, gl.FLOAT, false, 0, 0);
+	gl.drawArrays(gl.POINTS, 0, array.length/2);
+};
+
+//----------------------------------POINT------------------------------------//
+RenderPoint = function() {
+	RenderPoint.baseConstructor.call(this);
+	this.modelPoint = [];
+//	this.initBuffers(this.modelPoint);
+};
+
+InheritenceManager.extend(RenderPoint, RenderBase);
+
+RenderPoint.prototype.render = function() {
+	if(debug) {
+		gl.useProgram(progPoint);
+		var points = world.getPoints();
+		this.renderPoint(points);
+	}
+};
+
+RenderPoint.prototype.renderPoint = function(array) {
+
+	var modelView = mat4.create();
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+
+	var posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 1.1]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.1]);
+	else
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.1]);
+
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+	
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progPoint.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progPoint.modelView, false, modelView);
+	gl.uniform3f(progPoint.color, 1., 0.2, 0.2);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progPoint.position, 2, gl.FLOAT, false, 0, 0);
 	gl.drawArrays(gl.POINTS, 0, array.length/2);
 };
 
@@ -614,6 +688,7 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, velDen,
 	
 	progParticleGpuShow.modelView = gl.getUniformLocation(progParticleGpuShow, "modelViewMatrix");
 	progParticleGpuShow.proj = gl.getUniformLocation(progParticleGpuShow, "projMatrix");
+	
 };
 
 RenderParticle.prototype.borderDataDone = function(gpuParticle) {
@@ -624,6 +699,8 @@ RenderParticle.prototype.borderDataDone = function(gpuParticle) {
 };
 
 RenderParticle.prototype.initGpuParticleBorder = function(gpuParticle) {
+	
+	//------------------BORDER------------------------// 	
 	gl.useProgram(progParticleGpuVelDen);
 	gl.uniform2fv(progParticleGpuVelDen.borderPosLoc, gpuParticle.getBorderPos());
 	
@@ -635,7 +712,13 @@ RenderParticle.prototype.initGpuParticleBorder = function(gpuParticle) {
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gpuParticle.getBorderSize().x, gpuParticle.getBorderSize().y, 0, gl.RGBA, gl.FLOAT, new Float32Array(gpuParticle.getBorder().data));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+ 	
+ 	//------------------WARP POINTS-------------------// 	
+	gl.uniform2fv(progParticleGpuVelDen.inWarpToLoc, gpuParticle.getWarpTo());	
 	
+ 	gl.useProgram(progParticleGpuPos);	
+	gl.uniform2fv(progParticleGpuPos.inWarpToLoc, gpuParticle.getWarpTo());
+	gl.uniform2fv(progParticleGpuPos.inWarpFromLoc, gpuParticle.getWarpFrom());
 };
 
 RenderParticle.prototype.render = function() {
@@ -1352,7 +1435,7 @@ RenderBoundingBox = function() {
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
 
 RenderBoundingBox.prototype.render = function() {
-	if(debug) {
+
 		this.modelMovingBB = [];
 		this.modelMovingTB = [];
 		var tilesMg = world.getTilesMg();
@@ -1426,7 +1509,7 @@ RenderBoundingBox.prototype.render = function() {
 		this.renderBB(this.modelMovingBB, [1.0, 0.0, 0.0]);
 		this.renderBB(this.modelMovingTB, [0.0, 1.0, 0.0]);
 		this.renderBB(this.modelPlayer, [1.0, 0.0, 0.0]);
-	}
+	
 	
 };
 
@@ -1480,13 +1563,7 @@ RenderQuadTree = function() {
 
 InheritenceManager.extend(RenderQuadTree, RenderBase);
 
-RenderQuadTree.prototype.render = function() {
-	if(debug) {
-			this.renderQT();	
-	}	
-};
-
-RenderQuadTree.prototype.renderQT= function() {
+RenderQuadTree.prototype.render= function() {
 	gl.useProgram(progLine);
 	
 	var modelView = mat4.create();

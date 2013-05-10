@@ -209,8 +209,8 @@
 		<Id>13</Id>
 		<Url>resources/waterborder.png</Url>
 		<Size>
-			<X>1024</X>
-			<Y>1024</Y>
+			<X>512</X>
+			<Y>512</Y>
 		</Size>
 	</Tile>
 	

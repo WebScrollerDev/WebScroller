@@ -132,29 +132,35 @@ ParticleRainDrop.prototype.decreaseLifetime = function(decrement) {
 };
 
 //-------------------------FLUID------------------------//
-GpuParticle = function(position, particleAmount, borderDataImage) {
+GpuParticle = function(position, particleSpawnOffset, particleSpawnSpacing, particleAmount, borderDataImage, warpTo, warpFrom) {
 	
 	this.startPos = {
 		x: position[0], 
 		y: position[1]
 	};
 	this.pos = [];
+	this.particleSpawnOffset = particleSpawnOffset;
+	this.particleSpawnSpacing = particleSpawnSpacing;
 	this.velocityDensity = [];
 	this.border = [];
 	this.vertices = [];
 	this.amount = particleAmount;
+	this.warpTo = warpTo;
+	this.warpFrom = warpFrom;
 	this.borderLoadStatus = false;
 	this.borderDataHandler = new TextureData();
 	this.borderDataHandler.loadImage(borderDataImage);
 	this.init();
+	//console.log([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
+	world.addPoint([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
+	world.addPoint([this.startPos.x + warpFrom[0], this.startPos.y + warpFrom[1]]);
 }
 
 GpuParticle.prototype = {
 	init: function() {
-		var space = 3.0;
 		for(var x = 0.0; x < this.amount; x++) {
 			for(var y = 0.0; y < this.amount; y++) {
-				this.pos.push(300 + this.startPos.x + x * space, 700 + this.startPos.y + y * space, 0);
+				this.pos.push(this.particleSpawnOffset[0] + this.startPos.x + x * this.particleSpawnSpacing, this.particleSpawnOffset[1] + this.startPos.y + y * this.particleSpawnSpacing, 0);
 				this.velocityDensity.push(0, 0, 1);
 			}
 		}
@@ -195,7 +201,15 @@ GpuParticle.prototype = {
 	
 	getAmount: function() {
 		return this.amount;
-	}, 
+	},
+	
+	getWarpTo: function() {
+		return [this.startPos.x + this.warpTo[0], this.startPos.y + this.warpTo[1]];
+	},
+	
+	getWarpFrom: function() {
+		return [this.startPos.x + this.warpFrom[0], this.startPos.y + this.warpFrom[1]];
+	},
 	
 	getBorderPos: function() {
 		return [this.startPos.x, this.startPos.y];

@@ -6,13 +6,22 @@ uniform sampler2D borderSamp;
 uniform vec2 borderPos;
 uniform vec2 inPosPlayer;
 uniform vec2 inVelPlayer;
+uniform vec2 inWarpTo;
 
 varying vec2 tex;
 const float gravity = 0.05;
-const float borderSize = 1024.;
+const float borderSize = 512.;
 const float d = 1./32.;
 const float particleRadius = 4.;
-const float restitution = 0.85;
+const float restitution = .85;
+const float playerRadius = 15.;
+
+bool isInsideQuad(vec2 rectCenter, float radius, vec2 point) {
+	if(rectCenter.x + radius > point.x && rectCenter.x - radius < point.x && rectCenter.y + radius > point.y && rectCenter.y - radius < point.y)
+		return true;
+	return false;
+}
+
 void main(void) {
 
 	vec2 position = texture2D(posSamp, tex).xy;
@@ -21,8 +30,8 @@ void main(void) {
 	
 	//Calculate particle-particle collision and density
 	velocity.y -= gravity;
-	density = 0.0;
-	
+	density = 0.0;	
+
 	for(float x = 0.; x < 1.; x+=d) {
 		for(float y = 0.; y < 1.; y+=d) {
 		
@@ -63,8 +72,8 @@ void main(void) {
 	}
 
 	//Calculate particle-player collision
-	if( (inPosPlayer.x + 10.) > position.x && (inPosPlayer.x - 10.) < position.x &&
-	    (inPosPlayer.y + 10.) > position.y && (inPosPlayer.y - 10.) < position.y) {
+	if( (inPosPlayer.x + playerRadius) > position.x && (inPosPlayer.x - playerRadius) < position.x &&
+	    (inPosPlayer.y + playerRadius) > position.y && (inPosPlayer.y - playerRadius) < position.y) {
 		
 		velocity += inVelPlayer * 0.1;
 	   }
@@ -88,12 +97,15 @@ void main(void) {
 			else if(texture2D(borderSamp,vec2( (nextPos.x + 5./borderSize) , (1.0 - (nextPos.y - 1./borderSize)) )).r != 0.)	// can go down to the right, down a hill
 				velocity.x += 0.1;
 			
-			velocity.y = 0.;	// set velocity.y = 0
+			velocity.y = 0.;	// set velocity.y = 0			
 		}
 	} else
 		velocity.y = 0.0;
 		
-
+	// if inside warpzone		
+	if(isInsideQuad(inWarpTo, 10., position)) {
+		velocity = vec2(0., -gravity*5.);
+	}
 
 	gl_FragColor = vec4(velocity, density, 1.0);
 }

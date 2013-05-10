@@ -20,12 +20,12 @@ World = function() {
 	this.rootQuadTree = {};
 	this.cloths = [];
 	this.ropes = [];
-	this.gpuParticles.push(new GpuParticle([2700, 40], 32, "resources/waterborder.png"));
 	this.shadowHandler = new ShadowHandler(gl.viewportWidth, 10);
 	this.windVelocity = {
 		x: 0.001,
 		y: 0.0
 	}
+	this.points = [];
 }
 
 World.prototype = {	
@@ -42,12 +42,11 @@ World.prototype = {
 			y: this.worldSize.y*2
 		}
 		
-		
-		//this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
-		this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
+		this.gpuParticles.push(new GpuParticle([2700, 40], [200, 400], 3, 32, "resources/waterborder.png", [200, 400], [200, 10]));
+		this.rootQuadTree = new QuadTree(-100,-100, this.worldSize.x+100, this.worldSize.y+100);
 		//this.tilesMg[0].setMoving();
 		var i = 0;
-		for(var i = 1; i < this.tilesMg.length; i++) {
+		for(var i = 0; i < this.tilesMg.length; i++) {
 			var tmpBBArray = this.tilesMg[i].getBBs();
 			for(var j = 0; j < tmpBBArray.length; j++) {
 				var tmpBB = tmpBBArray[j];
@@ -61,6 +60,22 @@ World.prototype = {
 				this.rootQuadTree.addSegments(tmpQLines);
 			}
 		}
+	},
+	
+	addPoint: function(point) {
+		this.points = this.points.concat(point);
+	},
+	
+	getPoints: function() {
+		return this.points;		
+	}, 
+	
+	getWindVelocity: function() {
+		return this.windVelocity;
+	},
+	
+	setWindVelocity: function(newVel) {
+		this.windVelocity = newVel;
 	},
 	
 	setWorldSize: function(size) {

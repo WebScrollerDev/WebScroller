@@ -170,7 +170,7 @@ EmitterSmoke.prototype.updateParticles = function() { //clearInterval(int) when 
 		else {
 			this.particles[i].decreaseLifetime(this.updateTime);
 			this.particles[i].updatePosition();
-			this.particles[i].increaseVelocityWithValue(world.windVelocity);
+			this.particles[i].increaseVelocityWithValue(world.getWindVelocity());
 		}				
 	}
 };
@@ -215,7 +215,7 @@ EmitterFire.prototype.updateParticles = function() { //clearInterval(int) when d
 		else {
 		this.particles[i].decreaseLifetime(this.updateTime);
 		this.particles[i].updatePosition();
-		this.particles[i].increaseVelocityWithValue(world.windVelocity);
+		this.particles[i].increaseVelocityWithValue(world.getWindVelocity());
 		}	
 	}
 };
@@ -243,7 +243,7 @@ EmitterRain.prototype.spawnParticle = function() { //clearInterval(int) when don
 	if(this.particles.length < this.maxParticles) {
 		
 		var spawnCenter = world.player.getPosition();
-		//console.log(spawnCenter);
+
 		var tmpPos = {
 			x: spawnCenter.x + (Math.random()*2*this.spawnSpanWidth - this.spawnSpanWidth), 
 			y: spawnCenter.y + this.spawnSpanHeight
@@ -260,7 +260,7 @@ EmitterRain.prototype.spawnParticle = function() { //clearInterval(int) when don
 	
 EmitterRain.prototype.updateParticles = function() { //clearInterval(int) when done
 	for(var i = 0; i < this.particles.length; i++) {
-		
+
 		this.particles[i].updatePosition();
 		
 		if(this.particles[i].getLifetime() < 0 || this.particles[i].getPosition().x < 0 || this.particles[i].getPosition().x > world.worldSize.x
