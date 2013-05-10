@@ -229,11 +229,11 @@
 			<TriggerBox>
 				<TBCenter>
 					<TBX>50</TBX>
-					<TBY>50</TBY>
+					<TBY>40</TBY>
 				</TBCenter>
 				<TBSize>
-					<TBX>30</TBX>
-					<TBY>50</TBY>
+					<TBX>50</TBX>
+					<TBY>75</TBY>
 				</TBSize>
 				<TBAngle>0</TBAngle>
 				<TriggerFunc>playerBounceFunc</TriggerFunc>
@@ -243,11 +243,11 @@
 			<BoundingBox>
 				<BBCenter>
 					<BBX>50</BBX>
-					<BBY>50</BBY>
+					<BBY>40</BBY>
 				</BBCenter>
 				<BBSize>
-					<BBX>50</BBX>
-					<BBY>30</BBY>
+					<BBX>75</BBX>
+					<BBY>50</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
 			</BoundingBox>

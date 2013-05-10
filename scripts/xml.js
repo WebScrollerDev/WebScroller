@@ -17,7 +17,10 @@ var fabricsBool = false;
 var particleBool = false;
 
 var doneLoading = false;
-function loadXml() {
+
+var selectedWorld = 0;
+function loadXml(selWorld) {
+	selectedWorld = selWorld;
 	$.ajax({
     	type: "GET",
     	url: "config/mgTiles.xml",
@@ -74,198 +77,218 @@ function loadWorldXml() {
 function parseWorlds(xml) {
 	$(xml).find("Worlds").each(function() {
 		$(this).find("World").each(function() {
-			$(this).find("TilesBg").each(function() {
-				var tilesPlaceable = [];
-				$(this).find("Tile").each(function() {
-					var id = parseInt($(this).find("Id").text());
-					var pos;
-					$(this).find("Pos").each(function() {
-						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
-					});
-					var tilePlaceable = new TilePlaceable(tmpTilesBg[id], pos);
-					$(this).find("Lights").each(function() {
-						console.log("found bg light");
-						$(this).find("Light").each(function() {
-							var id = parseInt($(this).find("LightId").text());
-							var light = lights[id];
-							var lightPos = [];
-							$(this).find("LightPos").each(function() {
-								lightPos[0] = parseInt($(this).find("LightX").text());
-								lightPos[1] = parseInt($(this).find("LightY").text());
-								lightPos[2] = parseInt($(this).find("LightZ").text());
-							});
-							if(light.type == "static") {
-								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
-							}
-							if(light.type == "flickering") {
-								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
-							}
-							if(light.type == "morphing") {
-								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
-							}
-						});
-					});
-					tilesPlaceable.push(tilePlaceable);
-				});
-				world.setTilesBg(tilesPlaceable);
-			});
 			
-			$(this).find("TilesMg").each(function() {
-				var tilesPlaceable = [];
-				var tilesAnimated = [];
-				var smokeEmitters = [];
-				$(this).find("Tile").each(function() {
-					var tileAnimated;
-					var id = parseInt($(this).find("Id").text());
-					var pos;
-					var currentTile;
-					var normalTile = false;
-					$(this).find("Pos").each(function() {
-						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
-					});
-					//console.log(tmpAnimatedTilesMg);
-					
-					if(tmpTilesMg[id] != null) {
-						currentTile = new TilePlaceable(tmpTilesMg[id], pos);
-						normalTile = true;
-					}
-					else if(tmpAnimatedTilesMg[id] != null) {
-						currentTile = new TileAnimated(tmpAnimatedTilesMg[id].tile, pos, tmpAnimatedTilesMg[id].totalNrAnimations, tmpAnimatedTilesMg[id].maxNrFramesPerAnimation, tmpAnimatedTilesMg[id].nrFramesPerAnimation, tmpAnimatedTilesMg[id].animationSpeed);
-					}
-					//console.log(currentTile);
-					if(obbs[id] != null) {
-						for(var i = 0; i < obbs[id].length; i++) {
-							var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
-							currentTile.addBoundingBox(tmpObb);
-							world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
-						}
-					}
-					if(tbs[id] != null) {
-						for(var i = 0; i < tbs[id].length; i++) {
-							currentTile.addTriggerBox(new TriggerBox(pos, tbs[id][i].center, tbs[id][i].size, tbs[id][i].angle, currentTile, tbs[id][i].triggerFunc));
-						}
-					}
-					$(this).find("Lights").each(function() {
-						$(this).find("Light").each(function() {
-							var id = parseInt($(this).find("LightId").text());
-							var light = lights[id];
-							var lightPos = [];
-							$(this).find("LightPos").each(function() {
-								lightPos[0] = parseInt($(this).find("LightX").text());
-								lightPos[1] = parseInt($(this).find("LightY").text());
-								lightPos[2] = parseInt($(this).find("LightZ").text());;
-							});
-							if(light.type == "static") {
-								currentTile.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
-							}
-							if(light.type == "flickering") {
-								currentTile.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
-							}
-							if(light.type == "morphing") {
-								currentTile.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
-							}
+			var worldId, bgPath;
+			var worldSize = [], playerSpawn = [];
+			
+			worldId = parseInt($(this).find("WorldId").text());
+			if(selectedWorld == worldId) {
+				bgPath = $(this).find("BgPath").text();
+				world.setBgPath(bgPath);
+				$(this).find("WorldSize").each(function() {
+					worldSize[0] = parseInt($(this).find("WorldX").text());
+					worldSize[1] = parseInt($(this).find("WorldY").text());
+				});
+				world.setWorldSize(worldSize);
+				$(this).find("PlayerSpawn").each(function() {
+					playerSpawn[0] = parseInt($(this).find("SpawnX").text());
+					playerSpawn[1] = parseInt($(this).find("SpawnY").text());
+				});
+				world.player.setPosition(playerSpawn);
+				
+				$(this).find("TilesBg").each(function() {
+					var tilesPlaceable = [];
+					$(this).find("Tile").each(function() {
+						var id = parseInt($(this).find("Id").text());
+						var pos;
+						$(this).find("Pos").each(function() {
+							pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 						});
-					});
-					
-					$(this).find("Particles").each(function() {
-						$(this).find("Particle").each(function() {
-							var id = parseInt($(this).find("ParticleId").text());
-							var particle = tmpParticles[id];
-							var particlePos = [];
-							$(this).find("ParticlePos").each(function() {
-								particlePos[0] = parseInt($(this).find("ParticleX").text());
-								particlePos[1] = parseInt($(this).find("ParticleY").text());
-								particlePos[2] = parseInt($(this).find("ParticleZ").text());
+						var tilePlaceable = new TilePlaceable(tmpTilesBg[id], pos);
+						$(this).find("Lights").each(function() {
+							console.log("found bg light");
+							$(this).find("Light").each(function() {
+								var id = parseInt($(this).find("LightId").text());
+								var light = lights[id];
+								var lightPos = [];
+								$(this).find("LightPos").each(function() {
+									lightPos[0] = parseInt($(this).find("LightX").text());
+									lightPos[1] = parseInt($(this).find("LightY").text());
+									lightPos[2] = parseInt($(this).find("LightZ").text());
+								});
+								if(light.type == "static") {
+									tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+								}
+								if(light.type == "flickering") {
+									tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+								}
+								if(light.type == "morphing") {
+									tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+								}
 							});
-							if(particle.type == "smoke") {
-								smokeEmitters.push(new EmitterSmoke(vec3.add(vec3.create(), pos, particlePos), tmpParticles[id].maxParticles, tmpParticles[id].spawnInterval, tmpParticles[id].diameter, tmpParticles[id].velocity, tmpParticles[id].velocitySpan, tmpParticles[id].lifeTime, tmpParticles[id].lifeTimeSpan));
-							}
 						});
+						tilesPlaceable.push(tilePlaceable);
 					});
-					if(normalTile)
-						tilesPlaceable.push(currentTile);
-					else
-						tilesAnimated.push(currentTile);
+					world.setTilesBg(tilesPlaceable);
 				});
 				
-				world.setTilesAnimatedMg(tilesAnimated);
-				world.setTilesMg(tilesPlaceable);
-				world.setSmokeEmitters(smokeEmitters);
-			});
-			
-			$(this).find("TilesFg").each(function() {
-				var tilesPlaceable = [];
-				$(this).find("Tile").each(function() {
-					var id = parseInt($(this).find("Id").text());
-					var pos;
-					$(this).find("Pos").each(function() {
-						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
-					});
-					var tilePlaceable = new TilePlaceable(tmpTilesFg[id], pos);
-					$(this).find("Lights").each(function() {
-						$(this).find("Light").each(function() {
-							var id = parseInt($(this).find("LightId").text());
-							var light = lights[id];
-							var lightPos = [];
-							$(this).find("LightPos").each(function() {
-								lightPos[0] = parseInt($(this).find("LightX").text());
-								lightPos[1] = parseInt($(this).find("LightY").text());
-								lightPos[2] = parseInt($(this).find("LightZ").text());
-							});
-							if(light.type == "static") {
-								tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
-							}
-							if(light.type == "flickering") {
-								tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
-							}
-							if(light.type == "morphing") {
-								tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
-							}
+				$(this).find("TilesMg").each(function() {
+					var tilesPlaceable = [];
+					var tilesAnimated = [];
+					var smokeEmitters = [];
+					$(this).find("Tile").each(function() {
+						var tileAnimated;
+						var id = parseInt($(this).find("Id").text());
+						var pos;
+						var currentTile;
+						var normalTile = false;
+						$(this).find("Pos").each(function() {
+							pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
 						});
+						//console.log(tmpAnimatedTilesMg);
+						
+						if(tmpTilesMg[id] != null) {
+							currentTile = new TilePlaceable(tmpTilesMg[id], pos);
+							normalTile = true;
+						}
+						else if(tmpAnimatedTilesMg[id] != null) {
+							currentTile = new TileAnimated(tmpAnimatedTilesMg[id].tile, pos, tmpAnimatedTilesMg[id].totalNrAnimations, tmpAnimatedTilesMg[id].maxNrFramesPerAnimation, tmpAnimatedTilesMg[id].nrFramesPerAnimation, tmpAnimatedTilesMg[id].animationSpeed);
+						}
+						//console.log(currentTile);
+						if(obbs[id] != null) {
+							for(var i = 0; i < obbs[id].length; i++) {
+								var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
+								currentTile.addBoundingBox(tmpObb);
+								world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
+							}
+						}
+						if(tbs[id] != null) {
+							for(var i = 0; i < tbs[id].length; i++) {
+								currentTile.addTriggerBox(new TriggerBox(pos, tbs[id][i].center, tbs[id][i].size, tbs[id][i].angle, currentTile, tbs[id][i].triggerFunc));
+							}
+						}
+						$(this).find("Lights").each(function() {
+							$(this).find("Light").each(function() {
+								var id = parseInt($(this).find("LightId").text());
+								var light = lights[id];
+								var lightPos = [];
+								$(this).find("LightPos").each(function() {
+									lightPos[0] = parseInt($(this).find("LightX").text());
+									lightPos[1] = parseInt($(this).find("LightY").text());
+									lightPos[2] = parseInt($(this).find("LightZ").text());;
+								});
+								if(light.type == "static") {
+									currentTile.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+								}
+								if(light.type == "flickering") {
+									currentTile.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+								}
+								if(light.type == "morphing") {
+									currentTile.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+								}
+							});
+						});
+						
+						$(this).find("Particles").each(function() {
+							$(this).find("Particle").each(function() {
+								var id = parseInt($(this).find("ParticleId").text());
+								var particle = tmpParticles[id];
+								var particlePos = [];
+								$(this).find("ParticlePos").each(function() {
+									particlePos[0] = parseInt($(this).find("ParticleX").text());
+									particlePos[1] = parseInt($(this).find("ParticleY").text());
+									particlePos[2] = parseInt($(this).find("ParticleZ").text());
+								});
+								if(particle.type == "smoke") {
+									smokeEmitters.push(new EmitterSmoke(vec3.add(vec3.create(), pos, particlePos), tmpParticles[id].maxParticles, tmpParticles[id].spawnInterval, tmpParticles[id].diameter, tmpParticles[id].velocity, tmpParticles[id].velocitySpan, tmpParticles[id].lifeTime, tmpParticles[id].lifeTimeSpan));
+								}
+							});
+						});
+						if(normalTile)
+							tilesPlaceable.push(currentTile);
+						else
+							tilesAnimated.push(currentTile);
 					});
-					tilesPlaceable.push(tilePlaceable);
-				});
-				world.setTilesFg(tilesPlaceable);
-			});
-			
-			$(this).find("Ropes").each(function() {
-				var ropes = [];
-				$(this).find("Rope").each(function() {
-					var id, startPos, endPos, rope;
 					
-					id = parseInt($(this).find("Id").text());
-					$(this).find("StartPos").each(function() {
-						startPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
-					});
-					$(this).find("EndPos").each(function() {
-						endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
-					});
-					rope = new Rope(startPos, endPos, tmpRopes[id].numJoints, tmpRopes[id].lastPinned, tmpRopes[id].color);
-					
-					$(this).find("AttachedTile").each(function() {
-						var tileId = parseInt($(this).find("TileId").text());
-						var joint = parseInt($(this).find("Joint").text());
-						rope.attachTile(world.getTilesMg()[tileId], joint);
-						//endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
-					});
-					ropes.push(rope);
+					world.setTilesAnimatedMg(tilesAnimated);
+					world.setTilesMg(tilesPlaceable);
+					world.setSmokeEmitters(smokeEmitters);
 				});
-				world.setRopes(ropes);
-			});
-			
-			$(this).find("Cloths").each(function() {
-				var cloths = [];
-				$(this).find("Cloth").each(function() {
-					var id, pos;
-					
-					id = parseInt($(this).find("Id").text());
-					$(this).find("Pos").each(function() {
-						pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+				
+				$(this).find("TilesFg").each(function() {
+					var tilesPlaceable = [];
+					$(this).find("Tile").each(function() {
+						var id = parseInt($(this).find("Id").text());
+						var pos;
+						$(this).find("Pos").each(function() {
+							pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text()), parseFloat($(this).find("Z").text())];
+						});
+						var tilePlaceable = new TilePlaceable(tmpTilesFg[id], pos);
+						$(this).find("Lights").each(function() {
+							$(this).find("Light").each(function() {
+								var id = parseInt($(this).find("LightId").text());
+								var light = lights[id];
+								var lightPos = [];
+								$(this).find("LightPos").each(function() {
+									lightPos[0] = parseInt($(this).find("LightX").text());
+									lightPos[1] = parseInt($(this).find("LightY").text());
+									lightPos[2] = parseInt($(this).find("LightZ").text());
+								});
+								if(light.type == "static") {
+									tilePlaceable.addStaticLight(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity));
+								}
+								if(light.type == "flickering") {
+									tilePlaceable.addFlickeringLight(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity));
+								}
+								if(light.type == "morphing") {
+									tilePlaceable.addMorphingLight(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan));
+								}
+							});
+						});
+						tilesPlaceable.push(tilePlaceable);
 					});
-					cloths.push(new Cloth(pos, tmpCloths[id].size, tmpCloths[id].spacing, tmpCloths[id].color));
+					world.setTilesFg(tilesPlaceable);
 				});
-				world.setCloths(cloths);
-			});
+				
+				$(this).find("Ropes").each(function() {
+					var ropes = [];
+					$(this).find("Rope").each(function() {
+						var id, startPos, endPos, rope;
+						
+						id = parseInt($(this).find("Id").text());
+						$(this).find("StartPos").each(function() {
+							startPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+						});
+						$(this).find("EndPos").each(function() {
+							endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+						});
+						rope = new Rope(startPos, endPos, tmpRopes[id].numJoints, tmpRopes[id].lastPinned, tmpRopes[id].color);
+						
+						$(this).find("AttachedTile").each(function() {
+							var tileId = parseInt($(this).find("TileId").text());
+							var joint = parseInt($(this).find("Joint").text());
+							rope.attachTile(world.getTilesMg()[tileId], joint);
+							//endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+						});
+						ropes.push(rope);
+					});
+					world.setRopes(ropes);
+				});
+				
+				$(this).find("Cloths").each(function() {
+					var cloths = [];
+					$(this).find("Cloth").each(function() {
+						var id, pos;
+						
+						id = parseInt($(this).find("Id").text());
+						$(this).find("Pos").each(function() {
+							pos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+						});
+						cloths.push(new Cloth(pos, tmpCloths[id].size, tmpCloths[id].spacing, tmpCloths[id].color));
+					});
+					world.setCloths(cloths);
+				});
+			}
 		});
 	});
 	doneLoading = true;

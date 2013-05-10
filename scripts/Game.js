@@ -12,7 +12,7 @@ var gl;
 var cam;
 var render;
 var world;
-
+var mainMenu;
 function initGL(canvas) {
 	try {
 		gl = canvas.getContext("experimental-webgl");
@@ -28,10 +28,18 @@ function initGL(canvas) {
 function tick() {
 	requestAnimFrame(tick);
 	if(initialized) {
-		world.update();
-		cam.update();
-		render.render();
-		keyInput();
+		gameState = 1;
+	}
+	switch(gameState) {
+		case 0:
+			render.render();
+			break;
+		case 1:
+			world.update();
+			cam.update();
+			render.render();
+			keyInput();
+			break;
 	}
 }
 
@@ -49,21 +57,29 @@ function keyInput() {
 	else
 		keyCooldown--;
 }
+
+function tmpMouseUp(event) {
+	mouseUp(event);
+	mainMenu.mouseUp(event);
+}
+
 var initialized = false;
 function startGL() {
+	gameState = 0;
 	var canvas = document.getElementById("canvas");
 	canvas.width = window.innerWidth - 20;
 	canvas.height = window.innerHeight - 50;
 	initGL(canvas);
 	cam = new Camera();
 	world = new World();
-	loadXml();
+	mainMenu = new MainMenu();
+	render = new MenuRenderer();
 		
 	document.onkeydown = keyDown;
 	document.onkeyup = keyUp;
 	
 	canvas.onmousedown = mouseDown;
-    document.onmouseup = mouseUp;
+    document.onmouseup = tmpMouseUp;
     document.onmousemove = mouseMove;
     var interVal = setInterval(function(){
 			if(doneLoading) {

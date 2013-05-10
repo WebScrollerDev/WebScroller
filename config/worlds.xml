@@ -1,5 +1,15 @@
 <Worlds>
 	<World>
+		<WorldId>0</WorldId>
+		<BgPath>resources/bg.png</BgPath>
+		<WorldSize>
+			<WorldX>8192</WorldX>
+			<WorldY>2048</WorldY>
+		</WorldSize>
+		<PlayerSpawn>
+			<SpawnX>500</SpawnX>
+			<SpawnY>1000</SpawnY>
+		</PlayerSpawn>
 		<TilesMg>
 			<Tile>
 				<Id>8</Id>
@@ -481,5 +491,27 @@
 				</Pos>
 			</Cloth>
 		</Cloths>
+	</World>
+	<World>
+		<WorldId>1</WorldId>
+		<BgPath>resources/bg2.png</BgPath>
+		<WorldSize>
+			<WorldX>4096</WorldX>
+			<WorldY>2048</WorldY>
+		</WorldSize>
+		<PlayerSpawn>
+			<SpawnX>300</SpawnX>
+			<SpawnY>100</SpawnY>
+		</PlayerSpawn>
+		<TilesMg>
+			<Tile>
+				<Id>7</Id> // huge platform
+				<Pos>
+					<X>0</X>
+					<Y>0</Y>
+					<Z>-0.1</Z>
+				</Pos>
+			</Tile>
+		</TilesMg>
 	</World>
 </Worlds>

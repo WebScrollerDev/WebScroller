@@ -1,11 +1,11 @@
-Entity = function(pos, bbMin, bbMax) {
+Entity = function(bbMin, bbMax) {
 	this.position = {
-		x: pos[0], 
-		y: pos[1]
+		x: 0, 
+		y: 0
 	};
 	this.prevPosition = {
-		x: pos[0], 
-		y: pos[1]
+		x: 0, 
+		y: 0
 	};
 	this.velocity = vec2.create();
 	this.rotation = 0.0;
@@ -17,7 +17,10 @@ Entity = function(pos, bbMin, bbMax) {
 Entity.prototype = {
 	
 	setPosition: function(newPos) {
-		this.position = newPos;
+		this.position = {
+			x: newPos[0], 
+			y: newPos[1]
+		};
 	},
 	
 	getPosition: function() {
@@ -183,15 +186,15 @@ Entity.prototype = {
 
 //-------------------player--------------------//
 
-EntityPlayer = function(pos, bbMin, bbMax) {
-	EntityPlayer.baseConstructor.call(this, pos, bbMin, bbMax);
+EntityPlayer = function(bbMin, bbMax) {
+	EntityPlayer.baseConstructor.call(this, bbMin, bbMax);
 	
 	this.size = {
 		x: 45, 
 		y: 64
 	}
 	
-	this.obb = new OBB(pos, [this.size.x/2, this.size.y/2], [this.size.x, this.size.y], 0);
+	this.obb = new OBB([0, 0, 0], [this.size.x/2, this.size.y/2], [this.size.x, this.size.y], 0);
 	
 	this.playerStatus = {
 		IDLE: 0,

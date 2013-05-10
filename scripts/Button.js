@@ -1,9 +1,10 @@
-GuiButton = function(pos, size, text, image) {
+GuiButton = function(id, pos, size, text, image) {
+	this.id = id;
 	this.tex = gl.createTexture();
 	Texture.loadImage(gl, image, this.tex);
 	this.pos = {
 		x: pos[0], 
-		y: pos[1]
+		y: gl.viewportHeight - pos[1]
 	}
 	
 	this.size = {

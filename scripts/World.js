@@ -1,18 +1,5 @@
 World = function() {
-	this.worldSize = {
-		x: 8192,
-		y: 4096
-	}
 	
-	this.bgSize = {
-		x: this.worldSize.x/2, 
-		y: this.worldSize.y/2
-	}
-	
-	this.fgSize = {
-		x: this.worldSize.x*2, 
-		y: this.worldSize.y*2
-	}
 	this.tilesBg = [];
 	this.tilesMg = [];
 	this.tilesFg = [];
@@ -28,8 +15,9 @@ World = function() {
 	this.rainEmitters = [];
 	
 	this.gpuParticles = [];
-	this.player = new EntityPlayer([1337, 500, 0], [0, 0], [45, 64]);
-	this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
+	this.player = new EntityPlayer([0, 0], [45, 64]);
+	//this.player.setPosition([500, 500]);
+	this.rootQuadTree = {};
 	this.cloths = [];
 	this.ropes = [];
 	this.gpuParticles.push(new GpuParticle([2700, 40], 32, "resources/waterborder.png"));
@@ -44,9 +32,20 @@ World.prototype = {
 	
 	initArrays: function() {
 		
+		this.bgSize = {
+			x: this.worldSize.x/2, 
+			y: this.worldSize.y/2
+		}
+		
+		this.fgSize = {
+			x: this.worldSize.x*2, 
+			y: this.worldSize.y*2
+		}
+		
+		
 		this.rainEmitters.push(new EmitterRain(100, 50, [0.,-0.9],[0.,0.]));
-
-		this.tilesMg[0].setMoving();
+		this.rootQuadTree = new QuadTree(-1,-1, this.worldSize.x+1, this.worldSize.y+1);
+		//this.tilesMg[0].setMoving();
 		var i = 0;
 		for(var i = 1; i < this.tilesMg.length; i++) {
 			var tmpBBArray = this.tilesMg[i].getBBs();
@@ -63,6 +62,13 @@ World.prototype = {
 			}
 		}
 	},
+	
+	setWorldSize: function(size) {
+		this.worldSize = {
+			x: size[0],
+			y: size[1]
+		}
+	}, 
 	
 	setTilesBg: function(tiles) {
 		this.tilesBg = tiles;
@@ -248,5 +254,13 @@ World.prototype = {
 	
 	setSmokeEmitters: function(smokeEmitters) {
 		this.smokeEmitters = smokeEmitters;
+	}, 
+	
+	setBgPath: function(bgPath) {
+		this.bgPath = bgPath;
+	}, 
+	
+	getBgPath: function(bgPath) {
+		return this.bgPath;
 	}
 }

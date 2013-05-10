@@ -1238,15 +1238,8 @@ RenderWorld = function() {
 	
 	this.modelBg = new ModelSquare();
 	this.initBuffers(this.modelBg);
-	//this.vaoBg = generateModel(this.modelBg, progWorld);
 	this.texBg = gl.createTexture();
-	Texture.loadImage(gl, "resources/bg.png", this.texBg);
-
-	this.modelMg = new ModelSquare();
-	this.initBuffers(this.modelMg);
-	//this.vaoMg = generateModel(this.modelMg, progWorld);
-	this.texMg = gl.createTexture();
-	Texture.loadImage(gl, "resources/mg.png", this.texMg);
+	Texture.loadImage(gl, world.getBgPath(), this.texBg);
 }
 
 InheritenceManager.extend(RenderWorld, RenderBase);
