@@ -51,6 +51,7 @@ RenderManager.prototype = {
 		this.renderShadow = new RenderShadow();
 		this.renderRain = new RenderRain();
 		this.renderPoint = new RenderPoint();
+		this.renderWaterMass = new RenderWaterMass();
 		
 		gl.clearColor(1.0, 0.0, 0.0, 1.0);
 		gl.enable(gl.DEPTH_TEST);
@@ -167,7 +168,7 @@ RenderManager.prototype = {
 		progLine.modelView = gl.getUniformLocation(progLine, "modelViewMatrix");	
 		progLine.color = gl.getUniformLocation(progLine, "inColor");
 		
-//-----------------------------------SHADOW SHADER------------------------------------//
+//-----------------------------------SHADOW/TRIANGLE SHADER------------------------------------//
 		gl.useProgram(progShadow);
 		
 		progShadow.position = gl.getAttribLocation(progShadow, "inPosition");
@@ -257,6 +258,7 @@ RenderManager.prototype = {
 		this.renderFabric.render();
 		this.renderShadow.render();
 		this.renderRain.render();
+		this.renderWaterMass.render();
 	}
 }
 
@@ -465,11 +467,61 @@ RenderShadow.prototype.render = function() {
 	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
 };
 
+//----------------------------------WATERMASS------------------------------------//
+RenderWaterMass = function() {
+	RenderWaterMass.baseConstructor.call(this);
+};
+
+InheritenceManager.extend(RenderWaterMass, RenderBase);
+
+RenderWaterMass.prototype.render = function() {
+	var waterMasses = world.getWaterMasses();
+	for (var i = 0; i < waterMasses.length; i++) {
+	  this.renderMass(waterMasses[i].getWaterAsArray());
+	};
+};
+
+RenderWaterMass.prototype.renderMass = function(model) {
+	
+	gl.useProgram(progShadow);	// works good enough for now
+	var modelView = mat4.create();
+	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+	var posBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
+	
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 1.1]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 1.1]);
+	else
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 1.1]);
+
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+	
+	mat4.multiply(modelView, cam.getView(), modelView);
+
+	gl.uniformMatrix4fv(progShadow.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progShadow.modelView, false, modelView);
+	gl.uniform3f(progShadow.color, 0.0, 0.0, 1.0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progShadow.position, 2, gl.FLOAT, false, 0, 0);
+	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
+};
+
 //----------------------------------RAIN------------------------------------//
 RenderRain = function() {
 	RenderRain.baseConstructor.call(this);
-	this.modelRain = [];//new ModelSquare();
-//	this.initBuffers(this.modelRain);
 };
 
 InheritenceManager.extend(RenderRain, RenderBase);

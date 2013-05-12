@@ -266,7 +266,6 @@ EntityPlayer.prototype.update = function() {
 	else if(this.velocity[0] < 0)
 		this.flipped = true;
 	
-	//console.log(this.status);
 	this.obb.updatePosition(this.position);
 };
 

@@ -14,6 +14,8 @@ World = function() {
 	
 	this.rainEmitters = [];
 	
+	this.waterMasses = [];
+	
 	this.gpuParticles = [];
 	this.player = new EntityPlayer([0, 0], [45, 64]);
 	//this.player.setPosition([500, 500]);
@@ -42,6 +44,8 @@ World.prototype = {
 			y: this.worldSize.y*2
 		}
 		
+		this.waterMasses.push(new WaterMass([1200,20], 150, 100, 10, 30) );
+
 		this.gpuParticles.push(new GpuParticle([2700, 40], [200, 400], 3, 32, "resources/waterborder.png", [200, 400], [200, 10]));
 		this.rootQuadTree = new QuadTree(-100,-100, this.worldSize.x+100, this.worldSize.y+100);
 		//this.tilesMg[0].setMoving();
@@ -60,6 +64,18 @@ World.prototype = {
 				this.rootQuadTree.addSegments(tmpQLines);
 			}
 		}
+	},
+	
+	getPlayerPos: function() {
+		return this.player.getPosition();
+	},
+	
+	getPlayerVel: function() {
+		return this.player.getVelocity();
+	},
+	
+	getPlayerSize: function() {
+		return this.player.getSize();
 	},
 	
 	addPoint: function(point) {
@@ -174,6 +190,13 @@ World.prototype = {
 				}
 			}
 		}
+		
+		var waterMasses = this.waterMasses;
+		for(var i = 0; i < waterMasses.length; i++) {
+			if(this.intersects(this.player.getObb(), waterMasses[i].getTriggerBox()))
+				waterMasses[i].getTriggerBox().callFunction();
+		}
+		
 		this.player.update();
 		
 	},
@@ -281,5 +304,9 @@ World.prototype = {
 	
 	addRain: function(rain) {
 		this.rainEmitters.push(rain);
+	},
+	
+	getWaterMasses: function() {
+		return this.waterMasses;
 	}
 }

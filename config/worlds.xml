@@ -512,7 +512,7 @@
 			<WorldY>2048</WorldY>
 		</WorldSize>
 		<PlayerSpawn>
-			<SpawnX>300</SpawnX>
+			<SpawnX>2700</SpawnX>
 			<SpawnY>100</SpawnY>
 		</PlayerSpawn>
 		<Rain>
@@ -534,6 +534,15 @@
 					<X>0</X>
 					<Y>0</Y>
 					<Z>-0.1</Z>
+				</Pos>
+			</Tile>
+			
+			<Tile>
+				<Id>13</Id>	// border
+				<Pos>
+					<X>2700</X>
+					<Y>40</Y>
+					<Z>-1</Z>
 				</Pos>
 			</Tile>
 		</TilesMg>
