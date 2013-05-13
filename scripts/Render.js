@@ -1482,6 +1482,16 @@ RenderBoundingBox = function() {
 			}
 		}
 	}
+	this.modelWaterMass = [];
+	var bb = world.waterMasses[0].triggerBox;
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
 }
 
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
@@ -1555,19 +1565,6 @@ RenderBoundingBox.prototype.render = function() {
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
-		
-		
-		
-		this.modelWaterMass = [];
-		var bb = world.waterMasses[0].triggerBox;
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
 
 		this.renderBB(this.modelWaterMass, [0.0, 1.0, 0.0]);	
 		this.renderBB(this.modelTB, [0.0, 1.0, 0.0]);
