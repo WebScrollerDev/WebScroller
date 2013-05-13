@@ -23,10 +23,9 @@ WaterMass = function(position, targetHeight, waterColumnCount, waterColumnSpacin
 	var _this = this; //Needed in setInterval and TriggerBox, for specifying the correct this
 	this.setUpdateInterval = setInterval(function(){_this.update()}, this.updateInterval);
 	var posArray = [this.position.x, this.position.y];	// x,y
-	var waterMassCenterArray = [this.position.x + this.waterColumnCount/2*this.waterColumnSpacing, this.position.y + this.targetHeight*2];	// x,y
-	var waterMassSizeArray = [this.waterColumnCount * this.waterColumnSpacing, this.targetHeight*2];
-	this.triggerBox = new TriggerBox(posArray, waterMassCenterArray, waterMassSizeArray, 0, _this, waveFunc)
-	
+	var waterMassCenterArray = [(this.waterColumnCount-1)/2.0*this.waterColumnSpacing, this.targetHeight];	// x,y
+	var waterMassSizeArray = [(this.waterColumnCount-1) * this.waterColumnSpacing, this.targetHeight*2];
+	this.triggerBox = new TriggerBox(posArray, waterMassCenterArray, waterMassSizeArray, 0, _this, "waveFunc");
 };
 
 WaterMass.prototype = {
@@ -37,7 +36,7 @@ WaterMass.prototype = {
 		var rightDeltas = [];	// heightdiff between right column and current
 		
 		for(var i = 0; i < this.waterColumnCount; i++) {	// update each watercolumn
-			this.waterColumns[i].update(this.springConstant, this.dampeinngFactor);
+			this.waterColumns[i].update(this.springConstant, this.dampeningFactor);
 		}
 		
 		for (var j = 0; j < 8; j++)	{	// iterate 8 times
@@ -67,7 +66,7 @@ WaterMass.prototype = {
 	
 	getWaterAsArray: function() {
 		var tmpArray = [];
-		console.log(this.position.x + " " + this.position.y);
+		//console.log(this.position.x + " " + this.position.y);
 		for(var i = 0; i < this.waterColumnCount-1; i++) {
 			var x1 = this.position.x+i*this.waterColumnSpacing;
 			var x2 = this.position.x+(i+1)*this.waterColumnSpacing;

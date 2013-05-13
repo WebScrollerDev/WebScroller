@@ -517,6 +517,7 @@ RenderWaterMass.prototype.renderMass = function(model) {
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.vertexAttribPointer(progShadow.position, 2, gl.FLOAT, false, 0, 0);
 	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
+	//console.log(model);
 };
 
 //----------------------------------RAIN------------------------------------//
@@ -1481,7 +1482,6 @@ RenderBoundingBox = function() {
 			}
 		}
 	}
-	
 }
 
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
@@ -1555,7 +1555,21 @@ RenderBoundingBox.prototype.render = function() {
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+		
+		
+		
+		this.modelWaterMass = [];
+		var bb = world.waterMasses[0].triggerBox;
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
 
+		this.renderBB(this.modelWaterMass, [0.0, 1.0, 0.0]);	
 		this.renderBB(this.modelTB, [0.0, 1.0, 0.0]);
 		this.renderBB(this.modelBB, [1.0, 0.0, 0.0]);
 		this.renderBB(this.modelMovingBB, [1.0, 0.0, 0.0]);
