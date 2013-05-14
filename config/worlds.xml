@@ -322,7 +322,7 @@
 			</Tile>
 			
 			<Tile>
-				<Id>14</Id>	// Fungi
+				<Id>15</Id>	// Fungi
 				<Pos>
 					<X>2295</X>
 					<Y>8</Y>
@@ -513,10 +513,10 @@
 		</WorldSize>
 		<PlayerSpawn>
 			<SpawnX>2700</SpawnX>
-			<SpawnY>100</SpawnY>
+			<SpawnY>300</SpawnY>
 		</PlayerSpawn>
 		<Rain>
-			<Amount>1000</Amount>
+			<Amount>300</Amount>
 			<SpawnInterval>2</SpawnInterval>
 			<ParticleVelocity>
 				<VelX>0.0</VelX>
@@ -532,24 +532,23 @@
 				<WaterId>0</WaterId>
 				<WaterPos>
 					<WaterX>1200</WaterX>
-					<WaterY>20</WaterY>
+					<WaterY>18</WaterY>
 				</WaterPos>
 				<WaterSize>
 					<WaterSizeX>1000</WaterSizeX>
-					<WaterSizeY>150</WaterSizeY>
+					<WaterSizeY>50</WaterSizeY>
 				</WaterSize>
 			</Water>
 		</Waters>
 		<TilesMg>
 			<Tile>
-				<Id>7</Id> // huge platform
+				<Id>14</Id> // huge platform
 				<Pos>
 					<X>0</X>
 					<Y>0</Y>
 					<Z>-0.1</Z>
 				</Pos>
 			</Tile>
-			
 			<Tile>
 				<Id>13</Id>	// border
 				<Pos>

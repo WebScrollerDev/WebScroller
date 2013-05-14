@@ -213,9 +213,51 @@
 			<Y>512</Y>
 		</Size>
 	</Tile>
-	
-	<AnimatedTile>
+	<Tile>
 		<Id>14</Id>
+		<Url>resources/tiles/mg/big2.png</Url>
+		<BoundingBoxes>
+			<BoundingBox>
+				<BBCenter>
+					<BBX>600</BBX>
+					<BBY>42</BBY>
+				</BBCenter>
+				<BBSize>
+					<BBX>1200</BBX>
+					<BBY>84</BBY>
+				</BBSize>
+				<BBAngle>0</BBAngle>
+			</BoundingBox>
+			<BoundingBox>
+				<BBCenter>
+					<BBX>1700</BBX>
+					<BBY>10</BBY>
+				</BBCenter>
+				<BBSize>
+					<BBX>1000</BBX>
+					<BBY>20</BBY>
+				</BBSize>
+				<BBAngle>0</BBAngle>
+			</BoundingBox>
+			<BoundingBox>
+				<BBCenter>
+					<BBX>3148</BBX>
+					<BBY>42</BBY>
+				</BBCenter>
+				<BBSize>
+					<BBX>1896</BBX>
+					<BBY>84</BBY>
+				</BBSize>
+				<BBAngle>0</BBAngle>
+			</BoundingBox>
+		</BoundingBoxes>
+		<Size>
+			<X>4096</X>
+			<Y>130</Y>
+		</Size>
+	</Tile>
+	<AnimatedTile>
+		<Id>15</Id>
 		<Url>resources/tiles/mg/fungi_ss.png</Url>
 		<Size>
 			<X>100</X>

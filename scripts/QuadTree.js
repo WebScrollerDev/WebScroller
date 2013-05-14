@@ -1,5 +1,5 @@
 QuadTree = function(x, y, w, h) {
-	this.thresh = 3;
+	this.thresh = 5;
 	this.segs = [];
 	this.quads = [];
 

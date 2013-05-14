@@ -7,7 +7,7 @@ WaterMass = function(position, waterSize, waterColumnCount, updateInterval, spri
 		y: position[1]	
 	}
 	this.targetHeight = waterSize[1];
-	this.waterColumnCount = waterColumnCount;
+	this.waterColumnCount = waterColumnCount + 1;
 	this.waterColumnSpacing = waterSize[0] / waterColumnCount;
 	this.waterColumns = [];
 	this.updateInterval = updateInterval;

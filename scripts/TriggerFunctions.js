@@ -17,9 +17,12 @@ function waveFunc(owner) {
 	var waterColumnIndex = Math.round( (playerCenterPos.x - owner.getPosition().x)/owner.getWaterColumnSpacing() );
 	if(waterColumnIndex > 0 && waterColumnIndex < owner.waterColumns.length) {
 		var diff = Math.abs( (owner.getPosition().y + owner.getWaterColumnOnIndex(waterColumnIndex).getCurrHeight()) - playerCenterPos.y );
-		if(diff < 20) {
+		if(diff < 10) {
 			var playerVel = world.getPlayerVel()[1];
-			owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel);
+			if(playerVel < 0)
+				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel);
+			else
+				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel/2);
 		}
 	}
 };

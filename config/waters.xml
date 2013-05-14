@@ -2,8 +2,8 @@
 	<Water>
 		<Id>0</Id>
 		<ColumnCount>100</ColumnCount>
-		<SpringHardness>0.025</SpringHardness>
-		<SpringFriction>0.025</SpringFriction>
+		<SpringHardness>0.0025</SpringHardness>
+		<SpringFriction>0.0025</SpringFriction>
 		<SpreadFactor>0.125</SpreadFactor>
 		<UpdateInterval>30</UpdateInterval>
 	</Water>
