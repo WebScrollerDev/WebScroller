@@ -8,6 +8,7 @@ var lights = [];
 var tmpRopes = [];
 var tmpCloths = [];
 var tmpParticles = [];
+var tmpWaters = [];
 
 var bg = false;
 var mg = false;
@@ -15,6 +16,7 @@ var fg = false;
 var light = false;
 var fabricsBool = false;
 var particleBool = false;
+var waterBool = false;
 
 var doneLoading = false;
 
@@ -60,11 +62,16 @@ function loadXml(selWorld) {
     	dataType: "xml",
     	success: parseParticles
   	});
+  	$.ajax({
+    	type: "GET",
+    	url: "config/waters.xml",
+    	dataType: "xml",
+    	success: parseWaters
+  	});
 }
 
 function loadWorldXml() {
-	
-	if(bg && mg && fg && light && fabricsBool && particleBool) {
+	if(bg && mg && fg && light && fabricsBool && particleBool && waterBool) {
 		$.ajax({
 	    	type: "GET",
 	    	url: "config/worlds.xml",
@@ -113,6 +120,26 @@ function parseWorlds(xml) {
 						world.addRain(new EmitterRain(amount*rainMult, spawnInterval/rainMult, particleVelocity, particleVelocitySpan));
 					});
 				}
+				$(this).find("Waters").each(function() {
+					var waterMasses = [];
+					$(this).find("Water").each(function() {
+						var waterId;
+						var waterPos = [], waterSize = [];
+						
+						waterId = parseInt($(this).find("WaterId").text());
+						$(this).find("WaterPos").each(function() {
+							waterPos[0] = parseInt($(this).find("WaterX").text());
+							waterPos[1] = parseInt($(this).find("WaterY").text());
+						});
+						$(this).find("WaterSize").each(function() {
+							waterSize[0] = parseInt($(this).find("WaterSizeX").text());
+							waterSize[1] = parseInt($(this).find("WaterSizeY").text());
+						});
+						
+						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor));
+					});
+					world.setWaterMasses(waterMasses);
+				});
 				$(this).find("TilesBg").each(function() {
 					var tilesPlaceable = [];
 					$(this).find("Tile").each(function() {
@@ -658,5 +685,29 @@ function parseParticles(xml)
 	});
 
 	particleBool = true;
+	loadWorldXml();
+}
+
+function parseWaters(xml)
+{
+	$(xml).find("Waters").each(function() {
+		$(this).find("Water").each(function() {
+			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval;
+			id = parseInt($(this).find("Id").text());
+			columnCount = parseInt($(this).find("ColumnCount").text());
+			springHardness = parseFloat($(this).find("SpringHardness").text());
+			springFriction = parseFloat($(this).find("SpringFriction").text());
+			spreadFactor = parseFloat($(this).find("SpreadFactor").text());
+			updateInterval = parseInt($(this).find("UpdateInterval").text());
+			tmpWaters[id] = {
+				columnCount: columnCount, 
+				springHardness: springHardness, 
+				springFriction: springFriction, 
+				spreadFactor: spreadFactor, 
+				updateInterval: updateInterval
+			};
+		});
+	});
+	waterBool = true;
 	loadWorldXml();
 }

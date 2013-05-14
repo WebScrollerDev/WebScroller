@@ -1,20 +1,20 @@
 
 //-------------------------------------------------------WATERMASS---------------------------------------------------//
 
-WaterMass = function(position, targetHeight, waterColumnCount, waterColumnSpacing, updateInterval) {
+WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor) {
 	this.position = {	// down left of the watermass
 		x: position[0],
 		y: position[1]	
 	}
-	this.targetHeight = targetHeight;
+	this.targetHeight = waterSize[1];
 	this.waterColumnCount = waterColumnCount;
-	this.waterColumnSpacing = waterColumnSpacing;
+	this.waterColumnSpacing = waterSize[0] / waterColumnCount;
 	this.waterColumns = [];
 	this.updateInterval = updateInterval;
 	
-	this.springConstant = 0.025;
-	this.dampeningFactor = 0.025;
-	this.spreadFactor = 0.025;
+	this.springConstant = springConstant;
+	this.dampeningFactor = dampeningFactor;
+	this.spreadFactor = spreadFactor;
 	
 	for(var i = 0; i < this.waterColumnCount; i++) {
 		this.waterColumns.push(new WaterColumn(this.targetHeight));

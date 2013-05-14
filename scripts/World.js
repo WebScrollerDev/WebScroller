@@ -44,8 +44,6 @@ World.prototype = {
 			y: this.worldSize.y*2
 		}
 		
-		this.waterMasses.push(new WaterMass([1200,20], 150, 100, 10, 30) );
-
 		this.gpuParticles.push(new GpuParticle([2700, 40], [200, 400], 3, 32, "resources/waterborder.png", [200, 400], [200, 10]));
 		this.rootQuadTree = new QuadTree(-100,-100, this.worldSize.x+100, this.worldSize.y+100);
 		//this.tilesMg[0].setMoving();
@@ -308,5 +306,9 @@ World.prototype = {
 	
 	getWaterMasses: function() {
 		return this.waterMasses;
+	},
+	
+	setWaterMasses: function(waterMasses) {
+		this.waterMasses = waterMasses;
 	}
 }

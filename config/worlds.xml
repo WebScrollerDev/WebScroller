@@ -527,6 +527,19 @@
 				<VelSpanY>0.0</VelSpanY>
 			</ParticleVelocitySpan>
 		</Rain>
+		<Waters>
+			<Water>
+				<WaterId>0</WaterId>
+				<WaterPos>
+					<WaterX>1200</WaterX>
+					<WaterY>20</WaterY>
+				</WaterPos>
+				<WaterSize>
+					<WaterSizeX>1000</WaterSizeX>
+					<WaterSizeY>150</WaterSizeY>
+				</WaterSize>
+			</Water>
+		</Waters>
 		<TilesMg>
 			<Tile>
 				<Id>7</Id> // huge platform
