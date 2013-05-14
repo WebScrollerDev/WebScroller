@@ -1482,16 +1482,18 @@ RenderBoundingBox = function() {
 			}
 		}
 	}
-	this.modelWaterMass = [];
-	var bb = world.waterMasses[0].triggerBox;
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
-	this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+	if(world.waterMasses[0] != null) {
+		this.modelWaterMass = [];
+		var bb = world.waterMasses[0].triggerBox;
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[2][0], bb.corner[2][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[3][0], bb.corner[3][1], 0]);
+		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
+	}
 }
 
 InheritenceManager.extend(RenderBoundingBox, RenderBase);
@@ -1566,12 +1568,18 @@ RenderBoundingBox.prototype.render = function() {
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[3][0], bb.corner[3][1], 0]);
 		this.modelPlayer = this.modelPlayer.concat([bb.corner[0][0], bb.corner[0][1], 0]);	
 
-		this.renderBB(this.modelWaterMass, [0.0, 1.0, 0.0]);	
-		this.renderBB(this.modelTB, [0.0, 1.0, 0.0]);
-		this.renderBB(this.modelBB, [1.0, 0.0, 0.0]);
-		this.renderBB(this.modelMovingBB, [1.0, 0.0, 0.0]);
-		this.renderBB(this.modelMovingTB, [0.0, 1.0, 0.0]);
-		this.renderBB(this.modelPlayer, [1.0, 0.0, 0.0]);
+		if(this.modelWaterMass != null)
+			this.renderBB(this.modelWaterMass, [0.0, 1.0, 0.0]);	
+		if(this.modelTB != null)
+			this.renderBB(this.modelTB, [0.0, 1.0, 0.0]);
+		if(this.modelBB != null)
+			this.renderBB(this.modelBB, [1.0, 0.0, 0.0]);
+		if(this.modelMovingBB != null)
+			this.renderBB(this.modelMovingBB, [1.0, 0.0, 0.0]);
+		if(this.modelMovingTB != null)
+			this.renderBB(this.modelMovingTB, [0.0, 1.0, 0.0]);
+		if(this.modelPlayer != null)
+			this.renderBB(this.modelPlayer, [1.0, 0.0, 0.0]);
 	
 	
 };
