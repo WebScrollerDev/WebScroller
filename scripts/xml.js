@@ -203,7 +203,8 @@ function parseWorlds(xml) {
 							for(var i = 0; i < obbs[id].length; i++) {
 								var tmpObb = new OBB(pos, obbs[id][i].center, obbs[id][i].size, obbs[id][i].angle);
 								currentTile.addBoundingBox(tmpObb);
-								world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
+								if(obbs[id][i].shadows)
+									world.shadowHandler.addShadowPair(tmpObb.corner[3], tmpObb.corner[2], tmpObb.corner[1], tmpObb.corner[0]);
 							}
 						}
 						if(tbs[id] != null) {
@@ -350,7 +351,8 @@ function parseMgTiles(xml)
 				$(this).find("BoundingBox").each(function() {
 					var bbCenter = [];
 					var bbSize = [];
-					var bbAngle;
+					var bbAngle, shadows;
+					shadows = false;
 					$(this).find("BBSize").each(function() {
 						bbSize[0] = parseInt($(this).find("BBX").text());
 						bbSize[1] = parseInt($(this).find("BBY").text());
@@ -362,10 +364,12 @@ function parseMgTiles(xml)
 					});
 					
 					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
+					shadows = $(this).find("Shadows").text() == "true" ? true : false;
 					var obbTmp = {
 						center: bbCenter, 
 						size: bbSize, 
-						angle: bbAngle
+						angle: bbAngle, 
+						shadows: shadows
 					}
 					tmpBbs.push(obbTmp);
 				});
@@ -414,10 +418,12 @@ function parseMgTiles(xml)
 					});
 					
 					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
+					shadows = $(this).find("Shadows").text() == "true" ? true : false;
 					var obbTmp = {
 						center: bbCenter, 
 						size: bbSize, 
-						angle: bbAngle
+						angle: bbAngle, 
+						shadows: shadows
 					}
 					tmpBbs.push(obbTmp);
 				});

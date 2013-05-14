@@ -13,6 +13,7 @@
 					<BBY>20</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
@@ -35,6 +36,7 @@
 					<BBY>41</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
@@ -124,6 +126,7 @@
 					<BBY>32</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
@@ -146,6 +149,7 @@
 					<BBY>20</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 			
 			<BoundingBox>
@@ -158,6 +162,7 @@
 					<BBY>10</BBY>
 				</BBSize>
 				<BBAngle>45</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
@@ -189,6 +194,7 @@
 					<BBY>512</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
@@ -227,6 +233,7 @@
 					<BBY>84</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 			<BoundingBox>
 				<BBCenter>
@@ -238,6 +245,7 @@
 					<BBY>20</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 			<BoundingBox>
 				<BBCenter>
@@ -249,6 +257,7 @@
 					<BBY>84</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
+				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
 		<Size>
