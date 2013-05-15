@@ -132,7 +132,7 @@ ParticleRainDrop.prototype.decreaseLifetime = function(decrement) {
 };
 
 //-------------------------FLUID------------------------//
-GpuParticle = function(position, particleSpawnOffset, particleSpawnSpacing, particleAmount, borderDataImage, warpTo, warpFrom) {
+GpuFluidParticle = function(position, particleSpawnOffset, particleSpawnSpacing, particleAmount, borderDataImage, warpTo, warpFrom) {
 	
 	this.startPos = {
 		x: position[0], 
@@ -154,9 +154,9 @@ GpuParticle = function(position, particleSpawnOffset, particleSpawnSpacing, part
 	//console.log([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
 	world.addPoint([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
 	world.addPoint([this.startPos.x + warpFrom[0], this.startPos.y + warpFrom[1]]);
-}
+};
 
-GpuParticle.prototype = {
+GpuFluidParticle.prototype = {
 	init: function() {
 		for(var x = 0.0; x < this.amount; x++) {
 			for(var y = 0.0; y < this.amount; y++) {
@@ -226,7 +226,53 @@ GpuParticle.prototype = {
 		}
 		return size;
 	}
-}
+};
 
+//-------------------------AIR-PARTICLE------------------------//
+GpuAirParticle = function(particleAmount) {
+	this.pos = []
+	this.velocity = [];
+	this.vertices = [];
+	this.amount = particleAmount;
 
+	this.init();
+};
+
+GpuAirParticle.prototype = {
+	init: function() {
+		var worldSize = world.getWorldSize();
+		var totNrParticles = this.amount * this.amount;	// ex: 32 -> 32*32
+		for(var i = 0; i < totNrParticles; i++) {
+			var randPosX = Math.random() * worldSize.x;
+			var randPosY = Math.random() * worldSize.y;
+			var randVelX = Math.random()*0.2 - 0.1;
+			var randVelY = Math.random()*0.2 - 0.1;
+			this.pos.push(randPosX, randPosY, 0);
+			this.velocity.push(randVelX, randVelY, 1);
+		}
+		
+		var d = 1/this.amount;
+		for (var x = 0.0; x < 1.0; x += d) {
+			for (var y = 0.0; y < 1.0; y += d) {
+				this.vertices.push(x, y);
+			}
+		}
+	},
+	
+	getPos: function() {
+		return this.pos;
+	},
+	
+	getVel: function() {
+		return this.velocity;
+	},
+	
+	getVertices: function() {
+		return this.vertices;
+	}, 
+	
+	getAmount: function() {
+		return this.amount;
+	}
+};
 

@@ -1,6 +1,7 @@
 var progEntity, progWorld, progTileMg, progTileBg, progTileFg, 
-	progParticle, progParticleGpuPos, progParticleGpuVelDen, 
-	progParticleGpuShow, progLine, progShadow, progRain, progPoint;
+	progParticle, progParticleGpuFluidPos, progParticleGpuFluidVelDen, 
+	progParticleGpuFluidShow, progParticleGpuAirPos, progParticleGpuAirVel,
+	progParticleGpuAirShow, progLine, progShadow, progRain, progPoint;
 
 function RenderManager() {
 	
@@ -25,7 +26,6 @@ RenderManager.prototype = {
 			alert(err + "Vertex texture"); return;
 		}
 		
-		
 		progEntity = utils.addShaderProg(gl, 'player.vert', 'player.frag');
 		progWorld = utils.addShaderProg(gl, 'main.vert', 'main.frag');
 		progParticle = utils.addShaderProg(gl, 'particle.vert', 'particle.frag');
@@ -34,8 +34,10 @@ RenderManager.prototype = {
 		progTileFg = utils.addShaderProg(gl, 'tileFg.vert', 'tileFg.frag');
 		progLine = utils.addShaderProg(gl, 'line.vert', 'line.frag');
 		progShadow = utils.addShaderProg(gl, 'shadow.vert', 'shadow.frag');
-		progParticleGpuPos = utils.addShaderProg(gl, 'particle-calc-pos.vert', 'particle-calc-pos.frag');
-		progParticleGpuVelDen = utils.addShaderProg(gl, 'particle-calc-velDen.vert', 'particle-calc-velDen.frag');
+		progParticleGpuFluidPos = utils.addShaderProg(gl, 'GPU-fluid-particle-calc-pos.vert', 'GPU-fluid-particle-calc-pos.frag');
+		progParticleGpuFluidVelDen = utils.addShaderProg(gl, 'GPU-fluid-particle-calc-velDen.vert', 'GPU-fluid-particle-calc-velDen.frag');
+		progParticleGpuAirPos = utils.addShaderProg(gl, 'GPU-air-particle-calc-pos.vert', 'GPU-air-particle-calc-pos.frag');
+		progParticleGpuAirVel = utils.addShaderProg(gl, 'GPU-air-particle-calc-vel.vert', 'GPU-air-particle-calc-vel.frag');
 		progRain = utils.addShaderProg(gl, 'rain.vert', 'rain.frag');
 		progPoint = utils.addShaderProg(gl, 'point.vert', 'point.frag');
 		
@@ -210,32 +212,55 @@ RenderManager.prototype = {
 		progParticle.modelView = gl.getUniformLocation(progParticle, "modelViewMatrix");
 		progParticle.fade = gl.getUniformLocation(progParticle, "fade");
 		
-//-------------------------------POSITION PARTICLE SHADER-------------------------------//
+//-------------------------------POSITION FLUID PARTICLE SHADER-------------------------------//
 		
-		gl.useProgram(progParticleGpuPos);
-		progParticleGpuPos.pos = gl.getAttribLocation(progParticleGpuPos, "inPos");
-		gl.enableVertexAttribArray(progParticleGpuPos.pos);
-		progParticleGpuPos.tex = gl.getAttribLocation(progParticleGpuPos, "inTex");
-		gl.enableVertexAttribArray(progParticleGpuPos.tex);
-		progParticleGpuPos.posLoc = gl.getUniformLocation(progParticleGpuPos, "posSamp");
-		progParticleGpuPos.velDenLoc = gl.getUniformLocation(progParticleGpuPos, "velDenSamp");
-		progParticleGpuPos.inWarpToLoc = gl.getUniformLocation(progParticleGpuPos, "inWarpTo");
-		progParticleGpuPos.inWarpFromLoc = gl.getUniformLocation(progParticleGpuPos, "inWarpFrom");
+		gl.useProgram(progParticleGpuFluidPos);
+		progParticleGpuFluidPos.pos = gl.getAttribLocation(progParticleGpuFluidPos, "inPos");
+		gl.enableVertexAttribArray(progParticleGpuFluidPos.pos);
+		progParticleGpuFluidPos.tex = gl.getAttribLocation(progParticleGpuFluidPos, "inTex");
+		gl.enableVertexAttribArray(progParticleGpuFluidPos.tex);
+		progParticleGpuFluidPos.posLoc = gl.getUniformLocation(progParticleGpuFluidPos, "posSamp");
+		progParticleGpuFluidPos.velDenLoc = gl.getUniformLocation(progParticleGpuFluidPos, "velDenSamp");
+		progParticleGpuFluidPos.inWarpToLoc = gl.getUniformLocation(progParticleGpuFluidPos, "inWarpTo");
+		progParticleGpuFluidPos.inWarpFromLoc = gl.getUniformLocation(progParticleGpuFluidPos, "inWarpFrom");
 		
-//-------------------------------VELOCITY/DENSITY PARTICLE SHADER-------------------------------//
+//-------------------------------VELOCITY/DENSITY FLUID PARTICLE SHADER-------------------------------//
 		
-		gl.useProgram(progParticleGpuVelDen);		
-		progParticleGpuVelDen.pos = gl.getAttribLocation(progParticleGpuVelDen, "inPos");
-		gl.enableVertexAttribArray(progParticleGpuVelDen.pos);
-		progParticleGpuVelDen.tex = gl.getAttribLocation(progParticleGpuVelDen, "inTex");
-		gl.enableVertexAttribArray(progParticleGpuVelDen.tex);
-		progParticleGpuVelDen.posLoc = gl.getUniformLocation(progParticleGpuVelDen, "posSamp");
-		progParticleGpuVelDen.velDenLoc = gl.getUniformLocation(progParticleGpuVelDen, "velDenSamp");
-		progParticleGpuVelDen.borderLoc = gl.getUniformLocation(progParticleGpuVelDen, "borderSamp");
-		progParticleGpuVelDen.borderPosLoc = gl.getUniformLocation(progParticleGpuVelDen, "borderPos");
-		progParticleGpuVelDen.posPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inPosPlayer");
-		progParticleGpuVelDen.velPlayer = gl.getUniformLocation(progParticleGpuVelDen, "inVelPlayer");
-		progParticleGpuVelDen.inWarpToLoc = gl.getUniformLocation(progParticleGpuVelDen, "inWarpTo");
+		gl.useProgram(progParticleGpuFluidVelDen);		
+		progParticleGpuFluidVelDen.pos = gl.getAttribLocation(progParticleGpuFluidVelDen, "inPos");
+		gl.enableVertexAttribArray(progParticleGpuFluidVelDen.pos);
+		progParticleGpuFluidVelDen.tex = gl.getAttribLocation(progParticleGpuFluidVelDen, "inTex");
+		gl.enableVertexAttribArray(progParticleGpuFluidVelDen.tex);
+		progParticleGpuFluidVelDen.posLoc = gl.getUniformLocation(progParticleGpuFluidVelDen, "posSamp");
+		progParticleGpuFluidVelDen.velDenLoc = gl.getUniformLocation(progParticleGpuFluidVelDen, "velDenSamp");
+		progParticleGpuFluidVelDen.borderLoc = gl.getUniformLocation(progParticleGpuFluidVelDen, "borderSamp");
+		progParticleGpuFluidVelDen.borderPosLoc = gl.getUniformLocation(progParticleGpuFluidVelDen, "borderPos");
+		progParticleGpuFluidVelDen.posPlayer = gl.getUniformLocation(progParticleGpuFluidVelDen, "inPosPlayer");
+		progParticleGpuFluidVelDen.velPlayer = gl.getUniformLocation(progParticleGpuFluidVelDen, "inVelPlayer");
+		progParticleGpuFluidVelDen.inWarpToLoc = gl.getUniformLocation(progParticleGpuFluidVelDen, "inWarpTo");
+		
+//-------------------------------POSITION AIR PARTICLE SHADER-------------------------------//
+		
+		gl.useProgram(progParticleGpuAirPos);
+		progParticleGpuAirPos.pos = gl.getAttribLocation(progParticleGpuAirPos, "inPos");
+		gl.enableVertexAttribArray(progParticleGpuAirPos.pos);
+		progParticleGpuAirPos.tex = gl.getAttribLocation(progParticleGpuAirPos, "inTex");
+		gl.enableVertexAttribArray(progParticleGpuAirPos.tex);
+		progParticleGpuAirPos.posLoc = gl.getUniformLocation(progParticleGpuAirPos, "posSamp");
+		progParticleGpuAirPos.velLoc = gl.getUniformLocation(progParticleGpuAirPos, "velSamp");
+		progParticleGpuAirPos.borderSize = gl.getUniformLocation(progParticleGpuAirPos, "worldSize");
+
+//-------------------------------VELOCITY AIR PARTICLE SHADER-------------------------------//
+		
+		gl.useProgram(progParticleGpuAirVel);		
+		progParticleGpuAirVel.pos = gl.getAttribLocation(progParticleGpuAirVel, "inPos");
+		gl.enableVertexAttribArray(progParticleGpuAirVel.pos);
+		progParticleGpuAirVel.tex = gl.getAttribLocation(progParticleGpuAirVel, "inTex");
+		gl.enableVertexAttribArray(progParticleGpuAirVel.tex);
+		progParticleGpuAirVel.posLoc = gl.getUniformLocation(progParticleGpuAirVel, "posSamp");
+		progParticleGpuAirVel.velLoc = gl.getUniformLocation(progParticleGpuAirVel, "velSamp");
+		progParticleGpuAirVel.posPlayer = gl.getUniformLocation(progParticleGpuAirVel, "inPosPlayer");
+		progParticleGpuAirVel.velPlayer = gl.getUniformLocation(progParticleGpuAirVel, "inVelPlayer");
 		
 	},
 	
@@ -638,9 +663,6 @@ RenderPoint.prototype.renderPoint = function(array) {
 //----------------------------------PARTICLES------------------------------------//
 RenderParticle = function() {
 	RenderParticle.baseConstructor.call(this);
-	
-	
-	
 //------------------Smoke Particles---------------------//
 	this.modelParticleSmoke = new ModelSquare();
 	this.initBuffers(this.modelParticleSmoke);
@@ -648,28 +670,28 @@ RenderParticle = function() {
 	Texture.loadImage(gl, "resources/smokeParticle.png", this.texParticleSmoke);
 //------------------Fire Particles---------------------//
 	this.modelParticleFire = new ModelSquare();
-	//this.vaoParticleFire = generateModel(this.modelParticleFire, progParticle);
 	this.initBuffers(this.modelParticleFire);
 	this.texParticleFire = gl.createTexture();
 	Texture.loadImage(gl, "resources/fireParticle.png", this.texParticleFire);
-
-	this.initGpuParticle(world.gpuParticles[0].getAmount(), world.gpuParticles[0].getPos(), world.gpuParticles[0].getVelDen(), world.gpuParticles[0].getVertices());
 	
+//-------------------Gpu Particles---------------------//	
+	this.posTexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
+
+	this.initGpuFluidParticle(world.gpuFluidParticles[0].getAmount(), world.gpuFluidParticles[0].getPos(), world.gpuFluidParticles[0].getVelDen(), world.gpuFluidParticles[0].getVertices());
+	this.initGpuAirParticle(world.gpuAirParticles[0].getAmount(), world.gpuAirParticles[0].getPos(),world.gpuAirParticles[0].getVel(), world.gpuAirParticles[0].getVertices());
 	
 	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.checkIfDoneInterval = setInterval(function(){_this.borderDataDone(world.gpuParticles[0])}, 50);
+	this.checkIfDoneInterval = setInterval(function(){_this.borderDataDone(world.gpuFluidParticles[0])}, 50);
 };
 
 InheritenceManager.extend(RenderParticle, RenderBase);
 
-RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, velDen, vertices) { 
-	var particleAmount2 = particleAmount*particleAmount;
+//----------------------------------------------------INIT FLUID---------------------------------------------------------//
+RenderParticle.prototype.initGpuFluidParticle = function(particleAmount, pos, velDen, vertices) { 	
 	
-	this.posTexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
-	
-//-------This texture stores the position-------//
+//-------This texture stores the position---------------------//
 	this.texParticlePos1 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE1);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos1);
@@ -677,7 +699,7 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, velDen,
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-//-------This texture also stores the position-------//
+//-------This texture also stores the position---------------//
   	this.texParticlePos2 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE2);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticlePos2);
@@ -685,16 +707,15 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, velDen,
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
- 	
+//-------This texture stores the velocity/density------------// 	
  	this.texParticleVelDen1 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE3);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleVelDen1);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(velDen));
   	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
- 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
- 	
- 	
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); 	
+ //-------This texture also stores the velocity/density------// 		
  	this.texParticleVelDen2 = gl.createTexture();
 	gl.activeTexture(gl.TEXTURE4);
 	gl.bindTexture(gl.TEXTURE_2D, this.texParticleVelDen2);
@@ -723,39 +744,39 @@ RenderParticle.prototype.initGpuParticle = function(particleAmount, pos, velDen,
 	if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
 		console.log(err + "FLOAT as the color attachment to an FBO");
 	
-	
-	progParticleGpuShow = utils.addShaderProg(gl, 'particle-show.vert', 'particle-show.frag');
-	progParticleGpuShow.points = 3;
-	gl.bindAttribLocation(progParticleGpuShow, progParticleGpuShow.points, "inPoints");
-	gl.linkProgram(progParticleGpuShow);
-	gl.useProgram(progParticleGpuShow);
+	//-------------------------------SHOW FLUID PARTICLE SHADER-------------------------------//
+	progParticleGpuFluidShow = utils.addShaderProg(gl, 'GPU-fluid-particle-show.vert', 'GPU-fluid-particle-show.frag');
+	progParticleGpuFluidShow.points = 3;
+	gl.bindAttribLocation(progParticleGpuFluidShow, progParticleGpuFluidShow.points, "inPoints");
+	gl.linkProgram(progParticleGpuFluidShow);
+	gl.useProgram(progParticleGpuFluidShow);
 			
 	this.gpuParticleVao = gl.createBuffer();
-	gl.enableVertexAttribArray(progParticleGpuShow.points);
+	gl.enableVertexAttribArray(progParticleGpuFluidShow.points);
    	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVao);
    	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-   	gl.vertexAttribPointer(progParticleGpuShow.points, 2, gl.FLOAT, false, 0, 0);
+   	gl.vertexAttribPointer(progParticleGpuFluidShow.points, 2, gl.FLOAT, false, 0, 0);
 	
-	gl.uniform1i(gl.getUniformLocation(progParticleGpuShow, "posSamp"), 1);
-	gl.uniform1i(gl.getUniformLocation(progParticleGpuShow, "velDenSamp"), 3);
+	gl.uniform1i(gl.getUniformLocation(progParticleGpuFluidShow, "posSamp"), 1);
+	gl.uniform1i(gl.getUniformLocation(progParticleGpuFluidShow, "velDenSamp"), 3);
 	
-	progParticleGpuShow.modelView = gl.getUniformLocation(progParticleGpuShow, "modelViewMatrix");
-	progParticleGpuShow.proj = gl.getUniformLocation(progParticleGpuShow, "projMatrix");
+	progParticleGpuFluidShow.modelView = gl.getUniformLocation(progParticleGpuFluidShow, "modelViewMatrix");
+	progParticleGpuFluidShow.proj = gl.getUniformLocation(progParticleGpuFluidShow, "projMatrix");
 	
 };
 
 RenderParticle.prototype.borderDataDone = function(gpuParticle) {
 	if(gpuParticle.getBorderLoadStatus()) {
 		clearInterval(this.checkIfDoneInterval);
-		this.initGpuParticleBorder(gpuParticle);
+		this.initGpuFluidParticleBorder(gpuParticle);
 	}
 };
 
-RenderParticle.prototype.initGpuParticleBorder = function(gpuParticle) {
+RenderParticle.prototype.initGpuFluidParticleBorder = function(gpuParticle) {
 	
 	//------------------BORDER------------------------// 	
-	gl.useProgram(progParticleGpuVelDen);
-	gl.uniform2fv(progParticleGpuVelDen.borderPosLoc, gpuParticle.getBorderPos());
+	gl.useProgram(progParticleGpuFluidVelDen);
+	gl.uniform2fv(progParticleGpuFluidVelDen.borderPosLoc, gpuParticle.getBorderPos());
 	
 	
 	this.texParticleBorder = gl.createTexture();
@@ -767,11 +788,92 @@ RenderParticle.prototype.initGpuParticleBorder = function(gpuParticle) {
  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
  	
  	//------------------WARP POINTS-------------------// 	
-	gl.uniform2fv(progParticleGpuVelDen.inWarpToLoc, gpuParticle.getWarpTo());	
+	gl.uniform2fv(progParticleGpuFluidVelDen.inWarpToLoc, gpuParticle.getWarpTo());	
 	
- 	gl.useProgram(progParticleGpuPos);	
-	gl.uniform2fv(progParticleGpuPos.inWarpToLoc, gpuParticle.getWarpTo());
-	gl.uniform2fv(progParticleGpuPos.inWarpFromLoc, gpuParticle.getWarpFrom());
+ 	gl.useProgram(progParticleGpuFluidPos);	
+	gl.uniform2fv(progParticleGpuFluidPos.inWarpToLoc, gpuParticle.getWarpTo());
+	gl.uniform2fv(progParticleGpuFluidPos.inWarpFromLoc, gpuParticle.getWarpFrom());
+};
+
+//----------------------------------------------------INIT AIR---------------------------------------------------------//
+RenderParticle.prototype.initGpuAirParticle = function(particleAmount, pos, vel, vertices) { 
+
+//-------This texture stores the position------------//
+	this.texAirParticlePos1 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE6);
+	gl.bindTexture(gl.TEXTURE_2D, this.texAirParticlePos1);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+//-------This texture also stores the position-------//
+  	this.texAirParticlePos2 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE7);
+	gl.bindTexture(gl.TEXTURE_2D, this.texAirParticlePos2);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(pos));
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+ //-------This texture stores the velocity----------//	
+ 	this.texAirParticleVel1 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE8);
+	gl.bindTexture(gl.TEXTURE_2D, this.texAirParticleVel1);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(vel));
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+ //-------This texture also stores the velocity-----//		
+ 	this.texAirParticleVel2 = gl.createTexture();
+	gl.activeTexture(gl.TEXTURE9);
+	gl.bindTexture(gl.TEXTURE_2D, this.texAirParticleVel2);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, particleAmount, particleAmount, 0, gl.RGB, gl.FLOAT, new Float32Array(vel));
+  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+ 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); 
+ 		
+//----------This framebuffer stores the texture so we can use it as a output in the shader----//
+	this.FBOAirPos1 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirPos1);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texAirParticlePos1, 0);
+	
+	this.FBOAirPos2 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirPos2);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texAirParticlePos2, 0);
+	
+	this.FBOAirVel1 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirVel1);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texAirParticleVel1, 0);
+	
+	this.FBOAirVel2 = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirVel2);
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texAirParticleVel2, 0);
+
+	if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
+		console.log(err + "FLOAT as the color attachment to an FBO");
+		
+	gl.useProgram(progParticleGpuAirPos);
+	var worldSize = world.getWorldSize();
+	gl.uniform4f(progParticleGpuAirPos.borderSize, 0., 0., worldSize.x, worldSize.y);	// send the worldsize to the shader
+	
+	//-------------------------------SHOW AIR PARTICLE SHADER-------------------------------//
+	progParticleGpuAirShow = utils.addShaderProg(gl, 'GPU-air-particle-show.vert', 'GPU-air-particle-show.frag');
+	progParticleGpuAirShow.points = 4;
+	gl.bindAttribLocation(progParticleGpuAirShow, progParticleGpuAirShow.points, "inPoints");
+	gl.linkProgram(progParticleGpuAirShow);
+	gl.useProgram(progParticleGpuAirShow);
+			
+	this.gpuParticleVaoAir = gl.createBuffer();
+	gl.enableVertexAttribArray(progParticleGpuAirShow.points);
+   	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVaoAir);
+   	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+   	gl.vertexAttribPointer(progParticleGpuAirShow.points, 2, gl.FLOAT, false, 0, 0);
+	
+	gl.uniform1i(gl.getUniformLocation(progParticleGpuAirShow, "posSamp"), 6);
+	gl.uniform1i(gl.getUniformLocation(progParticleGpuAirShow, "velSamp"), 8);
+	
+	progParticleGpuAirShow.modelView = gl.getUniformLocation(progParticleGpuAirShow, "modelViewMatrix");
+	progParticleGpuAirShow.proj = gl.getUniformLocation(progParticleGpuAirShow, "projMatrix");
+	
 };
 
 RenderParticle.prototype.render = function() {
@@ -799,21 +901,21 @@ RenderParticle.prototype.render = function() {
 			this.renderFireParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getDiameter(), currEmitterParticles[j].getRotation());
 		}
 	}
-//-------------------------------GPU FLUID---------------------------------//
+//------------------------------------GPU----------------------------------//
 	gl.depthMask(false); //see other particles through the particles
-	this.renderGpuParticle(world.gpuParticles[0].getAmount());
-	//gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+	this.renderGpuFluidParticle(world.gpuFluidParticles[0].getAmount());
+	this.renderGpuAirParticle(world.gpuAirParticles[0].getAmount());
 	gl.depthMask(true);
 };
-
-RenderParticle.prototype.renderGpuParticle = function(amount) {
+//------------------------------------FLUID---------------------------------//
+RenderParticle.prototype.renderGpuFluidParticle = function(amount) {
 	
 	gl.viewport(0, 0, amount, amount);
 	
-	gl.useProgram(progParticleGpuPos);
+	gl.useProgram(progParticleGpuFluidPos);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
-	gl.vertexAttribPointer(progParticleGpuPos.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
-	gl.vertexAttribPointer(progParticleGpuPos.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+	gl.vertexAttribPointer(progParticleGpuFluidPos.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(progParticleGpuFluidPos.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
 	
   	var playerPos = {
 		x: world.player.getPosition().x, 
@@ -824,41 +926,40 @@ RenderParticle.prototype.renderGpuParticle = function(amount) {
   		y: world.player.getVelocity()[1]
   	}
 	var playerSize = world.player.getSize();
-	gl.useProgram(progParticleGpuVelDen);
+	gl.useProgram(progParticleGpuFluidVelDen);
 	
-	gl.uniform2f(progParticleGpuVelDen.posPlayer, playerPos.x + playerSize.x/2, playerPos.y + playerSize.y/2);
-	gl.uniform2f(progParticleGpuVelDen.velPlayer, playerVel.x, playerVel.y);
-	gl.vertexAttribPointer(progParticleGpuVelDen.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
-	gl.vertexAttribPointer(progParticleGpuVelDen.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+	gl.uniform2f(progParticleGpuFluidVelDen.posPlayer, playerPos.x + playerSize.x/2, playerPos.y + playerSize.y/2);
+	gl.uniform2f(progParticleGpuFluidVelDen.velPlayer, playerVel.x, playerVel.y);
+	gl.vertexAttribPointer(progParticleGpuFluidVelDen.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(progParticleGpuFluidVelDen.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
 		
-	for(var i = 0; i < 1; i++) {
-		gl.useProgram(progParticleGpuVelDen);
-		gl.uniform1i(progParticleGpuVelDen.velDenLoc, 3);
-		gl.uniform1i(progParticleGpuVelDen.posLoc, 1);
-		gl.uniform1i(progParticleGpuVelDen.borderLoc, 5);
+	for(var i = 0; i < 1; i++) {	// texture 1, 2, 3, 4 and 5
+		gl.useProgram(progParticleGpuFluidVelDen);
+		gl.uniform1i(progParticleGpuFluidVelDen.velDenLoc, 3);
+		gl.uniform1i(progParticleGpuFluidVelDen.posLoc, 1);
+		gl.uniform1i(progParticleGpuFluidVelDen.borderLoc, 5);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOVelDen1);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		gl.flush();
 		
-		gl.useProgram(progParticleGpuPos);
-		gl.uniform1i(progParticleGpuPos.posLoc, 1);
-		gl.uniform1i(progParticleGpuPos.velDenLoc, 3);
+		gl.useProgram(progParticleGpuFluidPos);
+		gl.uniform1i(progParticleGpuFluidPos.velDenLoc, 3);
+		gl.uniform1i(progParticleGpuFluidPos.posLoc, 1);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOPos1);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		gl.flush();
 		
-		
-		gl.useProgram(progParticleGpuVelDen);
-		gl.uniform1i(progParticleGpuVelDen.velDenLoc, 4);
-		gl.uniform1i(progParticleGpuVelDen.posLoc, 1);
-		gl.uniform1i(progParticleGpuVelDen.borderLoc, 5);
+		gl.useProgram(progParticleGpuFluidVelDen);
+		gl.uniform1i(progParticleGpuFluidVelDen.velDenLoc, 4);
+		gl.uniform1i(progParticleGpuFluidVelDen.posLoc, 1);
+		gl.uniform1i(progParticleGpuFluidVelDen.borderLoc, 5);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOVelDen2);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		gl.flush();
 		
-		gl.useProgram(progParticleGpuPos);
-		gl.uniform1i(progParticleGpuPos.posLoc, 2);
-		gl.uniform1i(progParticleGpuPos.velDenLoc, 3);
+		gl.useProgram(progParticleGpuFluidPos);
+		gl.uniform1i(progParticleGpuFluidPos.velDenLoc, 3);
+		gl.uniform1i(progParticleGpuFluidPos.posLoc, 2);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOPos2);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		gl.flush();
@@ -866,10 +967,9 @@ RenderParticle.prototype.renderGpuParticle = function(amount) {
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	
-	gl.useProgram(progParticleGpuShow);
+	gl.useProgram(progParticleGpuFluidShow);
   	var modelView = mat4.create();
   	mat4.lookAt(modelView, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
-  	//mat4.translate(modelView, modelView, [gl.viewportWidth/2, gl.viewportHeight/2, 0.5]);
 
 	if(playerPos.x < (gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
@@ -885,15 +985,100 @@ RenderParticle.prototype.renderGpuParticle = function(amount) {
 	else
 		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
 
-  	gl.uniformMatrix4fv(progParticleGpuShow.proj, false, cam.getProj());
-  	gl.uniformMatrix4fv(progParticleGpuShow.modelView, false, modelView);
+  	gl.uniformMatrix4fv(progParticleGpuFluidShow.proj, false, cam.getProj());
+  	gl.uniformMatrix4fv(progParticleGpuFluidShow.modelView, false, modelView);
   	
 	//gl.enable(gl.BLEND);
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVao);
   	gl.drawArrays(gl.POINTS, 0, amount*amount);
   	//gl.disable(gl.BLEND);
  	gl.flush();
-}
+};
+//------------------------------------AIR---------------------------------//
+RenderParticle.prototype.renderGpuAirParticle = function(amount) {
+	
+	gl.viewport(0, 0, amount, amount);
+	
+	gl.useProgram(progParticleGpuAirPos);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
+	gl.vertexAttribPointer(progParticleGpuAirPos.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(progParticleGpuAirPos.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+	
+  	var playerPos = {
+		x: world.player.getPosition().x, 
+		y: world.player.getPosition().y
+	}
+  	var playerVel = {
+  		x: world.player.getVelocity()[0],
+  		y: world.player.getVelocity()[1]
+  	}
+	var playerSize = world.player.getSize();
+	gl.useProgram(progParticleGpuAirVel);
+	
+	gl.uniform2f(progParticleGpuAirVel.posPlayer, playerPos.x + playerSize.x/2, playerPos.y + playerSize.y/2);
+	gl.uniform2f(progParticleGpuAirVel.velPlayer, playerVel.x, playerVel.y);
+	gl.vertexAttribPointer(progParticleGpuAirVel.pos, 2, gl.FLOAT, gl.FALSE, 16, 0);
+	gl.vertexAttribPointer(progParticleGpuAirVel.tex, 2, gl.FLOAT, gl.FALSE, 16, 8);
+		
+	for(var i = 0; i < 1; i++) {	// texture 6, 7, 8 and 9
+		gl.useProgram(progParticleGpuAirVel);
+		gl.uniform1i(progParticleGpuAirVel.velLoc, 8);
+		gl.uniform1i(progParticleGpuAirVel.posLoc, 6);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirVel1);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.flush();
+		
+		gl.useProgram(progParticleGpuAirPos);
+		gl.uniform1i(progParticleGpuAirPos.velLoc, 8);
+		gl.uniform1i(progParticleGpuAirPos.posLoc, 6);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirPos1);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.flush();
+		
+		gl.useProgram(progParticleGpuAirVel);
+		gl.uniform1i(progParticleGpuAirVel.velLoc, 9);
+		gl.uniform1i(progParticleGpuAirVel.posLoc, 6);;
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirVel2);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.flush();
+		
+		gl.useProgram(progParticleGpuAirPos);
+		gl.uniform1i(progParticleGpuAirPos.velLoc, 8);
+		gl.uniform1i(progParticleGpuAirPos.posLoc, 7);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.FBOAirPos2);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.flush();
+	}
+	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+	
+	gl.useProgram(progParticleGpuAirShow);
+  	var modelView = mat4.create();
+  	mat4.lookAt(modelView, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
+
+	if(playerPos.x < (gl.viewportWidth)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.5]);
+	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
+		mat4.translate(modelView, modelView, [-(world.worldSize.x - (gl.viewportWidth)), 0.0, 0.5]);
+	else
+		mat4.translate(modelView, modelView, [-(playerPos.x - ((gl.viewportWidth)/2)), 0.0, 0.5]);
+
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, 0.0, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, -(world.worldSize.y - (gl.viewportHeight)), 0.0]);
+	else
+		mat4.translate(modelView, modelView, [0.0, -(playerPos.y - ((gl.viewportHeight)/2)), 0.0]);
+
+  	gl.uniformMatrix4fv(progParticleGpuAirShow.proj, false, cam.getProj());
+  	gl.uniformMatrix4fv(progParticleGpuAirShow.modelView, false, modelView);
+  	
+	//gl.enable(gl.BLEND);
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.gpuParticleVaoAir);
+  	gl.drawArrays(gl.POINTS, 0, amount*amount);
+  	//gl.disable(gl.BLEND);
+ 	gl.flush();
+};
 
 //------------------------------------SMOKE---------------------------------//
 RenderParticle.prototype.renderSmokeParticle = function(pos, fade, scale, rotation) {
