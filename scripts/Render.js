@@ -1,7 +1,7 @@
 var progEntity, progWorld, progTileMg, progTileBg, progTileFg, 
 	progParticle, progParticleGpuFluidPos, progParticleGpuFluidVelDen, 
 	progParticleGpuFluidShow, progParticleGpuAirPos, progParticleGpuAirVel,
-	progParticleGpuAirShow, progLine, progShadow, progRain, progPoint;
+	progParticleGpuAirShow, progLine, progShadow, progRain, progPoint, progWaterMass;
 
 function RenderManager() {
 	
@@ -40,6 +40,7 @@ RenderManager.prototype = {
 		progParticleGpuAirVel = utils.addShaderProg(gl, 'GPU-air-particle-calc-vel.vert', 'GPU-air-particle-calc-vel.frag');
 		progRain = utils.addShaderProg(gl, 'rain.vert', 'rain.frag');
 		progPoint = utils.addShaderProg(gl, 'point.vert', 'point.frag');
+		progWaterMass = utils.addShaderProg(gl, 'waterMass.vert', 'waterMass.frag');
 		
 		this.initShaders();
 		this.renderEntity = new RenderEntity();
@@ -176,8 +177,19 @@ RenderManager.prototype = {
 		progShadow.position = gl.getAttribLocation(progShadow, "inPosition");
 		gl.enableVertexAttribArray(progShadow.position);
 		progShadow.proj = gl.getUniformLocation(progShadow, "projMatrix");
-		progShadow.modelView = gl.getUniformLocation(progShadow, "modelViewMatrix");	
-		progShadow.color = gl.getUniformLocation(progShadow, "inColor");
+		progShadow.modelView = gl.getUniformLocation(progShadow, "modelViewMatrix");
+		
+//-----------------------------------WATERMASS SHADER------------------------------------//
+		gl.useProgram(progWaterMass);
+		
+		progWaterMass.position = gl.getAttribLocation(progWaterMass, "inPosition");
+		gl.enableVertexAttribArray(progWaterMass.position);
+		progWaterMass.color = gl.getAttribLocation(progWaterMass, "inColor");
+		gl.enableVertexAttribArray(progWaterMass.color);
+		progWaterMass.proj = gl.getUniformLocation(progWaterMass, "projMatrix");
+		progWaterMass.modelView = gl.getUniformLocation(progWaterMass, "modelViewMatrix");	
+		progWaterMass.color = gl.getUniformLocation(progWaterMass, "inColor");
+		
 		
 //-----------------------------------RAIN SHADER------------------------------------//
 		gl.useProgram(progRain);
@@ -502,13 +514,12 @@ InheritenceManager.extend(RenderWaterMass, RenderBase);
 RenderWaterMass.prototype.render = function() {
 	var waterMasses = world.getWaterMasses();
 	for (var i = 0; i < waterMasses.length; i++) {
-	  this.renderMass(waterMasses[i].getWaterAsArray());
+	  this.renderMass(waterMasses[i].getWaterAsArray(), waterMasses[i].getWaterColorAsArray());
 	};
 };
 
-RenderWaterMass.prototype.renderMass = function(model) {
-	
-	gl.useProgram(progShadow);	// works good enough for now
+RenderWaterMass.prototype.renderMass = function(model, color) {
+	gl.useProgram(progWaterMass);	
 	var modelView = mat4.create();
 	var playerPos = {
 		x: world.player.getPosition().x, 
@@ -517,6 +528,10 @@ RenderWaterMass.prototype.renderMass = function(model) {
 	var posBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model), gl.STATIC_DRAW);
+	
+	var colorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
 		mat4.translate(modelView, modelView, [0.0, 0.0, 1.1]);
@@ -535,12 +550,15 @@ RenderWaterMass.prototype.renderMass = function(model) {
 	
 	mat4.multiply(modelView, cam.getView(), modelView);
 
-	gl.uniformMatrix4fv(progShadow.proj, false, cam.getProj());
-	gl.uniformMatrix4fv(progShadow.modelView, false, modelView);
-	gl.uniform3f(progShadow.color, 0.0, 0.0, 1.0);
+	gl.uniformMatrix4fv(progWaterMass.proj, false, cam.getProj());
+	gl.uniformMatrix4fv(progWaterMass.modelView, false, modelView);
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-	gl.vertexAttribPointer(progShadow.position, 2, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(progWaterMass.position, 2, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+	gl.vertexAttribPointer(progWaterMass.color, 3, gl.FLOAT, false, 0, 0);
+	
 	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
 	//console.log(model);
 };
@@ -1667,9 +1685,9 @@ RenderBoundingBox = function() {
 			}
 		}
 	}
-	if(world.waterMasses[0] != null) {
-		this.modelWaterMass = [];
-		var bb = world.waterMasses[0].triggerBox;
+	this.modelWaterMass = [];
+	for(var i = 0; i < world.getWaterMasses().length; i++) {
+		var bb = world.getWaterMasses()[i].triggerBox;
 		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[0][0], bb.corner[0][1], 0]);
 		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);
 		this.modelWaterMass = this.modelWaterMass.concat([bb.corner[1][0], bb.corner[1][1], 0]);

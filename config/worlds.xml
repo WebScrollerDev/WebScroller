@@ -573,6 +573,24 @@
 					<Z>0</Z>
 				</Pos>
 			</Tile>
+			<Tile>
+				<Id>6</Id> // streetlight
+				<Pos>
+					<X>1000</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+				<Lights>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>25</LightX>
+							<LightY>110</LightY>
+							<LightZ>10</LightZ>
+						</LightPos>
+					</Light>
+				</Lights>
+			</Tile>
 		</TilesMg>
 	</World>
 </Worlds>

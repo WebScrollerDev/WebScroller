@@ -1,7 +1,7 @@
 
 //-------------------------------------------------------WATERMASS---------------------------------------------------//
 
-WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor) {
+WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor, bottomColor, topColor) {
 	this.position = {	// down left of the watermass
 		x: position[0],
 		y: position[1]	
@@ -11,6 +11,8 @@ WaterMass = function(position, waterSize, waterColumnCount, updateInterval, spri
 	this.waterColumnSpacing = waterSize[0] / waterColumnCount;
 	this.waterColumns = [];
 	this.updateInterval = updateInterval;
+	this.bottomColor = bottomColor;
+	this.topColor = topColor;
 	
 	this.springConstant = springConstant;
 	this.dampeningFactor = dampeningFactor;
@@ -77,7 +79,20 @@ WaterMass.prototype = {
 						   x2, this.position.y,	// down right
 						   x2, this.position.y,	// down right
 						   x1, y1,				// up left                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-						   x2, y2 )				// up right
+						   x2, y2 );			// up right
+		}
+		return tmpArray;
+	},
+	
+	getWaterColorAsArray: function() {
+		var tmpArray = [];
+		for(var i = 0; i < this.waterColumnCount-1; i++) {
+			tmpArray.push( this.bottomColor[0], this.bottomColor[1], this.bottomColor[2],	// down left
+						   this.topColor[0], this.topColor[1], this.topColor[2], 			// up left
+						   this.bottomColor[0], this.bottomColor[1], this.bottomColor[2],	// down right
+						   this.bottomColor[0], this.bottomColor[1], this.bottomColor[2],	// down right
+						   this.topColor[0], this.topColor[1], this.topColor[2],			// up left                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+						   this.topColor[0], this.topColor[1], this.topColor[2]); 		// up right
 		}
 		return tmpArray;
 	},

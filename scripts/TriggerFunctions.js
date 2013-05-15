@@ -19,9 +19,9 @@ function waveFunc(owner) {
 		var diff = Math.abs( (owner.getPosition().y + owner.getWaterColumnOnIndex(waterColumnIndex).getCurrHeight()) - playerCenterPos.y );
 		if(diff < 10) {
 			var playerVel = world.getPlayerVel()[1];
-			if(playerVel < 0)
+			if(playerVel < 0) {
 				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel);
-			else
+			} else
 				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel/2);
 		}
 	}

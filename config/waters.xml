@@ -6,5 +6,15 @@
 		<SpringFriction>0.0025</SpringFriction>
 		<SpreadFactor>0.125</SpreadFactor>
 		<UpdateInterval>30</UpdateInterval>
+		<BottomColor>
+			<R>0.0</R>
+			<G>0.0</G>
+			<B>0.0</B>
+		</BottomColor>
+		<TopColor>
+			<R>0.2</R>
+			<G>0.2</G>
+			<B>1.0</B>
+		</TopColor>
 	</Water>
 </Waters>

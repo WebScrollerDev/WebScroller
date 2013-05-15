@@ -136,7 +136,7 @@ function parseWorlds(xml) {
 							waterSize[1] = parseInt($(this).find("WaterSizeY").text());
 						});
 						
-						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor));
+						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor));
 					});
 					world.setWaterMasses(waterMasses);
 				});
@@ -699,18 +699,31 @@ function parseWaters(xml)
 	$(xml).find("Waters").each(function() {
 		$(this).find("Water").each(function() {
 			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval;
+			var bottomColor = [], topColor = [];
 			id = parseInt($(this).find("Id").text());
 			columnCount = parseInt($(this).find("ColumnCount").text());
 			springHardness = parseFloat($(this).find("SpringHardness").text());
 			springFriction = parseFloat($(this).find("SpringFriction").text());
 			spreadFactor = parseFloat($(this).find("SpreadFactor").text());
 			updateInterval = parseInt($(this).find("UpdateInterval").text());
+			$(this).find("BottomColor").each(function() {
+				bottomColor[0] = parseFloat($(this).find("R").text());
+				bottomColor[1] = parseFloat($(this).find("G").text());
+				bottomColor[2] = parseFloat($(this).find("B").text());
+			});
+			$(this).find("TopColor").each(function() {
+				topColor[0] = parseFloat($(this).find("R").text());
+				topColor[1] = parseFloat($(this).find("G").text());
+				topColor[2] = parseFloat($(this).find("B").text());
+			});
 			tmpWaters[id] = {
 				columnCount: columnCount, 
 				springHardness: springHardness, 
 				springFriction: springFriction, 
 				spreadFactor: spreadFactor, 
-				updateInterval: updateInterval
+				updateInterval: updateInterval, 
+				bottomColor: bottomColor, 
+				topColor: topColor
 			};
 		});
 	});
