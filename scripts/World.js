@@ -163,7 +163,6 @@ World.prototype = {
 			if(tiles[i].getBBs() != null) {
 				for(var j = 0; j < tiles[i].getBBs().length; j++) {
 					if(this.intersects(this.player.getObb(), tiles[i].getBBs()[j])) {
-						world.player.obb.updateAngle(tiles[i].getBBs()[j].angle);
 						this.player.collidedWith(tiles[i].getBBs()[j]);
 					}
 				}
@@ -182,7 +181,7 @@ World.prototype = {
 				
 				for(var k = 0; k < animTiles[i].getBBs().length; k++) {
 					if(this.intersects(this.player.getObb(), animTiles[i].getBBs()[k])) {
-						world.player.obb.updateAngle(animTiles[i].getBBs()[k].angle);
+						world.player.angle = animTiles[i].getBBs()[k].angle;
 						this.player.collidedWith(animTiles[i].getBBs()[k]);
 					}
 				}
@@ -217,10 +216,12 @@ World.prototype = {
 		var result_S1 = this.getMinMax(firstBB, normal_secondBB[1]);
 		var result_S2 = this.getMinMax(secondBB, normal_secondBB[1]);
 		
-		var velocity_p = vec2.dot(this.player.velocity, normal_firstBB[0]);
-		var velocity_q = vec2.dot(this.player.velocity, normal_firstBB[1]);
-		var velocity_r = vec2.dot(this.player.velocity, normal_secondBB[0]);
-		var velocity_s = vec2.dot(this.player.velocity, normal_secondBB[1]);
+		var newVel = [this.player.velocity[0], this.player.velocity[1] - 0.5];
+		
+		var velocity_p = vec2.dot(newVel, normal_firstBB[0]);
+		var velocity_q = vec2.dot(newVel, normal_firstBB[1]);
+		var velocity_r = vec2.dot(newVel, normal_secondBB[0]);
+		var velocity_s = vec2.dot(newVel, normal_secondBB[1]);
 		
 		var collidingP = result_P1.min_proj + velocity_p < result_P2.max_proj && result_P1.max_proj + velocity_p > result_P2.min_proj;
 		var collidingQ = result_Q1.min_proj + velocity_q < result_Q2.max_proj && result_Q1.max_proj + velocity_q > result_Q2.min_proj;

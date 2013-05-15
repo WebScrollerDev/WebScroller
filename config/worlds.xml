@@ -512,12 +512,12 @@
 			<WorldY>2048</WorldY>
 		</WorldSize>
 		<PlayerSpawn>
-			<SpawnX>2700</SpawnX>
-			<SpawnY>300</SpawnY>
+			<SpawnX>1500</SpawnX>
+			<SpawnY>40</SpawnY>
 		</PlayerSpawn>
 		<Rain>
-			<Amount>300</Amount>
-			<SpawnInterval>2</SpawnInterval>
+			<Amount>50</Amount>
+			<SpawnInterval>30</SpawnInterval>
 			<ParticleVelocity>
 				<VelX>0.0</VelX>
 				<VelY>-0.9</VelY>
@@ -555,6 +555,22 @@
 					<X>2700</X>
 					<Y>40</Y>
 					<Z>-1</Z>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>15</Id>
+				<Pos>
+					<X>1100</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>0</Id>
+				<Pos>
+					<X>800</X>
+					<Y>200</Y>
+					<Z>0</Z>
 				</Pos>
 			</Tile>
 		</TilesMg>

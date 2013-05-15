@@ -363,7 +363,7 @@ function parseMgTiles(xml)
 						bbCenter[1] = parseInt($(this).find("BBY").text());
 					});
 					
-					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
+					bbAngle = (parseInt($(this).find("BBAngle").text())*Math.PI)/180;
 					shadows = $(this).find("Shadows").text() == "true" ? true : false;
 					var obbTmp = {
 						center: bbCenter, 
@@ -417,7 +417,7 @@ function parseMgTiles(xml)
 						bbCenter[1] = parseInt($(this).find("BBY").text());
 					});
 					
-					bbAngle = (parseInt($(this).find("BBAngle").text())*3.14)/180;
+					bbAngle = (parseInt($(this).find("BBAngle").text())*Math.PI)/180;
 					shadows = $(this).find("Shadows").text() == "true" ? true : false;
 					var obbTmp = {
 						center: bbCenter, 
@@ -446,7 +446,7 @@ function parseMgTiles(xml)
 						bbCenter[1] = parseInt($(this).find("TBY").text());
 					});
 					
-					bbAngle = (parseInt($(this).find("TBAngle").text())*3.14)/180;
+					bbAngle = (parseInt($(this).find("TBAngle").text())*Math.PI)/180;
 					triggerFunc = $(this).find("TriggerFunc").text();
 					var tbTmp = {
 						center: bbCenter, 

@@ -29,7 +29,7 @@ ShadowHandler.prototype = {
 				var playerToMiddle = vec2.normalize(vec2.create(), [(anchorPointOne.x + dx/2) - playerCenter.x, (anchorPointOne.y + dy/2) - playerCenter.y]);
 				var angle3 = Math.acos(vec2.dot(playerToMiddle, normal));
 
-				if(angle3 > 3.14/2)
+				if(angle3 > Math.PI/2)
 					this.shadows[i].setActive(false);
 				else {
 					this.shadows[i].setActive(true);
