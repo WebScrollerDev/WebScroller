@@ -1,18 +1,20 @@
 
 //-------------------------------------------------------WATERMASS---------------------------------------------------//
 
-WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor, bottomColor, topColor) {
+WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor, bottomColor, topColor, bubbleCount) {
 	this.position = {	// down left of the watermass
 		x: position[0],
 		y: position[1]	
 	}
 	this.targetHeight = waterSize[1];
-	this.waterColumnCount = waterColumnCount + 1;
+	this.waterColumnCount = waterColumnCount + 1;	// +1 since it takes 3 sides to create 2 columns
 	this.waterColumnSpacing = waterSize[0] / waterColumnCount;
 	this.waterColumns = [];
 	this.updateInterval = updateInterval;
 	this.bottomColor = bottomColor;
 	this.topColor = topColor;
+	this.bubbleCount = bubbleCount;
+	this.bubbles = [];
 	
 	this.springConstant = springConstant;
 	this.dampeningFactor = dampeningFactor;
@@ -63,7 +65,43 @@ WaterMass.prototype = {
 		        if (i < this.waterColumnCount - 1)
 		            this.waterColumns[i + 1].increaseCurrHeightWithValue(rightDeltas[i]);
 		    }
+		}		
+		this.updateBubbles();
+	},
+	
+	updateBubbles: function() {
+		
+		if(this.bubbles.length < this.bubbleCount) {	// create bubble
+			var tmpDiameter = 5.;
+			var fromEdge = Math.round(1/(this.waterColumnSpacing/(tmpDiameter/2)));
+			var tmpOwnerIndex = Math.round(fromEdge+Math.random() * (this.waterColumnCount-(1+fromEdge*2)));
+			
+			var tmpPosition = {
+				x: this.position.x + tmpOwnerIndex * this.waterColumnSpacing,
+				y: this.position.y + tmpDiameter/2, 
+				z: 1.4
+			}
+			var tmpVelocity = {
+				x: 0.,
+				y: 0.9
+			}
+			
+			this.bubbles.push(new ParticleWaterMassBubble(tmpPosition, tmpVelocity, tmpDiameter, tmpOwnerIndex));
 		}
+		
+		for(var i = 0; i < this.bubbles.length; i++) {	// handle the bubbles			
+			var currBubble = this.bubbles[i];
+			currBubble.updatePosition();	// update bubble position
+			if(currBubble.getPosition().y > this.waterColumns[currBubble.getOwnerIndex()].getCurrHeight() + this.position.y) {
+				this.bubbles.splice(i,1);
+				i--;
+			}
+		}
+		
+	},
+	
+	getBubbles: function() {
+		return this.bubbles;
 	},
 	
 	getWaterAsArray: function() {
@@ -148,3 +186,5 @@ WaterColumn.prototype = {
 	}
 	
 };
+
+

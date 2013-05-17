@@ -51,6 +51,21 @@ ParticleBase.prototype = {
 	}
 };
 
+//------------------------BUBBLES-----------------------//
+
+ParticleWaterMassBubble = function(position, velocity, diameter, ownerIndex) {
+	
+	ParticleWaterMassBubble.baseConstructor.call(this, position, velocity, diameter, 0);
+	
+	this.ownerIndex = ownerIndex;
+};
+
+InheritenceManager.extend(ParticleWaterMassBubble, ParticleBase);
+
+ParticleWaterMassBubble.prototype.getOwnerIndex = function() {
+	return this.ownerIndex;
+};
+
 //-------------------------SMOKE------------------------//
 
 ParticleSmoke = function(position, velocity, diameter, rotation, timeToLive) {

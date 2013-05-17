@@ -144,7 +144,7 @@ function parseWorlds(xml) {
 							waterSize[1] = parseInt($(this).find("WaterSizeY").text());
 						});
 						
-						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor));
+						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor, tmpWaters[waterId].bubbleCount));
 					});
 					world.setWaterMasses(waterMasses);
 				});
@@ -726,7 +726,7 @@ function parseWaters(xml)
 {
 	$(xml).find("Waters").each(function() {
 		$(this).find("Water").each(function() {
-			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval;
+			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval, bubbleCount;
 			var bottomColor = [], topColor = [];
 			id = parseInt($(this).find("Id").text());
 			columnCount = parseInt($(this).find("ColumnCount").text());
@@ -734,6 +734,7 @@ function parseWaters(xml)
 			springFriction = parseFloat($(this).find("SpringFriction").text());
 			spreadFactor = parseFloat($(this).find("SpreadFactor").text());
 			updateInterval = parseInt($(this).find("UpdateInterval").text());
+			bubbleCount = parseInt($(this).find("BubbleCount").text());
 			$(this).find("BottomColor").each(function() {
 				bottomColor[0] = parseFloat($(this).find("R").text());
 				bottomColor[1] = parseFloat($(this).find("G").text());
@@ -751,13 +752,15 @@ function parseWaters(xml)
 				spreadFactor: spreadFactor, 
 				updateInterval: updateInterval, 
 				bottomColor: bottomColor, 
-				topColor: topColor
+				topColor: topColor,
+				bubbleCount: bubbleCount
 			};
 		});
 	});
 	waterBool = true;
 	loadWorldXml();
 }
+
 function parseGpuParticles(xml)
 {
 	$(xml).find("GpuParticles").each(function() {
