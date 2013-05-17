@@ -336,12 +336,12 @@ function parseWorlds(xml) {
 							endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
 						});
 						rope = new Rope(startPos, endPos, tmpRopes[id].numJoints, tmpRopes[id].lastPinned, tmpRopes[id].color);
-						
-						$(this).find("AttachedTile").each(function() {
-							var tileId = parseInt($(this).find("TileId").text());
-							var joint = parseInt($(this).find("Joint").text());
-							rope.attachTile(world.getTilesMg()[tileId], joint);
-							//endPos = [parseFloat($(this).find("X").text()), parseFloat($(this).find("Y").text())];
+						$(this).find("AttachedTiles").each(function() {
+							$(this).find("AttachedTile").each(function() {
+								var tileIndex = parseInt($(this).find("TileIndex").text());
+								var joint = parseInt($(this).find("Joint").text());
+								rope.attachTile(world.getTilesMg()[tileIndex], joint);
+							});
 						});
 						ropes.push(rope);
 					});

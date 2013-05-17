@@ -499,13 +499,15 @@
 					<Y>300</Y>
 				</StartPos>
 				<EndPos>
-					<X>1100</X>
+					<X>1000</X>
 					<Y>100</Y>
 				</EndPos>
-				<AttachedTile>
-					<TileId>0</TileId>
-					<Joint>8</Joint>
-				</AttachedTile>
+				<AttachedTiles>
+					<AttachedTile>
+						<TileIndex>0</TileIndex>
+						<Joint>8</Joint>
+					</AttachedTile>
+				</AttachedTiles>
 			</Rope>
 		</Ropes>
 		

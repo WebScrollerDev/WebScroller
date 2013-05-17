@@ -115,23 +115,9 @@
 	<Tile>
 		<Id>8</Id>
 		<Url>resources/tiles/mg/test.png</Url>
-		<BoundingBoxes>
-			<BoundingBox>
-				<BBCenter>
-					<BBX>8</BBX>
-					<BBY>16</BBY>
-				</BBCenter>
-				<BBSize>
-					<BBX>16</BBX>
-					<BBY>32</BBY>
-				</BBSize>
-				<BBAngle>0</BBAngle>
-				<Shadows>true</Shadows>
-			</BoundingBox>
-		</BoundingBoxes>
 		<Size>
-			<X>16</X>
-			<Y>32</Y>
+			<X>32</X>
+			<Y>16</Y>
 		</Size>
 	</Tile>
 	
