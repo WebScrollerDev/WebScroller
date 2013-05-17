@@ -1,0 +1,27 @@
+<GpuParticles>
+	<Fluid>
+		<Amount>32</Amount>
+		<Color>
+			<R>0.0</R>
+			<G>0.4</G>
+			<B>0.4</B>
+		</Color>
+		<CollisionImage>resources/waterborder.png</CollisionImage>
+		<WarpFrom>
+			<X>200</X>
+			<Y>10</Y>
+		</WarpFrom>
+		<WarpTo>
+			<X>200</X>
+			<Y>400</Y>
+		</WarpTo>
+	</Fluid>
+	<Air>
+		<Amount>64</Amount>
+		<Color>
+			<R>1.0</R>
+			<G>1.0</G>
+			<B>1.0</B>
+		</Color>
+	</Air>
+</GpuParticles>

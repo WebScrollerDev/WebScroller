@@ -9,7 +9,8 @@ var tmpRopes = [];
 var tmpCloths = [];
 var tmpParticles = [];
 var tmpWaters = [];
-
+var tmpGpuAir;
+var tmpGpuFluid;
 var bg = false;
 var mg = false;
 var fg = false;
@@ -17,6 +18,7 @@ var light = false;
 var fabricsBool = false;
 var particleBool = false;
 var waterBool = false;
+var gpuParticlesBool = false;
 
 var doneLoading = false;
 
@@ -68,10 +70,16 @@ function loadXml(selWorld) {
     	dataType: "xml",
     	success: parseWaters
   	});
+  	$.ajax({
+    	type: "GET",
+    	url: "config/gpuParticles.xml",
+    	dataType: "xml",
+    	success: parseGpuParticles
+  	});
 }
 
 function loadWorldXml() {
-	if(bg && mg && fg && light && fabricsBool && particleBool && waterBool) {
+	if(bg && mg && fg && light && fabricsBool && particleBool && waterBool && gpuParticlesBool) {
 		$.ajax({
 	    	type: "GET",
 	    	url: "config/worlds.xml",
@@ -139,6 +147,26 @@ function parseWorlds(xml) {
 						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor));
 					});
 					world.setWaterMasses(waterMasses);
+				});
+				$(this).find("GpuParticles").each(function() {
+					$(this).find("Fluid").each(function() {
+						var fluidSpacing;
+						var fluidPos = [], fluidOffset = [];
+						
+						fluidSpacing = parseInt($(this).find("FluidSpacing").text());
+						$(this).find("FluidPos").each(function() {
+							fluidPos[0] = parseInt($(this).find("FluidX").text());
+							fluidPos[1] = parseInt($(this).find("FluidY").text());
+						});
+						$(this).find("FluidOffset").each(function() {
+							fluidOffset[0] = parseInt($(this).find("FluidX").text());
+							fluidOffset[1] = parseInt($(this).find("FluidY").text());
+						});
+						world.gpuFluid = new GpuFluidParticle(fluidPos, fluidOffset, fluidSpacing, tmpGpuFluid.amount, tmpGpuFluid.collisionImage, tmpGpuFluid.warpTo, tmpGpuFluid.warpFrom, tmpGpuFluid.color)
+					});
+					$(this).find("Air").each(function() {
+						world.gpuAir = new GpuAirParticle(tmpGpuAir.amount, tmpGpuAir.color);
+					});
 				});
 				$(this).find("TilesBg").each(function() {
 					var tilesPlaceable = [];
@@ -728,5 +756,52 @@ function parseWaters(xml)
 		});
 	});
 	waterBool = true;
+	loadWorldXml();
+}
+function parseGpuParticles(xml)
+{
+	$(xml).find("GpuParticles").each(function() {
+		$(this).find("Fluid").each(function() {
+			var amount, collisionImage;
+			var color = [], warpFrom = [], warpTo = [];
+			amount = parseInt($(this).find("Amount").text());
+			collisionImage = $(this).find("CollisionImage").text();
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			$(this).find("WarpFrom").each(function() {
+				warpFrom[0] = parseFloat($(this).find("X").text());
+				warpFrom[1] = parseFloat($(this).find("Y").text());
+			});
+			$(this).find("WarpTo").each(function() {
+				warpTo[0] = parseFloat($(this).find("X").text());
+				warpTo[1] = parseFloat($(this).find("Y").text());
+			});
+			tmpGpuFluid = {
+				amount: amount, 
+				color: color,
+				collisionImage: collisionImage,
+				warpFrom: warpFrom, 
+				warpTo: warpTo
+			};
+		});
+		$(this).find("Air").each(function() {
+			var amount;
+			var color = [];
+			amount = parseInt($(this).find("Amount").text());
+			$(this).find("Color").each(function() {
+				color[0] = parseFloat($(this).find("R").text());
+				color[1] = parseFloat($(this).find("G").text());
+				color[2] = parseFloat($(this).find("B").text());
+			});
+			tmpGpuAir = {
+				amount: amount, 
+				color: color
+			};
+		});
+	});
+	gpuParticlesBool = true;
 	loadWorldXml();
 }

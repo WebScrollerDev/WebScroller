@@ -22,6 +22,21 @@
 				<VelSpanY>0.0</VelSpanY>
 			</ParticleVelocitySpan>
 		</Rain>
+		<GpuParticles>
+			<Fluid>
+				<FluidPos>
+					<FluidX>2700</FluidX>
+					<FluidY>40</FluidY>
+				</FluidPos>
+				<FluidOffset>
+					<FluidX>200</FluidX>
+					<FluidY>400</FluidY>
+				</FluidOffset>
+				<FluidSpacing>3</FluidSpacing>
+			</Fluid>
+			<Air>
+			</Air>
+		</GpuParticles>
 		<TilesMg>
 			<Tile>
 				<Id>8</Id>
@@ -540,6 +555,10 @@
 				</WaterSize>
 			</Water>
 		</Waters>
+		<GpuParticles>
+			<Air>
+			</Air>
+		</GpuParticles>
 		<TilesMg>
 			<Tile>
 				<Id>14</Id> // huge platform
@@ -547,14 +566,6 @@
 					<X>0</X>
 					<Y>0</Y>
 					<Z>-0.1</Z>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>13</Id>	// border
-				<Pos>
-					<X>2700</X>
-					<Y>40</Y>
-					<Z>-1</Z>
 				</Pos>
 			</Tile>
 			<Tile>

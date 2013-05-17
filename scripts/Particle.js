@@ -132,7 +132,7 @@ ParticleRainDrop.prototype.decreaseLifetime = function(decrement) {
 };
 
 //-------------------------FLUID------------------------//
-GpuFluidParticle = function(position, particleSpawnOffset, particleSpawnSpacing, particleAmount, borderDataImage, warpTo, warpFrom) {
+GpuFluidParticle = function(position, particleSpawnOffset, particleSpawnSpacing, particleAmount, borderDataImage, warpTo, warpFrom, color) {
 	
 	this.startPos = {
 		x: position[0], 
@@ -150,6 +150,7 @@ GpuFluidParticle = function(position, particleSpawnOffset, particleSpawnSpacing,
 	this.borderLoadStatus = false;
 	this.borderDataHandler = new TextureData();
 	this.borderDataHandler.loadImage(borderDataImage);
+	this.color = color;
 	this.init();
 	//console.log([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
 	world.addPoint([this.startPos.x + warpTo[0], this.startPos.y + warpTo[1]]);
@@ -225,14 +226,19 @@ GpuFluidParticle.prototype = {
 			y: this.border.height
 		}
 		return size;
+	}, 
+	
+	getColor: function() {
+		return this.color;
 	}
 };
 
 //-------------------------AIR-PARTICLE------------------------//
-GpuAirParticle = function(particleAmount) {
+GpuAirParticle = function(particleAmount, color) {
 	this.pos = []
 	this.velocity = [];
 	this.vertices = [];
+	this.color = color;
 	this.amount = particleAmount;
 
 	this.init();
@@ -273,6 +279,10 @@ GpuAirParticle.prototype = {
 	
 	getAmount: function() {
 		return this.amount;
+	}, 
+	
+	getColor: function() {
+		return this.color;
 	}
 };
 

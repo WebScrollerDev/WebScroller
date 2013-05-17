@@ -16,8 +16,8 @@ World = function() {
 	
 	this.waterMasses = [];
 	
-	this.gpuFluidParticles = [];
-	this.gpuAirParticles = [];
+	//this.gpuFluidParticles = [];
+	//this.gpuAirParticles = [];
 	this.player = new EntityPlayer([0, 0], [45, 64]);
 	//this.player.setPosition([500, 500]);
 	this.rootQuadTree = {};
@@ -45,8 +45,8 @@ World.prototype = {
 			y: this.worldSize.y*2
 		}
 		
-		this.gpuFluidParticles.push(new GpuFluidParticle([2700, 40], [200, 400], 3, 32, "resources/waterborder.png", [200, 400], [200, 10]));
-		this.gpuAirParticles.push(new GpuAirParticle(64));
+		//this.gpuFluidParticles.push(new GpuFluidParticle([2700, 40], [200, 400], 3, 32, "resources/waterborder.png", [200, 400], [200, 10], [0.0, 1.0, 1.0]));
+		//this.gpuAirParticles.push(new GpuAirParticle(64, [1.0, 1.0, 1.0]));
 		this.rootQuadTree = new QuadTree(-100,-100, this.worldSize.x+100, this.worldSize.y+100);
 		//this.tilesMg[0].setMoving();
 		var i = 0;

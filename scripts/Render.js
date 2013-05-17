@@ -696,18 +696,21 @@ RenderParticle = function() {
 	this.posTexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
-
-	this.initGpuFluidParticle(world.gpuFluidParticles[0].getAmount(), world.gpuFluidParticles[0].getPos(), world.gpuFluidParticles[0].getVelDen(), world.gpuFluidParticles[0].getVertices());
-	this.initGpuAirParticle(world.gpuAirParticles[0].getAmount(), world.gpuAirParticles[0].getPos(),world.gpuAirParticles[0].getVel(), world.gpuAirParticles[0].getVertices());
 	
-	var _this = this; //Needed in setInterval, for specifying the correct this
-	this.checkIfDoneInterval = setInterval(function(){_this.borderDataDone(world.gpuFluidParticles[0])}, 50);
+	if(world.gpuAir != null)
+		this.initGpuAirParticle(world.gpuAir.getAmount(), world.gpuAir.getPos(),world.gpuAir.getVel(), world.gpuAir.getVertices(), world.gpuAir.getColor());
+	
+	if(world.gpuFluid != null) {
+		this.initGpuFluidParticle(world.gpuFluid.getAmount(), world.gpuFluid.getPos(), world.gpuFluid.getVelDen(), world.gpuFluid.getVertices(), world.gpuFluid.getColor());
+		var _this = this; //Needed in setInterval, for specifying the correct this
+		this.checkIfDoneInterval = setInterval(function(){_this.borderDataDone(world.gpuFluid)}, 50);
+	}
 };
 
 InheritenceManager.extend(RenderParticle, RenderBase);
 
 //----------------------------------------------------INIT FLUID---------------------------------------------------------//
-RenderParticle.prototype.initGpuFluidParticle = function(particleAmount, pos, velDen, vertices) { 	
+RenderParticle.prototype.initGpuFluidParticle = function(particleAmount, pos, velDen, vertices, color) { 	
 	
 //-------This texture stores the position---------------------//
 	this.texParticlePos1 = gl.createTexture();
@@ -778,6 +781,8 @@ RenderParticle.prototype.initGpuFluidParticle = function(particleAmount, pos, ve
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuFluidShow, "posSamp"), 1);
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuFluidShow, "velDenSamp"), 3);
 	
+	gl.uniform3fv(gl.getUniformLocation(progParticleGpuFluidShow, "inColor"), color);
+	
 	progParticleGpuFluidShow.modelView = gl.getUniformLocation(progParticleGpuFluidShow, "modelViewMatrix");
 	progParticleGpuFluidShow.proj = gl.getUniformLocation(progParticleGpuFluidShow, "projMatrix");
 	
@@ -814,7 +819,7 @@ RenderParticle.prototype.initGpuFluidParticleBorder = function(gpuParticle) {
 };
 
 //----------------------------------------------------INIT AIR---------------------------------------------------------//
-RenderParticle.prototype.initGpuAirParticle = function(particleAmount, pos, vel, vertices) { 
+RenderParticle.prototype.initGpuAirParticle = function(particleAmount, pos, vel, vertices, color) { 
 
 //-------This texture stores the position------------//
 	this.texAirParticlePos1 = gl.createTexture();
@@ -889,6 +894,8 @@ RenderParticle.prototype.initGpuAirParticle = function(particleAmount, pos, vel,
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuAirShow, "posSamp"), 6);
 	gl.uniform1i(gl.getUniformLocation(progParticleGpuAirShow, "velSamp"), 8);
 	
+	gl.uniform3fv(gl.getUniformLocation(progParticleGpuAirShow, "inColor"), color);
+	
 	progParticleGpuAirShow.modelView = gl.getUniformLocation(progParticleGpuAirShow, "modelViewMatrix");
 	progParticleGpuAirShow.proj = gl.getUniformLocation(progParticleGpuAirShow, "projMatrix");
 	
@@ -921,8 +928,10 @@ RenderParticle.prototype.render = function() {
 	}
 //------------------------------------GPU----------------------------------//
 	gl.depthMask(false); //see other particles through the particles
-	this.renderGpuFluidParticle(world.gpuFluidParticles[0].getAmount());
-	this.renderGpuAirParticle(world.gpuAirParticles[0].getAmount());
+	if(world.gpuFluid != null)
+		this.renderGpuFluidParticle(world.gpuFluid.getAmount());
+	if(world.gpuAir != null)
+		this.renderGpuAirParticle(world.gpuAir.getAmount());
 	gl.depthMask(true);
 };
 //------------------------------------FLUID---------------------------------//
