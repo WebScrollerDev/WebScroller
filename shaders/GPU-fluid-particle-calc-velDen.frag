@@ -66,7 +66,7 @@ void main(void) {
 
 						// change in momentum
 						velocity = velocity+impulse;
-						otherVel = otherVel-impulse;		
+						otherVel = otherVel-impulse;					
 			}			
 		}
 	}

@@ -251,9 +251,18 @@
 			<Y>130</Y>
 		</Size>
 	</Tile>
-	<AnimatedTile>
+	<Tile>
 		<Id>15</Id>
-		<Url>resources/tiles/mg/fungi_ss.png</Url>
+		<Url>resources/tiles/mg/mill.png</Url>	// mill
+		<Size>
+			<X>420</X>
+			<Y>300</Y>
+		</Size>
+	</Tile>
+	
+	<AnimatedTile>
+		<Id>16</Id>
+		<Url>resources/tiles/mg/fungi_ss.png</Url>	// mushroom
 		<Size>
 			<X>100</X>
 			<Y>100</Y>
@@ -290,4 +299,26 @@
 			</BoundingBox>
 		</BoundingBoxes>
 	</AnimatedTile>
+	
+	<AnimatedTile>
+		<Id>17</Id>
+		<Url>resources/tiles/mg/wheel_ss.png</Url>	// water wheel
+		<Size>
+			<X>200</X>
+			<Y>200</Y>
+		</Size>
+		<TotalNrAnimations>1</TotalNrAnimations>
+		<MaxNrFramesPerAnimation>20</MaxNrFramesPerAnimation>
+		<NrFramesPerAnimation>20</NrFramesPerAnimation>
+		<AnimationSpeed>20</AnimationSpeed>
+	</AnimatedTile>
+	
+	<Tile>
+		<Id>18</Id>
+		<Url>resources/tiles/mg/lantern.png</Url> // lantern
+		<Size>
+			<X>20</X>
+			<Y>20</Y>
+		</Size>
+	</Tile>
 </Tiles>

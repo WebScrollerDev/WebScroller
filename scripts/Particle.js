@@ -176,7 +176,7 @@ GpuFluidParticle.prototype = {
 	init: function() {
 		for(var x = 0.0; x < this.amount; x++) {
 			for(var y = 0.0; y < this.amount; y++) {
-				this.pos.push(this.particleSpawnOffset[0] + this.startPos.x + x * this.particleSpawnSpacing, this.particleSpawnOffset[1] + this.startPos.y + y * this.particleSpawnSpacing, 0);
+				this.pos.push(this.particleSpawnOffset[0] + this.startPos.x + x * this.particleSpawnSpacing, this.particleSpawnOffset[1] + this.startPos.y + y * this.particleSpawnSpacing, 0.);
 				this.velocityDensity.push(0, 0, 1);
 			}
 		}

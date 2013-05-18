@@ -6,7 +6,7 @@
 		<SpringFriction>0.0025</SpringFriction>
 		<SpreadFactor>0.125</SpreadFactor>
 		<UpdateInterval>30</UpdateInterval>
-		<BubbleCount>30</BubbleCount>
+		<BubbleCount>3</BubbleCount>
 		<BottomColor>
 			<R>0.0</R>
 			<G>0.0</G>

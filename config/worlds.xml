@@ -521,8 +521,10 @@
 			</Cloth>
 		</Cloths>
 	</World>
+	
+	
 	<World>
-		<WorldId>1</WorldId>
+		<WorldId>1</WorldId>					// WORLD 1
 		<BgPath>resources/bg2.png</BgPath>
 		<WorldSize>
 			<WorldX>4096</WorldX>
@@ -558,28 +560,31 @@
 			</Water>
 		</Waters>
 		<GpuParticles>
-			<Air>
+			<Air>		// air particles
 			</Air>
+			<Fluid>			// fluid particles
+				<FluidPos>
+					<FluidX>2700</FluidX>
+					<FluidY>40</FluidY>
+				</FluidPos>
+				<FluidOffset>
+					<FluidX>200</FluidX>
+					<FluidY>400</FluidY>
+				</FluidOffset>
+				<FluidSpacing>3</FluidSpacing>
+			</Fluid>
 		</GpuParticles>
 		<TilesMg>
 			<Tile>
-				<Id>14</Id> // huge platform
+				<Id>14</Id> // huge platform 0
 				<Pos>
 					<X>0</X>
 					<Y>0</Y>
-					<Z>-0.1</Z>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>15</Id>
-				<Pos>
-					<X>1100</X>
-					<Y>80</Y>
 					<Z>0</Z>
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>0</Id>
+				<Id>0</Id>	// platform 1
 				<Pos>
 					<X>800</X>
 					<Y>200</Y>
@@ -587,7 +592,7 @@
 				</Pos>
 			</Tile>
 			<Tile>
-				<Id>6</Id> // streetlight
+				<Id>6</Id> // streetlight 2
 				<Pos>
 					<X>1000</X>
 					<Y>80</Y>
@@ -604,6 +609,118 @@
 					</Light>
 				</Lights>
 			</Tile>
+			<Tile>
+				<Id>15</Id> // mill 3
+				<Pos>
+					<X>2050</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+				<Lights>
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>192</LightX>
+							<LightY>23</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>238</LightX>
+							<LightY>21</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>285</LightX>
+							<LightY>21</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>330</LightX>
+							<LightY>23</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>261</LightX>
+							<LightY>225</LightY>
+							<LightZ>1</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>4</LightId>
+						<LightPos>
+							<LightX>20</LightX>
+							<LightY>85</LightY>
+							<LightZ>4</LightZ>
+						</LightPos>
+					</Light>
+				</Lights>
+			</Tile>
+			<Tile>
+				<Id>18</Id> // lantern 4
+				<Pos>
+					<X>0</X>
+					<Y>0</Y>
+					<Z>2</Z>
+				</Pos>
+				<Lights>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>10</LightX>
+							<LightY>10</LightY>
+							<LightZ>10</LightZ>
+						</LightPos>
+					</Light>
+				</Lights>
+			</Tile>
+			<Tile>
+				<Id>16</Id>	// mushroom
+				<Pos>
+					<X>1100</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>17</Id>	// wheel
+				<Pos>
+					<X>1970</X>
+					<Y>65</Y>
+					<Z>1</Z>
+				</Pos>
+			</Tile>
 		</TilesMg>
+		
+		<Ropes>
+			<Rope>
+				<Id>0</Id>
+				<StartPos>
+					<X>2460</X>
+					<Y>165</Y>
+				</StartPos>
+				<EndPos>
+					<X>2460</X>
+					<Y>140</Y>
+				</EndPos>
+				<AttachedTiles>
+					<AttachedTile>
+						<TileIndex>4</TileIndex>
+						<Joint>10</Joint>
+					</AttachedTile>
+				</AttachedTiles>
+			</Rope>
+		</Ropes>
 	</World>
 </Worlds>
