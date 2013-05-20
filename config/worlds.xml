@@ -691,6 +691,14 @@
 					<Z>1</Z>
 				</Pos>
 			</Tile>
+			<Tile>
+				<Id>13</Id>	// border
+				<Pos>
+					<X>2700</X>
+					<Y>40</Y>
+					<Z>-1</Z>
+				</Pos>
+			</Tile>
 		</TilesMg>
 		
 		<Ropes>
