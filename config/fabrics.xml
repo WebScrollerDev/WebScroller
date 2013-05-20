@@ -14,7 +14,7 @@
 	</Cloth>
 	<Rope>
 		<Id>0</Id>
-		<NumJoints>10</NumJoints>
+		<NumJoints>5</NumJoints>
 		<LastPinned>false</LastPinned>
 		<Color>
 			<R>0.7</R>

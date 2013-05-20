@@ -144,7 +144,7 @@ function parseWorlds(xml) {
 							waterSize[1] = parseInt($(this).find("WaterSizeY").text());
 						});
 						
-						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor, tmpWaters[waterId].bubbleCount));
+						waterMasses.push(new WaterMass(waterPos, waterSize, tmpWaters[waterId].columnCount, tmpWaters[waterId].updateInterval, tmpWaters[waterId].springHardness, tmpWaters[waterId].springFriction, tmpWaters[waterId].spreadFactor, tmpWaters[waterId].bottomColor, tmpWaters[waterId].topColor, tmpWaters[waterId].bubbleCount, tmpWaters[waterId].splashCount));
 					});
 					world.setWaterMasses(waterMasses);
 				});
@@ -341,6 +341,26 @@ function parseWorlds(xml) {
 								var tileIndex = parseInt($(this).find("TileIndex").text());
 								var joint = parseInt($(this).find("Joint").text());
 								rope.attachTile(world.getTilesMg()[tileIndex], joint);
+							});
+						});
+						$(this).find("AttachedLights").each(function() {
+							$(this).find("AttachedLight").each(function() {
+								var lightId = parseInt($(this).find("LightId").text());
+								var joint = parseInt($(this).find("Joint").text());
+								var light = lights[lightId];
+								//console.log(lights[lightId]);
+								var pos = [0, 0, 0];
+								var lightPos = [0, 0, 0];
+								if(light.type == "static") {
+									rope.attachLightS(new LightBase(vec3.add(vec3.create(), pos, lightPos), light.color, light.intensity), joint);
+								}
+								if(light.type == "flickering") {
+									rope.attachLightF(new LightFlickering(vec3.add(vec3.create(), pos, lightPos), light.color, light.flickerSpeed, light.flickerSpeedSpan, light.intensity), joint);
+								}
+								if(light.type == "morphing") {
+									rope.attachLightM(new LightMorphing(vec3.add(vec3.create(), pos, lightPos), light.colors, light.flickerSpeed, light.flickerSpeedSpan, light.intensity, light.morphSpeed, light.morphSpeedSpan), joint);
+								}
+								
 							});
 						});
 						ropes.push(rope);
@@ -726,7 +746,7 @@ function parseWaters(xml)
 {
 	$(xml).find("Waters").each(function() {
 		$(this).find("Water").each(function() {
-			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval, bubbleCount;
+			var id, columnCount, springHardness, springFriction, spreadFactor, updateInterval, bubbleCount, splashCount;
 			var bottomColor = [], topColor = [];
 			id = parseInt($(this).find("Id").text());
 			columnCount = parseInt($(this).find("ColumnCount").text());
@@ -735,6 +755,7 @@ function parseWaters(xml)
 			spreadFactor = parseFloat($(this).find("SpreadFactor").text());
 			updateInterval = parseInt($(this).find("UpdateInterval").text());
 			bubbleCount = parseInt($(this).find("BubbleCount").text());
+			splashCount = parseInt($(this).find("SplashCount").text());
 			$(this).find("BottomColor").each(function() {
 				bottomColor[0] = parseFloat($(this).find("R").text());
 				bottomColor[1] = parseFloat($(this).find("G").text());
@@ -753,7 +774,8 @@ function parseWaters(xml)
 				updateInterval: updateInterval, 
 				bottomColor: bottomColor, 
 				topColor: topColor,
-				bubbleCount: bubbleCount
+				bubbleCount: bubbleCount, 
+				splashCount: splashCount
 			};
 		});
 	});

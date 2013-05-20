@@ -7,6 +7,7 @@
 		<SpreadFactor>0.125</SpreadFactor>
 		<UpdateInterval>30</UpdateInterval>
 		<BubbleCount>3</BubbleCount>
+		<SplashCount>30</SplashCount>
 		<BottomColor>
 			<R>0.0</R>
 			<G>0.0</G>

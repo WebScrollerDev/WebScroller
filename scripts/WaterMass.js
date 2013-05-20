@@ -1,7 +1,7 @@
 
 //-------------------------------------------------------WATERMASS---------------------------------------------------//
 
-WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor, bottomColor, topColor, bubbleCount) {
+WaterMass = function(position, waterSize, waterColumnCount, updateInterval, springConstant, dampeningFactor, spreadFactor, bottomColor, topColor, bubbleCount, splashCount) {
 	this.position = {	// down left of the watermass
 		x: position[0],
 		y: position[1]	
@@ -15,7 +15,7 @@ WaterMass = function(position, waterSize, waterColumnCount, updateInterval, spri
 	this.topColor = topColor;
 	this.bubbleCount = bubbleCount;
 	this.bubbles = [];
-	this.splashParticleCount = 30;
+	this.splashParticleCount = splashCount;
 	this.splashColdown = 500.;
 	this.splashParticles = [];
 	

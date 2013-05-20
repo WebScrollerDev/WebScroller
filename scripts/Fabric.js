@@ -91,7 +91,9 @@ Rope = function(startPos, endPos, numJoints, lastPinned, color) {
 	
 	this.color = color;
 	this.tiles = [];
-	
+	this.lightsS = [];
+	this.lightsF = [];
+	this.lightsM = [];
 	var distTotal = vec2.distance(startPos, endPos);
 	
 	var distX = endPos[0] - startPos[0];//
@@ -178,7 +180,7 @@ Rope.prototype = {
 		var tmpPos = {
 			x: this.points[i % this.points.length].x, 
 			y: this.points[i % this.points.length].y,
-			z: 0.1
+			z: 2.1
 		}
 		return tmpPos;
 	},
@@ -199,8 +201,22 @@ Rope.prototype = {
 	
 	attachTile: function(tile, i) {
 		this.tiles[i] = tile;
-	}
+	}, 
 	
+	attachLightS: function(light, i) {
+		console.log(light);
+		this.lightsS[i] = light;
+	}, 
+	
+	attachLightF: function(light, i) {
+		console.log(light);
+		this.lightsF[i] = light;
+	}, 
+	
+	attachLightM: function(light, i) {
+		console.log(light);
+		this.lightsM[i] = light;
+	}
 };
 
 //-------------------------POINT-------------------------//

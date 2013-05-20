@@ -26,6 +26,7 @@ World = function() {
 		y: 0.0
 	}
 	this.points = [];
+	this.ropeLights = [];
 }
 
 World.prototype = {	
@@ -312,5 +313,13 @@ World.prototype = {
 	
 	setWaterMasses: function(waterMasses) {
 		this.waterMasses = waterMasses;
+	}, 
+	
+	setRopeLights: function(ropeLights) {
+		this.ropeLights = ropeLights;
+	}, 
+	
+	getRopeLights: function() {
+		return this.ropeLights;
 	}
 }

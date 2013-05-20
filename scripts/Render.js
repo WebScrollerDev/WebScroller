@@ -1958,7 +1958,8 @@ RenderLight.prototype.initLights = function() {
 		this.lightPosMg = this.lightPosMg.concat(position);
 		this.lightColorMg = this.lightColorMg.concat(color);
 		this.lightIntensityMg = this.lightIntensityMg.concat(this.morphingLightsMg[i].getIntensity());
-	}
+	}	
+	
 	this.totalMgLights = totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights;
 	if(this.totalMgLights > 0) {
 		gl.useProgram(progTileMg);
@@ -2078,6 +2079,61 @@ RenderLight.prototype.updateMg = function() {
 		this.lightColorMg[i*3+1] = tmpColor.g;
 		this.lightColorMg[i*3+2] = tmpColor.b;
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	var start = this.totalMgLights;//(totalNrStaticLights + totalNrFlickeringLights + totalNrMorphingLights);
+	for(var i = 0; i < world.ropes.length; i++) {
+		for(var j = 0; j < world.ropes[i].lightsS.length; j++) {
+			if(world.ropes[i].lightsS[j] != null) {
+				var tmpPos = world.ropes[i].getPosition(j);
+				this.lightPosMg[start*3] = tmpPos.x;
+				this.lightPosMg[start*3 + 1] = tmpPos.y;
+				this.lightPosMg[start*3 + 2] = tmpPos.z;
+				
+				this.lightIntensityMg[start] = world.ropes[i].lightsS[j].getIntensity();
+				
+				var tmpColor = world.ropes[i].lightsS[j].getColor();
+				this.lightColorMg[start*3] = tmpColor.r;
+				this.lightColorMg[start*3 + 1] = tmpColor.g;
+				this.lightColorMg[start*3 + 2] = tmpColor.b;
+				start++;
+			}
+		}
+		for(var j = 0; j < world.ropes[i].lightsF.length; j++) {
+			if(world.ropes[i].lightsF[j] != null) {
+				var tmpPos = world.ropes[i].getPosition(j);
+				this.lightPosMg[start*3] = tmpPos.x;
+				this.lightPosMg[start*3 + 1] = tmpPos.y;
+				this.lightPosMg[start*3 + 2] = tmpPos.z;
+				
+				this.lightIntensityMg[start] = world.ropes[i].lightsF[j].getIntensity();
+				
+				var tmpColor = world.ropes[i].lightsF[j].getColor();
+				this.lightColorMg[start*3] = tmpColor.r;
+				this.lightColorMg[start*3 + 1] = tmpColor.g;
+				this.lightColorMg[start*3 + 2] = tmpColor.b;
+				start++;
+			}
+		}
+		for(var j = 0; j < world.ropes[i].lightsM.length; j++) {
+			if(world.ropes[i].lightsM[j] != null) {
+				var tmpPos = world.ropes[i].getPosition(j);
+				this.lightPosMg[start*3] = tmpPos.x;
+				this.lightPosMg[start*3 + 1] = tmpPos.y;
+				this.lightPosMg[start*3 + 2] = tmpPos.z;
+				
+				this.lightIntensityMg[start] = world.ropes[i].lightsM[j].getIntensity();
+				
+				var tmpColor = world.ropes[i].lightsM[j].getColor();
+				this.lightColorMg[start*3] = tmpColor.r;
+				this.lightColorMg[start*3 + 1] = tmpColor.g;
+				this.lightColorMg[start*3 + 2] = tmpColor.b;
+				start++;
+			}
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
 	
 	gl.useProgram(progTileMg);
 	gl.uniform3fv(progTileMg.lightPos, this.lightPosMg);

@@ -674,16 +674,6 @@
 					<Y>0</Y>
 					<Z>2</Z>
 				</Pos>
-				<Lights>
-					<Light>
-						<LightId>2</LightId>
-						<LightPos>
-							<LightX>10</LightX>
-							<LightY>10</LightY>
-							<LightZ>10</LightZ>
-						</LightPos>
-					</Light>
-				</Lights>
 			</Tile>
 			<Tile>
 				<Id>16</Id>	// mushroom
@@ -717,9 +707,15 @@
 				<AttachedTiles>
 					<AttachedTile>
 						<TileIndex>4</TileIndex>
-						<Joint>10</Joint>
+						<Joint>5</Joint>
 					</AttachedTile>
 				</AttachedTiles>
+				<AttachedLights>
+					<AttachedLight>
+						<LightId>4</LightId>
+						<Joint>5</Joint>
+					</AttachedLight>
+				</AttachedLights>
 			</Rope>
 		</Ropes>
 	</World>
