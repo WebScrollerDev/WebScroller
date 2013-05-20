@@ -681,23 +681,28 @@ RenderPoint.prototype.renderPoint = function(array) {
 //----------------------------------PARTICLES------------------------------------//
 RenderParticle = function() {
 	RenderParticle.baseConstructor.call(this);
-//------------------Smoke Particles---------------------//
+//------------------Smoke Particles-------------------------------//
 	this.modelParticleSmoke = new ModelSquare();
 	this.initBuffers(this.modelParticleSmoke);
 	this.texParticleSmoke = gl.createTexture();
 	Texture.loadImage(gl, "resources/smokeParticle.png", this.texParticleSmoke);
-//------------------Fire Particles---------------------//
+//------------------Fire Particles-------------------------------//
 	this.modelParticleFire = new ModelSquare();
 	this.initBuffers(this.modelParticleFire);
 	this.texParticleFire = gl.createTexture();
 	Texture.loadImage(gl, "resources/fireParticle.png", this.texParticleFire);
-//------------------Bubble Particles-------------------//
+//------------------WaterMass bubble Particles-------------------//
 	this.modelParticleBubble = new ModelSquare();
 	this.initBuffers(this.modelParticleBubble);
 	this.texParticleBubble = gl.createTexture();
 	Texture.loadImage(gl, "resources/bubbleParticle.png", this.texParticleBubble);
+//------------------WaterMass Splash Particles-------------------//
+	this.modelParticleSplash = new ModelSquare();
+	this.initBuffers(this.modelParticleSplash);
+	this.texParticleSplash = gl.createTexture();
+	Texture.loadImage(gl, "resources/splashParticle.png", this.texParticleSplash);
 	
-//-------------------Gpu Particles---------------------//	
+//-------------------Gpu Particles-------------------------------//	
 	this.posTexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.posTexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, -1,1,0,1, 1,-1,1,0, 1,1,1,1]), gl.STATIC_DRAW);
@@ -931,7 +936,7 @@ RenderParticle.prototype.render = function() {
 			this.renderParticle(currEmitterParticles[j].getPosition(), currEmitterParticles[j].getFade(), currEmitterParticles[j].getFade()*currEmitterParticles[j].getDiameter(), currEmitterParticles[j].getRotation(), this.modelParticleFire, this.texParticleFire);
 		}
 	}
-//------------------------------------BUBBLES-------------------------------//	
+//------------------------------------BUBBLES/SPLASH-----------------------//	
 	gl.depthMask(false);
 	var waterMasses = world.getWaterMasses();
 	for(var i = 0; i < waterMasses.length; i++)
@@ -939,7 +944,12 @@ RenderParticle.prototype.render = function() {
 		var bubbles = waterMasses[i].getBubbles();
 		for(var j = 0; j < bubbles.length; j++)
 		{
-			this.renderParticle(bubbles[j].getPosition(), 1, bubbles[j].getDiameter(), bubbles[j].getRotation(), this.modelParticleBubble, this.texParticleBubble);
+			this.renderParticle(bubbles[j].getPosition(), 1, bubbles[j].getDiameter(), 0, this.modelParticleBubble, this.texParticleBubble);
+		}
+		var splash = waterMasses[i].getSplashParticles();
+		for(var k = 0; k < splash.length; k++)
+		{
+			this.renderParticle(splash[k].getPosition(), 1, splash[k].getDiameter(), 0, this.modelParticleSplash, this.texParticleSplash);
 		}
 	}
 //------------------------------------GPU----------------------------------//

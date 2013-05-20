@@ -87,8 +87,8 @@ void main(void) {
 		if(texture2D(borderSamp,vec2(nextPos.x, 1.0 - nextPos.y)).r == 0.) {
 			velocity.x = -velocity.x*0.01;	// reflect from wall
 		}
-	} else
-		velocity.x = -velocity.x*0.1;
+	} //else
+		//velocity.x = -velocity.x*0.1;
 	//----------------------------------------Y----------------------------------------//	
 	if(nextPos.y < 1. && nextPos.y > 0.) {
 		if(texture2D(borderSamp,vec2(nextPos.x, 1.0 - nextPos.y)).r == 0.) { // if solid block under particle

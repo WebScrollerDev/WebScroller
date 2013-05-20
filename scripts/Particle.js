@@ -66,6 +66,23 @@ ParticleWaterMassBubble.prototype.getOwnerIndex = function() {
 	return this.ownerIndex;
 };
 
+//------------------------SPLASH-----------------------//
+
+ParticleWaterMassSplash = function(position, velocity, diameter, timeToLive) {
+	
+	ParticleWaterMassSplash.baseConstructor.call(this, position, velocity, diameter, 0);
+	this.timeToLive = timeToLive;
+};
+
+InheritenceManager.extend(ParticleWaterMassSplash, ParticleBase);
+
+ParticleWaterMassSplash.prototype.getLifetime = function() {
+	return this.timeToLive;
+};
+ParticleWaterMassSplash.prototype.decreaseLifetime = function(decrement) {
+	this.timeToLive -= decrement;
+};
+
 //-------------------------SMOKE------------------------//
 
 ParticleSmoke = function(position, velocity, diameter, rotation, timeToLive) {
@@ -114,7 +131,7 @@ ParticleFire.prototype.getFade = function() {
 
 ParticleRainDrop = function(position, velocity, timeToLive) {
 	this.position = new QuadPoint([position.x, position.y]);	// position as a QuadPoint
-	this.velocity = new QuadPoint([velocity.x, velocity.y]);	// position as a QuadPoint
+	this.velocity = new QuadPoint([velocity.x, velocity.y]);	// velocity as a QuadPoint
 	this.deathMark = false;
 	this.timeToLive = timeToLive;
 	this.maxTimeToLive = timeToLive + 0; //+0 to create a separate var

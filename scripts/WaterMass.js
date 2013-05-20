@@ -15,6 +15,9 @@ WaterMass = function(position, waterSize, waterColumnCount, updateInterval, spri
 	this.topColor = topColor;
 	this.bubbleCount = bubbleCount;
 	this.bubbles = [];
+	this.splashParticleCount = 30;
+	this.splashColdown = 500.;
+	this.splashParticles = [];
 	
 	this.springConstant = springConstant;
 	this.dampeningFactor = dampeningFactor;
@@ -65,8 +68,62 @@ WaterMass.prototype = {
 		        if (i < this.waterColumnCount - 1)
 		            this.waterColumns[i + 1].increaseCurrHeightWithValue(rightDeltas[i]);
 		    }
-		}		
+		}
+		
 		this.updateBubbles();
+		if(this.splashColdown >= 0)
+			this.splashColdown -= this.updateInterval;
+		if(this.splashParticles.length > 0)
+			this.updateSplashParticles();
+	},
+	
+	createSplashAtColumn: function(index) {
+
+		for(var i = 0; i < this.splashParticleCount; i++) {
+			var tmpPosition = {
+				x: this.position.x + index * this.waterColumnSpacing + (Math.random()*world.player.getSize().x - world.player.getSize().x/2),
+				y: this.position.y + this.getWaterColumnOnIndex(index).getCurrHeight() + world.player.velocity[1], 
+				z: 2
+			}
+			var tmpVelocity = {
+				x: Math.random()*2 - 1 + world.player.velocity[0]*0.5,
+				y: 1.5 + Math.random()*2
+			}
+			var tmpDiameter = 4 + Math.random() * 4.;
+			var tmpTimeToLive = Math.random() * 1000.;
+			
+			this.splashParticles.push(new ParticleWaterMassSplash(tmpPosition, tmpVelocity, tmpDiameter, tmpTimeToLive));
+		}
+	},
+	
+	updateSplashParticles: function() {
+		for(var i = 0; i < this.splashParticles.length; i++) {	// handle the particles			
+			var currParticle = this.splashParticles[i];
+			if(currParticle.getLifetime() < 0.) {
+				this.splashParticles.splice(i,1);
+				i--;
+				continue;	// skip updatePosition if time to die
+			}
+			currParticle.decreaseLifetime(this.updateInterval);
+			currParticle.updatePosition();	// update particle position
+			var tmpVel = {
+				x: 0,
+				y: -0.1
+			}
+			currParticle.increaseVelocityWithValue(tmpVel);	// apply gravity
+		}
+	},
+	
+	getSplashParticles: function() {
+		return this.splashParticles;
+	},
+	
+	getSplashColdown: function() {
+		return this.splashColdown;
+	},
+	
+	setSplashColdown: function(value) {
+		this.splashColdown = value;
 	},
 	
 	updateBubbles: function() {

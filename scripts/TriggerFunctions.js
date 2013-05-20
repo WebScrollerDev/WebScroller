@@ -3,11 +3,7 @@ function playerBounceFunc(owner) {
 	owner.changeStatus(1);
 };
 
-function waveFunc(owner) {
-	
-	//console.log(owner.waterColumns);
-	
-	
+function waveFunc(owner) {	
 	var playerPos = world.getPlayerPos();
 	var playerSize = world.getPlayerSize();
 	var playerCenterPos = {
@@ -19,9 +15,13 @@ function waveFunc(owner) {
 		var diff = Math.abs( (owner.getPosition().y + owner.getWaterColumnOnIndex(waterColumnIndex).getCurrHeight()) - playerCenterPos.y );
 		if(diff < 10) {
 			var playerVel = world.getPlayerVel()[1];
-			if(playerVel < 0) {
+			if(playerVel < 0) {	// if player is falling down
 				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel);
-			} else
+				if(owner.getSplashColdown() < 0) {
+					owner.createSplashAtColumn(waterColumnIndex);
+					owner.setSplashColdown(500.);	
+				}
+			} else	// if player is jumping up
 				owner.getWaterColumnOnIndex(waterColumnIndex).increaseVelocityWithValue(playerVel/2);
 		}
 	}
