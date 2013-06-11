@@ -6,13 +6,13 @@
 			<G>0.4</G>
 			<B>0.4</B>
 		</Color>
-		<CollisionImage>resources/waterborder.png</CollisionImage>
+		<CollisionImage>resources/border.png</CollisionImage>
 		<WarpFrom>
-			<X>200</X>
+			<X>400</X>
 			<Y>10</Y>
 		</WarpFrom>
 		<WarpTo>
-			<X>200</X>
+			<X>400</X>
 			<Y>400</Y>
 		</WarpTo>
 	</Fluid>

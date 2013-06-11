@@ -10,7 +10,7 @@ uniform vec2 inWarpTo;
 
 varying vec2 tex;
 const float gravity = 0.05;
-const float borderSize = 512.;
+const float borderSize = 1024.;
 const float d = 1./32.;
 const float particleRadius = 4.;
 const float restitution = .85;

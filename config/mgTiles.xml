@@ -199,10 +199,10 @@
 	</Tile>
 	<Tile>
 		<Id>13</Id>
-		<Url>resources/waterborder.png</Url>
+		<Url>resources/tiles/mg/waterborder.png</Url>
 		<Size>
-			<X>512</X>
-			<Y>512</Y>
+			<X>500</X>
+			<Y>500</Y>
 		</Size>
 	</Tile>
 	<Tile>

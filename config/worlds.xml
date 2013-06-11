@@ -564,11 +564,11 @@
 			</Air>
 			<Fluid>			// fluid particles
 				<FluidPos>
-					<FluidX>2700</FluidX>
-					<FluidY>40</FluidY>
+					<FluidX>1562</FluidX>
+					<FluidY>30</FluidY>
 				</FluidPos>
 				<FluidOffset>
-					<FluidX>200</FluidX>
+					<FluidX>360</FluidX>
 					<FluidY>400</FluidY>
 				</FluidOffset>
 				<FluidSpacing>3</FluidSpacing>
@@ -689,14 +689,6 @@
 					<X>1970</X>
 					<Y>65</Y>
 					<Z>1</Z>
-				</Pos>
-			</Tile>
-			<Tile>
-				<Id>13</Id>	// border
-				<Pos>
-					<X>2700</X>
-					<Y>40</Y>
-					<Z>-1</Z>
 				</Pos>
 			</Tile>
 		</TilesMg>
