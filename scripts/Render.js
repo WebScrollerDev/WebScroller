@@ -188,7 +188,7 @@ RenderManager.prototype = {
 		gl.enableVertexAttribArray(progWaterMass.color);
 		progWaterMass.proj = gl.getUniformLocation(progWaterMass, "projMatrix");
 		progWaterMass.modelView = gl.getUniformLocation(progWaterMass, "modelViewMatrix");	
-		progWaterMass.color = gl.getUniformLocation(progWaterMass, "inColor");
+		//progWaterMass.color = gl.getUniformLocation(progWaterMass, "inColor");
 		
 		
 //-----------------------------------RAIN SHADER------------------------------------//
@@ -553,11 +553,11 @@ RenderWaterMass.prototype.renderMass = function(model, color) {
 	gl.uniformMatrix4fv(progWaterMass.proj, false, cam.getProj());
 	gl.uniformMatrix4fv(progWaterMass.modelView, false, modelView);
 	
-	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-	gl.vertexAttribPointer(progWaterMass.position, 2, gl.FLOAT, false, 0, 0);
-	
 	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 	gl.vertexAttribPointer(progWaterMass.color, 3, gl.FLOAT, false, 0, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+	gl.vertexAttribPointer(progWaterMass.position, 2, gl.FLOAT, false, 0, 0);
 	
 	gl.drawArrays(gl.TRIANGLES, 0, model.length/2);
 	//console.log(model);
