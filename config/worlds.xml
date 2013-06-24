@@ -531,8 +531,8 @@
 			<WorldY>2048</WorldY>
 		</WorldSize>
 		<PlayerSpawn>
-			<SpawnX>1500</SpawnX>
-			<SpawnY>40</SpawnY>
+			<SpawnX>2500</SpawnX>
+			<SpawnY>100</SpawnY>
 		</PlayerSpawn>
 		<Rain>
 			<Amount>50</Amount>
@@ -691,7 +691,97 @@
 					<Z>1</Z>
 				</Pos>
 			</Tile>
+			<Tile>
+				<Id>3</Id> // house
+				<Pos>
+					<X>400</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+				<Lights>
+					
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>122</LightX>
+							<LightY>45</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>			
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>96</LightX>
+							<LightY>117</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					<Light>
+						<LightId>2</LightId>
+						<LightPos>
+							<LightX>92</LightX>
+							<LightY>218</LightY>
+							<LightZ>2</LightZ>
+						</LightPos>
+					</Light>
+					
+				</Lights>
+				<Particles>
+					<Particle>
+						<ParticleId>0</ParticleId>
+						<ParticlePos>
+							<ParticleX>130</ParticleX>
+							<ParticleY>290</ParticleY>
+							<ParticleZ>0</ParticleZ>
+						</ParticlePos>
+					</Particle>
+				</Particles>
+			</Tile>
+			<Tile>
+				<Id>19</Id>	// top
+				<Pos>
+					<X>1750</X>
+					<Y>290</Y>
+					<Z>2</Z>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>20</Id>	// bottom
+				<Pos>
+					<X>1800</X>
+					<Y>20</Y>
+					<Z>0</Z>
+				</Pos>
+			</Tile>
+			<Tile>
+				<Id>9</Id> // scaffold
+				<Pos>
+					<X>2500</X>
+					<Y>80</Y>
+					<Z>0</Z>
+				</Pos>
+			</Tile>
 		</TilesMg>
+		<TilesFg>
+			<Tile>
+				<Id>3</Id>	// tree
+				<Pos>
+					<X>2700</X>
+					<Y>0</Y>
+					<Z>5</Z>
+				</Pos>
+			</Tile>
+		</TilesFg>
+		<TilesBg>
+			<Tile>
+				<Id>3</Id>	// Moon
+				<Pos>
+					<X>500</X>
+					<Y>400</Y>
+					<Z>-9</Z>
+				</Pos>
+			</Tile>
+		</TilesBg>
 		
 		<Ropes>
 			<Rope>
@@ -718,5 +808,14 @@
 				</AttachedLights>
 			</Rope>
 		</Ropes>
+		<Cloths>
+			<Cloth>
+				<Id>0</Id>
+				<Pos>
+					<X>2570</X>
+					<Y>278</Y>
+				</Pos>
+			</Cloth>
+		</Cloths>
 	</World>
 </Worlds>

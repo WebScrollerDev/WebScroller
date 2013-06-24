@@ -147,7 +147,7 @@
 					<BBX>205</BBX>
 					<BBY>10</BBY>
 				</BBSize>
-				<BBAngle>45</BBAngle>
+				<BBAngle>0</BBAngle>
 				<Shadows>true</Shadows>
 			</BoundingBox>
 		</BoundingBoxes>
@@ -199,7 +199,7 @@
 	</Tile>
 	<Tile>
 		<Id>13</Id>
-		<Url>resources/tiles/mg/waterborder.png</Url>
+		<Url>resources/waterborder.png</Url>
 		<Size>
 			<X>500</X>
 			<Y>500</Y>
@@ -231,7 +231,7 @@
 					<BBY>20</BBY>
 				</BBSize>
 				<BBAngle>0</BBAngle>
-				<Shadows>true</Shadows>
+				
 			</BoundingBox>
 			<BoundingBox>
 				<BBCenter>
@@ -319,6 +319,22 @@
 		<Size>
 			<X>20</X>
 			<Y>20</Y>
+		</Size>
+	</Tile>
+	<Tile>
+		<Id>19</Id>
+		<Url>resources/tiles/mg/top.png</Url>
+		<Size>
+			<X>351</X>
+			<Y>224</Y>
+		</Size>
+	</Tile>
+	<Tile>
+		<Id>20</Id>
+		<Url>resources/tiles/mg/bottom.png</Url>
+		<Size>
+			<X>348</X>
+			<Y>402</Y>
 		</Size>
 	</Tile>
 </Tiles>

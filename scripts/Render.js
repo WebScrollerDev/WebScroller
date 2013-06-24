@@ -1247,16 +1247,25 @@ RenderTile.prototype.renderTileBg = function(pos, tex, size, model) {
 	}
 	
 	if(playerPos.x < (gl.viewportWidth)/2)
-		mat4.translate(modelView, modelView, [pos.x, pos.y, pos.z]);
+		mat4.translate(modelView, modelView, [pos.x, 0.0, pos.z]);
 	else if(playerPos.x > world.worldSize.x - ((gl.viewportWidth)/2))
-		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), pos.y, pos.z]);
+		mat4.translate(modelView, modelView, [pos.x -(world.bgSize.x - (gl.viewportWidth)), 0.0, pos.z]);
 	else {
 		/*var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - 
 					(playerPos.x*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));*/
 		var trans = (((gl.viewportWidth)/2)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth))) - ((playerPos.x)*((world.bgSize.x - gl.viewportWidth)/(world.worldSize.x - gl.viewportWidth)));
-		mat4.translate(modelView, modelView, [trans + pos.x, pos.y, pos.z]);
+		mat4.translate(modelView, modelView, [trans + pos.x, 0.0, pos.z]);
 		//mat4.translate(modelView, modelView, [pos.x -(playerPos.x - ((gl.viewportWidth)/2)), pos.y, -9.0]);
 	}
+	
+	if(playerPos.y < (gl.viewportHeight)/2)
+		mat4.translate(modelView, modelView, [0.0, pos.y, 0.0]);
+	else if(playerPos.y > world.worldSize.y - ((gl.viewportHeight)/2))
+		mat4.translate(modelView, modelView, [0.0, pos.y -(world.bgSize.y - (gl.viewportHeight)), 0.0]);
+	else {
+		var trans = (((gl.viewportHeight)/2)*((world.bgSize.y - gl.viewportHeight)/(world.worldSize.x - gl.viewportHeight))) - ((playerPos.y)*((world.bgSize.y - gl.viewportHeight)/(world.worldSize.x - gl.viewportHeight)));
+		mat4.translate(modelView, modelView, [0.0, trans + pos.y, 0.0]);
+	} // -(playerPos.y - ((gl.viewportHeight)/2))
 	
 	mat4.scale(modelView, modelView, [size.x, size.y, 0.0]);
 	//Used to center the player on the canvas
